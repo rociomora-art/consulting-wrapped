@@ -1,0 +1,3920 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consulting Wrapped 2026–2027 · Artefact LATAM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            },
+            colors: {
+              artefact: {
+                navy: '#051336',
+                magenta: '#E6007E',
+                purple: '#8B5CF6',
+                blue: '#3B82F6',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #051336;
+        color: #ffffff;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(5, 19, 54, 0.5);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(230, 0, 126, 0.45);
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(230, 0, 126, 0.8);
+      }
+    </style>
+    <!-- React 18 + ReactDOM 18 + Framer Motion + Canvas Confetti + Babel Standalone -->
+    <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/framer-motion@11.11.17/dist/framer-motion.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script crossorigin src="https://unpkg.com/@babel/standalone@7.26.2/babel.min.js"></script>
+  </head>
+  <body class="bg-[#051336] text-white antialiased selection:bg-[#E6007E] selection:text-white">
+    <div id="root"></div>
+
+    <script id="wrapped-tsx-source" type="text/plain">
+      const { useState, useEffect, useCallback, useRef, useMemo } = React;
+
+      // Framer Motion bridge with resilient fallback
+      const _MotionGlobal = window.Motion || window.FramerMotion || {};
+      const motion = _MotionGlobal.motion || new Proxy({}, {
+        get: (_, tag) => React.forwardRef(({ initial, animate, exit, transition, whileHover, whileTap, custom, ...props }, ref) =>
+          React.createElement(tag, { ref, ...props })
+        )
+      });
+      const AnimatePresence = _MotionGlobal.AnimatePresence || (({ children }) => React.createElement(React.Fragment, null, children));
+
+      // Canvas confetti bridge
+      const confetti = window.confetti || (() => {});
+
+      // Crisp SVG Lucide Icon Factory
+      const createIcon = (paths: React.ReactNode) => ({ className = "w-4 h-4", style, ...rest }: any) => (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={className}
+          style={style}
+          {...rest}
+        >
+          {paths}
+        </svg>
+      );
+
+      const Volume2 = createIcon(<><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M15.54 8.46a5 5 0 0 1 0 7.07" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /></>);
+      const VolumeX = createIcon(<><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><line x1="22" y1="9" x2="16" y2="15" /><line x1="16" y1="9" x2="22" y2="15" /></>);
+      const Play = createIcon(<polygon points="6 3 20 12 6 21 6 3" />);
+      const Pause = createIcon(<><rect x="14" y="4" width="4" height="16" rx="1" /><rect x="6" y="4" width="4" height="16" rx="1" /></>);
+      const Maximize2 = createIcon(<><polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" /><line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" /></>);
+      const Minimize2 = createIcon(<><polyline points="4 14 10 14 10 20" /><polyline points="20 10 14 10 14 4" /><line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" /></>);
+      const ChevronLeft = createIcon(<path d="m15 18-6-6 6-6" />);
+      const ChevronRight = createIcon(<path d="m9 18 6-6-6-6" />);
+      const X = createIcon(<><path d="M18 6 6 18" /><path d="m6 6 12 12" /></>);
+      const ZoomIn = createIcon(<><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" /></>);
+      const ZoomOut = createIcon(<><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><line x1="8" y1="11" x2="14" y2="11" /></>);
+      const RotateCcw = createIcon(<><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></>);
+      const Sparkles = createIcon(<><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /></>);
+      const ArrowRight = createIcon(<><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></>);
+      const Calendar = createIcon(<><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /></>);
+      const Layers = createIcon(<><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" /><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" /><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" /></>);
+      const Award = createIcon(<><circle cx="12" cy="8" r="6" /><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11" /></>);
+      const Users = createIcon(<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></>);
+      const Flame = createIcon(<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />);
+      const Briefcase = createIcon(<><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></>);
+      const CheckCircle2 = createIcon(<><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></>);
+      const Crown = createIcon(<><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z" /><path d="M5 21h14" /></>);
+      const Mic2 = createIcon(<><path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12" /><circle cx="17" cy="7" r="5" /></>);
+      const Radio = createIcon(<><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9" /><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5" /><circle cx="12" cy="12" r="2" /><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5" /><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19" /></>);
+      const Lightbulb = createIcon(<><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" /></>);
+      const HelpCircle = createIcon(<><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></>);
+      const PartyPopper = createIcon(<><path d="M5.8 11.3 2 22l10.7-3.79" /><path d="M4 3h.01" /><path d="M22 8h.01" /><path d="M15 2h.01" /><path d="M22 20h.01" /><path d="m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10" /><path d="m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17" /><path d="m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7" /><path d="M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1.93-2.83-4.17-2-5 .83-.83 3.07.07 5 2Z" /></>);
+      const BrainCircuit = createIcon(<><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z" /><path d="M9 13a4.5 4.5 0 0 0 3-4" /><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5" /><path d="M3.477 10.896a4 4 0 0 1 .585-.396" /><path d="M6 18a4 4 0 0 1-1.967-.516" /><path d="M12 13h4" /><path d="M12 18h6a2 2 0 0 1 2 2v1" /><path d="M12 8h8" /><path d="M16 8V5a2 2 0 0 1 2-2" /><circle cx="16" cy="13" r=".5" /><circle cx="18" cy="3" r=".5" /><circle cx="20" cy="21" r=".5" /><circle cx="20" cy="8" r=".5" /></>);
+      const Compass = createIcon(<><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></>);
+      const Rocket = createIcon(<><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" /><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" /><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" /><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" /></>);
+      const ShieldCheck = createIcon(<><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></>);
+      const Star = createIcon(<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />);
+      const Disc3 = createIcon(<><circle cx="12" cy="12" r="10" /><path d="M6 12c0-1.7.7-3.2 1.8-4.2" /><circle cx="12" cy="12" r="2" /><path d="M18 12c0 1.7-.7 3.2-1.8 4.2" /></>);
+      const Headphones = createIcon(<><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></>);
+      const ListMusic = createIcon(<><path d="M21 15V6" /><path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path d="M12 12H3" /><path d="M16 6H3" /><path d="M12 18H3" /></>);
+      const AudioLines = createIcon(<><path d="M2 10v3" /><path d="M6 6v11" /><path d="M10 3v18" /><path d="M14 8v7" /><path d="M18 5v13" /><path d="M22 10v3" /></>);
+      const BookOpen = createIcon(<><path d="M12 7v14" /><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" /></>);
+      const Clock = createIcon(<><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></>);
+      const Download = createIcon(<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></>);
+      const Check = createIcon(<path d="M20 6 9 17l-5-5" />);
+      const Share2 = createIcon(<><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></>);
+
+// ==========================================
+// FILE: src/data/wrappedData.ts
+// ==========================================
+interface SpeakerItem {
+  id: string;
+  name: string;
+  role: string;
+  sessionTag: string;
+  photo?: string;
+  initials?: string;
+  gradient?: string;
+  isHost?: boolean;
+  isTeamCard?: boolean;
+  cropStyle?: {
+    objectPosition?: string;
+    scale?: number;
+  };
+}
+interface DemoScreenshot {
+  id: string;
+  title: string;
+  subtitle: string;
+  src: string;
+  badge: string;
+}
+interface TimelineSession {
+  id: string;
+  date: string;
+  monthLabel: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  gif: string;
+  clientLogo?: string;
+  clientName?: string;
+  clientLogoDarkInvert?: boolean;
+  speakers: {
+    name: string;
+    photo?: string;
+    initials?: string;
+    cropStyle?: {
+      objectPosition?: string;
+      scale?: number;
+    };
+  }[];
+  highlights: string[];
+  keyLearnings?: {
+    number: number;
+    title: string;
+    description: string;
+  }[];
+  demos?: DemoScreenshot[];
+  bonusInteractive?: {
+    initialLabel: string;
+    initialText: string;
+    initialGif: string;
+    revealedLabel: string;
+    revealedText: string;
+    revealedGif: string;
+    examples: {
+      title: string;
+      detail: string;
+    }[];
+  };
+  accentColor: string;
+}
+interface GridComparisonItem {
+  id: string;
+  category: string;
+  title: string;
+  before?: string;
+  after: string;
+  badgeText: string;
+  description: string;
+  iconName: string;
+  accent: 'magenta' | 'purple' | 'blue' | 'emerald' | 'amber';
+}
+interface CourseTrack {
+  id: string;
+  trackNumber: string;
+  title: string;
+  categoryTag: string;
+  durationLabel: string;
+  intensity: string;
+}
+interface CourseLevel {
+  id: string;
+  tier: 'Entry' | 'Senior' | 'Manager';
+  levelName: string;
+  shortCode: string;
+  subtitle: string;
+  accentColor: string;
+  gradient: string;
+  tracks: CourseTrack[];
+}
+const ASSETS = {
+  gifs: {
+    introSparkles: 'assets/gifs/intro-sparkles.gif',
+    statsRocket: 'assets/gifs/stats-rocket.gif',
+    speakers: 'assets/gifs/Speakers.gif',
+    microphone: 'assets/gifs/microphone.gif',
+    septKickoff: 'assets/gifs/sept-kickoff.gif',
+    octCarozzi: 'assets/gifs/oct-carozzi.gif',
+    octAutomation: 'assets/gifs/oct-automation.gif',
+    novLab: 'assets/gifs/nov-lab.gif',
+    dicDiagnostico: 'assets/gifs/dic-diagnostico.gif',
+    confusedThinking: 'assets/gifs/Confused Thinking GIF.gif',
+    congrats: 'assets/gifs/congrats.gif',
+    eneLevelup: 'assets/gifs/ene-levelup.gif',
+    cierreParty: 'assets/gifs/cierre-party.gif',
+  },
+  drawings: {
+    chapterGridMiloJoaco: 'assets/Imagenes version dibujo/chapter grid (milo y joaco).jpeg',
+    teamCarozzi: 'assets/Imagenes version dibujo/team carozzi.png',
+  },
+  logosAndDemos: {
+    logoArtefact: 'assets/logos y presentaciones/logo ARTEFACT.png',
+    logoCencosud: 'assets/logos y presentaciones/cencosud.png',
+    logoCarozzi: 'assets/logos y presentaciones/logo carozzi.png',
+    logoPalacioHierro: 'assets/logos y presentaciones/El_Palacio_de_Hierro_logo.svg.webp',
+    demoCatman: 'assets/logos y presentaciones/catman.png',
+    demoAgenteCatman: 'assets/logos y presentaciones/agente catman.png',
+    demoArtetalkPalacios: 'assets/logos y presentaciones/ARTETALK (PALACIOS).png',
+  },
+  personas: {
+    camiloYGuille: 'assets/personas/Camilo y Guille.png',
+    clemente: 'assets/personas/Clemente.png',
+    maite: 'assets/personas/Maite.png',
+    rocio: 'assets/personas/Rocio.png',
+    javier: 'assets/personas/Javier.png',
+    israel: 'assets/personas/israel.png',
+    teamPalacioHierro: 'assets/personas/team palacio de hierro.png',
+  },
+  sounds: {
+    pop: 'assets/sonidos/pop.wav',
+  },
+} as const;
+const WRAPPED_DATA = {
+  meta: {
+    appName: 'Consulting Wrapped 2026–2027',
+    chapterName: 'Chapter de Consulting · Artefact LATAM',
+    period: 'Septiembre 2026 – Enero 2027',
+    palette: {
+      navy: '#051336',
+      magenta: '#E6007E',
+      purple: '#8B5CF6',
+      electricBlue: '#3B82F6',
+      white: '#FFFFFF',
+    },
+  },
+
+  slides: [
+    { id: 'intro', number: 1, label: 'Portada', shortTitle: 'Intro' },
+    { id: 'stats', number: 2, label: 'El Año en Números', shortTitle: 'Stats' },
+    { id: 'speakers', number: 3, label: 'Top Speakers', shortTitle: 'Speakers' },
+    { id: 'timeline', number: 4, label: 'Hits del Año', shortTitle: 'Timeline' },
+    { id: 'grid2027', number: 5, label: 'Consulting Grid 2027', shortTitle: 'Grid 2027' },
+    { id: 'playlist', number: 6, label: 'Playlist de Aprendizaje', shortTitle: 'Playlist' },
+    { id: 'outro', number: 7, label: 'Tu Aura 2027', shortTitle: 'Aura 2027' },
+  ],
+
+  intro: {
+    badge: 'ARTEFACT LATAM · CHAPTER DE CONSULTING',
+    title: 'Consulting Wrapped: Nuestro año en modo Agéntico',
+    highlightedPhrase: 'modo Agéntico',
+    subtitle: 'Septiembre 2026 – Enero 2027',
+    description:
+      'De las primeras PoCs a sistemas multi-agente en producción, nuevos frameworks de diagnóstico y la evolución hacia el Consulting Grid 2027.',
+    ctaText: 'Empezar el recorrido',
+    gif: ASSETS.gifs.introSparkles,
+    logo: ASSETS.logosAndDemos.logoArtefact,
+  },
+
+  stats: {
+    eyebrow: 'EL AÑO EN NÚMEROS · 2026–2027',
+    title: 'Un semestre de alto impacto y evolución continua',
+    subtitle: 'Cada sesión fue una oportunidad para compartir casos reales, herramientas tácticas y construir juntos el estándar del consultor agéntico.',
+    gif: ASSETS.gifs.statsRocket,
+    counters: [
+      {
+        id: 'sessions',
+        value: 9,
+        prefix: '',
+        suffix: '',
+        label: 'Sesiones de Chapter',
+        sublabel: 'De Septiembre 2026 a Enero 2027 con asistencia récord del equipo',
+        accent: 'from-[#E6007E] to-[#8B5CF6]',
+        tags: ['Kick-off', 'Casos Reales', 'Labs', 'Carrera & Bono'],
+      },
+      {
+        id: 'speakers',
+        value: 15,
+        prefix: '+',
+        suffix: '',
+        label: 'Speakers en Escena',
+        sublabel: 'Consultores, Managers, Tech Leads y People compartiendo conocimiento real',
+        accent: 'from-[#8B5CF6] to-[#3B82F6]',
+        tags: ['Hosts', 'Speakers de Proyecto', 'Agentic Lab', 'People Team'],
+      },
+      {
+        id: 'cases',
+        value: 4,
+        prefix: '',
+        suffix: '',
+        label: 'Grandes Casos y Herramientas',
+        sublabel: 'Soluciones accionables presentadas con demos en vivo al Chapter',
+        accent: 'from-[#3B82F6] to-[#06B6D4]',
+        tags: ['Cencosud', 'Carozzi', 'Palacio de Hierro', 'Portal de Diagnóstico'],
+      },
+      {
+        id: 'evolution',
+        value: 1,
+        prefix: '',
+        suffix: '',
+        label: 'Gran Evolución',
+        sublabel: 'Rediseño estructural del modelo de evaluación, carrera y badges',
+        accent: 'from-[#E6007E] via-[#8B5CF6] to-[#3B82F6]',
+        tags: ['Consulting Grid 2027', '60 Puntos Máx.', '24 Badges', 'AI PM'],
+      },
+    ],
+  },
+
+  speakers: {
+    eyebrow: 'NUESTRO LINE-UP ESTELAR',
+    title: 'Top Speakers: Las voces que hicieron vibrar el Chapter',
+    subtitle: 'Como en todo gran Wrapped, estos fueron los artistas principales que compartieron sus aprendizajes, dolores y victorias.',
+    headerGifs: {
+      speakers: ASSETS.gifs.speakers,
+      microphone: ASSETS.gifs.microphone,
+    },
+    podiumHost: {
+      rank: '#1 TOP HOSTS DEL AÑO',
+      names: 'Camilo & Guillaume',
+      role: 'Anfitriones del Chapter · Conducción, Kick-Off, Path del Consultor & Grid 2027',
+      photo: ASSETS.personas.camiloYGuille,
+      sessionsCount: '9 sesiones lideradas',
+      badge: 'Chapter Leads & Hosts',
+    },
+    featuredPhotoSpeakers: [
+      {
+        id: 'maite',
+        name: 'Maite',
+        role: 'Experiencia Cencosud & Kick-Off',
+        sessionTag: '25/09 · Kick-Off & Cenco',
+        photo: ASSETS.personas.maite,
+        cropStyle: { objectPosition: '50% 18%', scale: 1.35 },
+      },
+      {
+        id: 'clemente',
+        name: 'Clemente',
+        role: 'Experiencia Cencosud & Kick-Off',
+        sessionTag: '25/09 · Kick-Off & Cenco',
+        photo: ASSETS.personas.clemente,
+        cropStyle: { objectPosition: '50% 16%', scale: 1.32 },
+      },
+      {
+        id: 'rocio',
+        name: 'Rocío',
+        role: 'Caso Carozzi: De PoCs a Producción',
+        sessionTag: '09/10 · Experiencia Carozzi',
+        photo: ASSETS.personas.rocio,
+        cropStyle: { objectPosition: '50% 18%', scale: 1.32 },
+      },
+      {
+        id: 'javier',
+        name: 'Javier',
+        role: 'Demo Táctica de 2 PoCs de Agentes',
+        sessionTag: '09/10 · Experiencia Carozzi',
+        photo: ASSETS.personas.javier,
+        cropStyle: { objectPosition: '50% 16%', scale: 1.34 },
+      },
+      {
+        id: 'israel',
+        name: 'Israel',
+        role: 'Buenas Prácticas & Chatbot de Campaña',
+        sessionTag: '23/10 · Automation',
+        photo: ASSETS.personas.israel,
+        cropStyle: { objectPosition: '50% 14%', scale: 1.38 },
+      },
+      {
+        id: 'team-palacio',
+        name: 'Team Palacio de Hierro',
+        role: 'Diego Bendicho, Iñaki & Isabela',
+        sessionTag: '06/11 & 18/12 · Agentic Lab',
+        photo: ASSETS.personas.teamPalacioHierro,
+        isTeamCard: true,
+      },
+    ] as SpeakerItem[],
+    initialsSpeakers: [
+      {
+        id: 'joaco',
+        name: 'Joaco (Joaquín)',
+        initials: 'JQ',
+        role: 'Bono & Consulting Grid 2027',
+        sessionTag: '08/01 · Bono & Grid',
+        gradient: 'from-[#E6007E] to-[#8B5CF6]',
+      },
+      {
+        id: 'valentina',
+        name: 'Valentina',
+        initials: 'VA',
+        role: 'Portal RFI + Diagnóstico + Roadmap',
+        sessionTag: '04/12 · Diagnóstico',
+        gradient: 'from-[#8B5CF6] to-[#3B82F6]',
+      },
+      {
+        id: 'laura',
+        name: 'Laura',
+        initials: 'LA',
+        role: 'Palacio de Hierro · Agentic Lab',
+        sessionTag: '06/11 & 18/12 · Agentic Lab',
+        gradient: 'from-[#3B82F6] to-[#06B6D4]',
+      },
+      {
+        id: 'simones',
+        name: 'Simones',
+        initials: 'SI',
+        role: 'Palacio de Hierro · Agentic Lab',
+        sessionTag: '06/11 & 18/12 · Agentic Lab',
+        gradient: 'from-[#EC4899] to-[#F43F5E]',
+      },
+      {
+        id: 'people',
+        name: 'People Team',
+        initials: 'PP',
+        role: 'Path del Consultor & Artefactory',
+        sessionTag: '22/01 · Carrera & Cursos',
+        gradient: 'from-[#6366F1] to-[#E6007E]',
+      },
+    ] as SpeakerItem[],
+  },
+
+  timeline: {
+    eyebrow: 'NUESTROS HITS DEL AÑO · TRACK BY TRACK',
+    title: 'Línea de Tiempo Interactiva',
+    subtitle: 'Haz clic en cada sesión para explorar los entregables, aprendizajes clave y abrir las capturas de demos en pantalla completa.',
+    sessions: [
+      {
+        id: '25-09-kickoff',
+        date: '25/09',
+        monthLabel: 'SEPTIEMBRE 2026',
+        title: 'Kick-Off & Cenco',
+        subtitle: 'One Pager, Encuesta de Clima y experiencia Cencosud',
+        summary:
+          'Arrancamos la temporada definiendo el propósito del Chapter en el One Pager oficial, revisando el pulso del equipo en la Encuesta de Clima y aterrizando aprendizajes reales del cliente Cencosud.',
+        gif: ASSETS.gifs.septKickoff,
+        clientLogo: ASSETS.logosAndDemos.logoCencosud,
+        clientName: 'Cencosud',
+        speakers: [
+          { name: 'Camilo & Guille', photo: ASSETS.personas.camiloYGuille },
+          { name: 'Maite', photo: ASSETS.personas.maite, cropStyle: { objectPosition: '50% 18%', scale: 1.35 } },
+          { name: 'Clemente', photo: ASSETS.personas.clemente, cropStyle: { objectPosition: '50% 16%', scale: 1.32 } },
+        ],
+        highlights: [
+          'Lanzamiento del One Pager del Chapter con visión, rituales y objetivos del ciclo 2026–2027.',
+          'Análisis abierto de la Encuesta de Clima: foco en visibilidad de proyectos, herramientas técnicas y acompañamiento.',
+          'Deep-dive en la experiencia Cencosud: estructuración del servicio, gestión de stakeholders y valor entregado por Maite y Clemente.',
+        ],
+        accentColor: '#3B82F6',
+      },
+      {
+        id: '09-10-carozzi',
+        date: '09/10',
+        monthLabel: 'OCTUBRE 2026',
+        title: 'Experiencia Carozzi',
+        subtitle: 'De dolores y PoCs a soluciones agénticas en producción + Demo táctica de 2 PoCs',
+        summary:
+          'Rocío y Javier nos llevaron por la transformación completa en Carozzi: cómo evolucionar desde pruebas de concepto aisladas hacia productos agénticos en producción con impacto cuantificable en el negocio.',
+        gif: ASSETS.gifs.octCarozzi,
+        clientLogo: ASSETS.logosAndDemos.logoCarozzi,
+        clientName: 'Carozzi',
+        speakers: [
+          { name: 'Rocío', photo: ASSETS.personas.rocio, cropStyle: { objectPosition: '50% 18%', scale: 1.32 } },
+          { name: 'Javier', photo: ASSETS.personas.javier, cropStyle: { objectPosition: '50% 16%', scale: 1.34 } },
+        ],
+        highlights: [
+          'De dolores operativos reales y PoCs iniciales a soluciones agénticas robustas corriendo en producción.',
+          'Demo táctica en vivo por Javi mostrando 2 PoCs de agentes aplicados a Category Management (Catman).',
+          'Flujo end-to-end: configuración de estructura de presentación, generación automatizada por bloques y ensamblado final.',
+        ],
+        keyLearnings: [
+          {
+            number: 1,
+            title: 'Valorización',
+            description: 'Cuantificar desde el día uno el impacto en horas ahorradas y decisiones de negocio para justificar la inversión.',
+          },
+          {
+            number: 2,
+            title: 'Productos vs. PoCs',
+            description: 'Diseñar pensando en escalabilidad, mantenibilidad y experiencia de usuario final, no solo en una demo funcional.',
+          },
+          {
+            number: 3,
+            title: 'Datos Gobernados',
+            description: 'Sin calidad, trazabilidad y gobierno en las fuentes de datos, ningún agente puede sostener resultados confiables en producción.',
+          },
+          {
+            number: 4,
+            title: 'Gestión del Cambio',
+            description: 'Involucrar a los usuarios de negocio en la co-creación para asegurar adopción real y confianza en el agente.',
+          },
+          {
+            number: 5,
+            title: 'Upstream vs. Downstream',
+            description: 'Mapear todo el proceso: entender qué ocurre antes de la ingesta (upstream) y cómo se consume el output en la toma de decisión (downstream).',
+          },
+        ],
+        demos: [
+          {
+            id: 'catman-slide',
+            title: 'CATMAN · Análisis Canasta Mascotas',
+            subtitle: 'Generación automatizada de slides por sección (Apertura, Canasta, Shopper, Cuantitativo) con estado del run en tiempo real.',
+            src: ASSETS.logosAndDemos.demoCatman,
+            badge: 'Demo PoC #1 · Catman Run',
+          },
+          {
+            id: 'agente-catman',
+            title: 'Agente CATMAN · Orquestador de Estructura',
+            subtitle: 'Configuración modular de 22 slides activables por bloque (Canasta, Shopper) antes de disparar la generación agéntica.',
+            src: ASSETS.logosAndDemos.demoAgenteCatman,
+            badge: 'Demo PoC #2 · Agente Catman',
+          },
+          {
+            id: 'team-carozzi-art',
+            title: 'Equipo Carozzi · De una idea a impacto real (100%)',
+            subtitle: 'Catman, Cobertura GC, Obsolescencia y Variación de Costos llevados a producción.',
+            src: ASSETS.drawings.teamCarozzi,
+            badge: 'Arte del Equipo · Carozzi',
+          },
+        ],
+        accentColor: '#E6007E',
+      },
+      {
+        id: '23-10-automation',
+        date: '23/10',
+        monthLabel: 'OCTUBRE 2026',
+        title: 'Automation',
+        subtitle: 'Buenas prácticas de levantamiento y Chatbot de Campaña',
+        summary:
+          'Israel compartió la metodología práctica para realizar levantamientos de procesos orientados a automatización sin fricción y presentó la arquitectura del Chatbot de Campaña.',
+        gif: ASSETS.gifs.octAutomation,
+        speakers: [
+          { name: 'Israel', photo: ASSETS.personas.israel, cropStyle: { objectPosition: '50% 14%', scale: 1.38 } },
+        ],
+        highlights: [
+          'Framework de buenas prácticas para levantamiento de procesos antes de automatizar: identificación de cuellos de botella, reglas de negocio y excepciones.',
+          'Caso práctico: diseño y despliegue del Chatbot de Campaña para acelerar la atención y conversión.',
+          'Checklist táctico para evitar re-trabajos entre consultoría de negocio y desarrollo técnico.',
+        ],
+        accentColor: '#8B5CF6',
+      },
+      {
+        id: '06-11-18-12-palacio',
+        date: '06/11 & 18/12',
+        monthLabel: 'NOV & DIC 2026',
+        title: 'Palacio de Hierro (Agentic Lab)',
+        subtitle: 'Doble entrega práctica: "ArteTalk: Crackeando Palacio – Aprendizajes de un Agentic Lab"',
+        summary:
+          'Una sesión doble épica liderada por el equipo de México y LATAM (Diego Bendicho, Iñaki, Isa, Laura y Simones), abriendo la cocina de cómo estructurar y ejecutar un Agentic Lab de alto impacto.',
+        gif: ASSETS.gifs.novLab,
+        clientLogo: ASSETS.logosAndDemos.logoPalacioHierro,
+        clientName: 'El Palacio de Hierro',
+        clientLogoDarkInvert: true,
+        speakers: [
+          { name: 'Diego, Iñaki & Isa', photo: ASSETS.personas.teamPalacioHierro },
+          { name: 'Laura', initials: 'LA' },
+          { name: 'Simones', initials: 'SI' },
+        ],
+        highlights: [
+          'Primera entrega (06/11): Estructuración del Agentic Lab, descubrimiento de casos de uso y alineación con stakeholders de El Palacio de Hierro.',
+          'Segunda entrega (18/12): Resultados tácticos, arquitectura agéntica implementada y lecciones aprendidas para escalar Labs en retail de lujo.',
+          'Presentación insignia "ArteTalk: Crackeando Palacio" con el blueprint replicable para toda la región.',
+        ],
+        demos: [
+          {
+            id: 'artetalk-palacios',
+            title: 'ArteTalk: Crackeando Palacio',
+            subtitle: 'Aprendizajes de un Agentic Lab para El Palacio de Hierro (Diego Bendicho, Iñaki, Isabela, Laura y Simones).',
+            src: ASSETS.logosAndDemos.demoArtetalkPalacios,
+            badge: 'Presentación · Agentic Lab',
+          },
+        ],
+        accentColor: '#F59E0B',
+      },
+      {
+        id: '04-12-diagnostico',
+        date: '04/12',
+        monthLabel: 'DICIEMBRE 2026',
+        title: 'Herramienta de Diagnóstico',
+        subtitle: 'Portal que construye RFI + Diagnóstico + Entregable de Roadmap (Valentina + Apoyos)',
+        summary:
+          'Valentina y el equipo de apoyo presentaron un acelerador clave para consultoría: un portal integral que automatiza desde la creación del RFI hasta el diagnóstico de madurez y el entregable final de Roadmap.',
+        gif: ASSETS.gifs.dicDiagnostico,
+        speakers: [
+          { name: 'Valentina', initials: 'VA' },
+          { name: 'Equipo de Apoyos', initials: 'AP' },
+        ],
+        highlights: [
+          'Generación estructurada de RFI adaptada a la industria y dolor del cliente en minutos.',
+          'Motor de Diagnóstico que procesa los hallazgos y evalúa dimensiones clave de madurez.',
+          'Construcción automática del Entregable de Roadmap listo para presentar a dirección.',
+        ],
+        accentColor: '#06B6D4',
+      },
+      {
+        id: '08-01-bono',
+        date: '08/01',
+        monthLabel: 'ENERO 2027',
+        title: 'Bono (Joaquín)',
+        subtitle: 'Aclaración de bono con ejemplos claros y resolución de dudas en vivo',
+        summary:
+          'Joaco lideró una sesión 100% transparente para despejar todas las incógnitas sobre el esquema de bonos: pasamos de las dudas iniciales a simulaciones y ejemplos numéricos clarísimos.',
+        gif: ASSETS.gifs.confusedThinking,
+        speakers: [
+          { name: 'Joaquín (Joaco)', initials: 'JQ' },
+        ],
+        highlights: [
+          'Espacio abierto para resolver todas las preguntas sobre métricas individuales, performance de compañía y ponderaciones.',
+          'Modelado paso a paso con casos prácticos por nivel para que cada consultor entienda exactamente cómo se calcula su bono.',
+          'Alineación directa con los objetivos del nuevo ciclo 2027.',
+        ],
+        bonusInteractive: {
+          initialLabel: 'Fase 1: Dudas Iniciales',
+          initialText: '¿Cómo pondera cada variable? ¿Qué pasa en cambios de nivel o sobrecumplimiento? El equipo llegó con mil preguntas...',
+          initialGif: ASSETS.gifs.confusedThinking,
+          revealedLabel: 'Fase 2: ¡Ejemplos Claros Revelados!',
+          revealedText: 'Con tablas comparativas y escenarios concretos de Joaco, todo quedó 100% claro y transparente para buscar el máximo bono.',
+          revealedGif: ASSETS.gifs.congrats,
+          examples: [
+            {
+              title: 'Fórmula Desglosada',
+              detail: 'Visibilidad total del peso entre desempeño individual (Grid) y resultados colectivos de Artefact LATAM.',
+            },
+            {
+              title: 'Escenarios Reales Simulados',
+              detail: 'Ejemplos numéricos de cumplimiento al 100% y sobrecumplimiento explicados paso a paso.',
+            },
+          ],
+        },
+        accentColor: '#10B981',
+      },
+      {
+        id: '22-01-path',
+        date: '22/01',
+        monthLabel: 'ENERO 2027',
+        title: 'Path del Consultor & Artefactory',
+        subtitle: 'Carrera por nivel y capacitaciones técnicas (Camilo + People)',
+        summary:
+          'Cerramos el ciclo conectando el crecimiento profesional con la formación continua: expectativas claras por seniority junto a la malla completa de cursos en Artefactory.',
+        gif: ASSETS.gifs.eneLevelup,
+        speakers: [
+          { name: 'Camilo', photo: ASSETS.personas.camiloYGuille },
+          { name: 'People Team', initials: 'PP' },
+        ],
+        highlights: [
+          'Mapa de carrera transparente desde Entry (1–3), pasando por Senior (1–3) hasta Manager (1–2).',
+          'Integración con Artefactory: rutas de aprendizaje curadas en negocio, estructuración, delivery técnico y liderazgo.',
+          'Puente directo hacia el nuevo Consulting Grid 2027 y el sistema de 24 badges.',
+        ],
+        accentColor: '#E6007E',
+      },
+    ] as TimelineSession[],
+  },
+
+  grid2027: {
+    eyebrow: 'EL GRAN PLOT TWIST DEL AÑO',
+    title: 'Nuevo Consulting Grid 2027 (& Bonus)',
+    subtitle: 'Evolucionamos nuestra matriz de talento para reflejar el verdadero ADN del consultor Artefact en la era de la IA Agéntica.',
+    heroImage: ASSETS.drawings.chapterGridMiloJoaco,
+    heroCaption: 'Camilo y Joaco celebrando el salto a los 60 puntos del Consulting Grid 2027 y el Bono.',
+    metricsComparison: [
+      {
+        id: 'skills-count',
+        label: 'Total de Skills Evaluadas',
+        from: '13',
+        to: '15',
+        unit: 'Skills',
+        subtext: 'De 6 a 7 categorías estratégicas',
+        accent: 'from-[#E6007E] to-[#8B5CF6]',
+      },
+      {
+        id: 'categories-count',
+        label: 'Categorías del Grid',
+        from: '6',
+        to: '7',
+        unit: 'Categorías',
+        subtext: 'Suma AI & Data Fluency al core',
+        accent: 'from-[#8B5CF6] to-[#3B82F6]',
+      },
+      {
+        id: 'max-points',
+        label: 'Puntaje Máximo Posible',
+        from: '52',
+        to: '60',
+        unit: 'Puntos',
+        subtext: '+8 puntos de techo en la matriz',
+        accent: 'from-[#3B82F6] to-[#10B981]',
+      },
+      {
+        id: 'badges-count',
+        label: 'Ecosistema de Especialización',
+        from: '0',
+        to: '24',
+        unit: 'Nuevos Badges',
+        subtext: 'Distribuidos en 3 familias + Thought Leader',
+        accent: 'from-[#F59E0B] to-[#E6007E]',
+      },
+    ],
+    evolutions: [
+      {
+        id: 'ai-data-fluency',
+        category: 'NUEVA CATEGORÍA (#7)',
+        title: 'AI & Data Fluency',
+        before: '6 categorías tradicionales',
+        after: '7 categorías con IA y Datos en el centro',
+        badgeText: 'Core Category',
+        description:
+          'Se incorpora formalmente como la 7ª categoría del Grid para medir la fluidez real en arquitecturas de datos, GenAI y sistemas agénticos.',
+        iconName: 'BrainCircuit',
+        accent: 'magenta',
+      },
+      {
+        id: 'solution-framing',
+        category: 'NUEVA SKILL',
+        title: 'Solution Framing',
+        before: '13 skills en el modelo anterior',
+        after: '15 skills (+Solution Framing & AI Fluency)',
+        badgeText: 'Skill #14/#15',
+        description:
+          'Capacidad de traducir problemas ambiguos de negocio en arquitecturas de solución claras, viables y escalables desde la preventa hasta el delivery.',
+        iconName: 'Compass',
+        accent: 'blue',
+      },
+      {
+        id: 'ai-pm',
+        category: 'EVOLUCIÓN DE ROL',
+        title: 'Transición a AI Product Manager',
+        before: 'Project / Delivery Management clásico',
+        after: 'AI Product Manager mindset',
+        badgeText: 'Role Evolution',
+        description:
+          'Pasamos de gestionar proyectos aislados a liderar productos impulsados por IA con visión de ciclo de vida, adopción, discovery continuo y valor de negocio.',
+        iconName: 'Rocket',
+        accent: 'purple',
+      },
+      {
+        id: 'essential-skills',
+        category: 'REGLA DE EXCELENCIA',
+        title: 'Skills Esenciales Sin Compensación',
+        before: 'Promedios que compensaban brechas críticas',
+        after: 'Piso mínimo obligatorio en skills esenciales',
+        badgeText: 'No Compensation Rule',
+        description:
+          'Las skills esenciales de cada nivel son no-negociables: un puntaje alto en otra dimensión ya no compensa estar bajo el estándar en una skill esencial.',
+        iconName: 'ShieldCheck',
+        accent: 'emerald',
+      },
+    ] as GridComparisonItem[],
+    badgesSystem: {
+      totalBadges: 24,
+      familiesCount: 3,
+      topLevel: 'Thought Leader',
+      description:
+        'Un sistema de reconocimiento verificable con 24 nuevos badges divididos en 3 familias estratégicas, coronado por el nuevo nivel experto Thought Leader.',
+      families: [
+        {
+          id: 'tech',
+          name: 'Familia Técnica',
+          count: 10,
+          color: '#3B82F6',
+          examples: 'Agentes, RAG, Cloud Architecture, Data Engineering, MLOps & Automation',
+        },
+        {
+          id: 'offer',
+          name: 'Familia de Oferta',
+          count: 7,
+          color: '#E6007E',
+          examples: 'Data & AI Strategy, Marketing Tech, Customer Data, Agentic Transformation',
+        },
+        {
+          id: 'industry',
+          name: 'Familia de Industria',
+          count: 7,
+          color: '#8B5CF6',
+          examples: 'Retail & CPG, Financial Services, Telco, Latam Enterprise Verticals',
+        },
+      ],
+    },
+  },
+
+  playlist: {
+    eyebrow: 'ARTEFACTORY · TU PLAYLIST DE APRENDIZAJE 2027',
+    title: 'Grilla de Cursos por Nivel',
+    subtitle: 'Selecciona tu nivel (Entry 1–3, Senior 1–3, Manager 1–2) para explorar los tracks oficiales de formación continua.',
+    levels: [
+      {
+        id: 'entry-1',
+        tier: 'Entry',
+        levelName: 'Entry 1',
+        shortCode: 'E1',
+        subtitle: 'Fundamentos del negocio, industrias y portafolio de ofertas de Artefact',
+        accentColor: '#3B82F6',
+        gradient: 'from-[#3B82F6] to-[#06B6D4]',
+        tracks: [
+          {
+            id: 'e1-t1',
+            trackNumber: '01',
+            title: 'Our Business: Go To Market - Industries & Offers',
+            categoryTag: 'Business & GTM Foundations',
+            durationLabel: 'Core Track · Entry 1',
+            intensity: 'Esencial',
+          },
+        ],
+      },
+      {
+        id: 'entry-2',
+        tier: 'Entry',
+        levelName: 'Entry 2',
+        shortCode: 'E2',
+        subtitle: 'Estructuración lógica de problemas y construcción sólida de Business Cases',
+        accentColor: '#0EA5E9',
+        gradient: 'from-[#0EA5E9] to-[#6366F1]',
+        tracks: [
+          {
+            id: 'e2-t1',
+            trackNumber: '01',
+            title: 'Problem Structuring, Reasoning Logic and Business Case',
+            categoryTag: 'Consulting Core',
+            durationLabel: 'Track 01 · Entry 2',
+            intensity: 'Estructuración',
+          },
+          {
+            id: 'e2-t2',
+            trackNumber: '02',
+            title: 'How to build a Business Case',
+            categoryTag: 'Value & Impact',
+            durationLabel: 'Track 02 · Entry 2',
+            intensity: 'Caso de Negocio',
+          },
+        ],
+      },
+      {
+        id: 'entry-3',
+        tier: 'Entry',
+        levelName: 'Entry 3',
+        shortCode: 'E3',
+        subtitle: 'Gestión de proyectos, relación con cliente y bases del perfil técnico',
+        accentColor: '#6366F1',
+        gradient: 'from-[#6366F1] to-[#8B5CF6]',
+        tracks: [
+          {
+            id: 'e3-t1',
+            trackNumber: '01',
+            title: 'Project Management - Basics',
+            categoryTag: 'Delivery Excellence',
+            durationLabel: 'Track 01 · Entry 3',
+            intensity: 'Gestión',
+          },
+          {
+            id: 'e3-t2',
+            trackNumber: '02',
+            title: 'Client Facing',
+            categoryTag: 'Stakeholder Communication',
+            durationLabel: 'Track 02 · Entry 3',
+            intensity: 'Comunicación',
+          },
+          {
+            id: 'e3-t3',
+            trackNumber: '03',
+            title: 'Basics of Tech Profile',
+            categoryTag: 'AI & Data Fluency',
+            durationLabel: 'Track 03 · Entry 3',
+            intensity: 'Tech Foundations',
+          },
+        ],
+      },
+      {
+        id: 'senior-1',
+        tier: 'Senior',
+        levelName: 'Senior 1',
+        shortCode: 'S1',
+        subtitle: 'Diseño de soluciones técnicas e iniciación en propuestas comerciales',
+        accentColor: '#8B5CF6',
+        gradient: 'from-[#8B5CF6] to-[#D946EF]',
+        tracks: [
+          {
+            id: 's1-t1',
+            trackNumber: '01',
+            title: 'Designing Technical Solutions',
+            categoryTag: 'Solution Framing',
+            durationLabel: 'Track 01 · Senior 1',
+            intensity: 'Arquitectura',
+          },
+          {
+            id: 's1-t2',
+            trackNumber: '02',
+            title: 'Initiation in Proposals',
+            categoryTag: 'Commercial & Pre-Sales',
+            durationLabel: 'Track 02 · Senior 1',
+            intensity: 'Propuestas',
+          },
+        ],
+      },
+      {
+        id: 'senior-2',
+        tier: 'Senior',
+        levelName: 'Senior 2',
+        shortCode: 'S2',
+        subtitle: 'Puente técnico-negocio, desarrollo comercial (Farming/Hunting) y Agentic PM/Design',
+        accentColor: '#E6007E',
+        gradient: 'from-[#E6007E] to-[#8B5CF6]',
+        tracks: [
+          {
+            id: 's2-t1',
+            trackNumber: '01',
+            title: 'Solving Technical Problems and Transforming Them into Business Solutions',
+            categoryTag: 'Tech-to-Business Impact',
+            durationLabel: 'Track 01 · Senior 2',
+            intensity: 'Impacto',
+          },
+          {
+            id: 's2-t2',
+            trackNumber: '02',
+            title: 'Sales 101 - Farming/Hunting',
+            categoryTag: 'Commercial Growth',
+            durationLabel: 'Track 02 · Senior 2',
+            intensity: 'Ventas',
+          },
+          {
+            id: 's2-t3',
+            trackNumber: '03',
+            title: 'Agentic PM/Design',
+            categoryTag: 'AI Product Manager',
+            durationLabel: 'Track 03 · Senior 2',
+            intensity: 'Agéntico',
+          },
+        ],
+      },
+      {
+        id: 'senior-3',
+        tier: 'Senior',
+        levelName: 'Senior 3',
+        shortCode: 'S3',
+        subtitle: 'Administración avanzada de proyectos, liderazgo de equipos y paso a producción',
+        accentColor: '#EC4899',
+        gradient: 'from-[#EC4899] to-[#F43F5E]',
+        tracks: [
+          {
+            id: 's3-t1',
+            trackNumber: '01',
+            title: 'Advanced Project Management Administration PoV',
+            categoryTag: 'Advanced PM & Economics',
+            durationLabel: 'Track 01 · Senior 3',
+            intensity: 'Avanzado',
+          },
+          {
+            id: 's3-t2',
+            trackNumber: '02',
+            title: 'How to lead your team to project success?',
+            categoryTag: 'Team Delivery Leadership',
+            durationLabel: 'Track 02 · Senior 3',
+            intensity: 'Liderazgo',
+          },
+          {
+            id: 's3-t3',
+            trackNumber: '03',
+            title: 'Project Documentation, Production and Handover',
+            categoryTag: 'Production & Handover',
+            durationLabel: 'Track 03 · Senior 3',
+            intensity: 'Producción',
+          },
+        ],
+      },
+      {
+        id: 'manager-1',
+        tier: 'Manager',
+        levelName: 'Manager 1',
+        shortCode: 'M1',
+        subtitle: 'Liderazgo y motivación de equipos, negociación avanzada y cultura de feedback',
+        accentColor: '#F59E0B',
+        gradient: 'from-[#F59E0B] to-[#E6007E]',
+        tracks: [
+          {
+            id: 'm1-t1',
+            trackNumber: '01',
+            title: 'Team Leadership and Motivation',
+            categoryTag: 'People & Culture Leadership',
+            durationLabel: 'Track 01 · Manager 1',
+            intensity: 'Management',
+          },
+          {
+            id: 'm1-t2',
+            trackNumber: '02',
+            title: 'Negotiation, Feedback & Advanced Communication',
+            categoryTag: 'Executive Communication',
+            durationLabel: 'Track 02 · Manager 1',
+            intensity: 'Ejecutivo',
+          },
+        ],
+      },
+      {
+        id: 'manager-2',
+        tier: 'Manager',
+        levelName: 'Manager 2',
+        shortCode: 'M2',
+        subtitle: 'Ownership integral de cuenta/práctica y liderazgo técnico estratégico',
+        accentColor: '#10B981',
+        gradient: 'from-[#10B981] to-[#3B82F6]',
+        tracks: [
+          {
+            id: 'm2-t1',
+            trackNumber: '01',
+            title: 'Ownership & Tech Leadership',
+            categoryTag: 'Thought Leader & Practice Ownership',
+            durationLabel: 'Master Track · Manager 2',
+            intensity: 'Thought Leader',
+          },
+        ],
+      },
+    ] as CourseLevel[],
+  },
+
+  outro: {
+    eyebrow: 'TU RESUMEN OFICIAL · CONSULTING WRAPPED',
+    title: 'Tu Aura de Consultor 2027',
+    subtitle: 'Comparte o descarga la tarjeta oficial del Chapter de Consulting de Artefact LATAM.',
+    logo: ASSETS.logosAndDemos.logoArtefact,
+    gif: ASSETS.gifs.cierreParty,
+    auraArchetypes: [
+      {
+        id: 'agentic-architect',
+        name: 'Agentic Solution Builder',
+        auraColors: 'Magenta Vibrante & Azul Eléctrico',
+        gradient: 'from-[#E6007E] via-[#8B5CF6] to-[#3B82F6]',
+        tagline: 'Transformas PoCs en productos agénticos escalables en producción con impacto real.',
+        topGenre: 'AI Product Management & Solution Framing',
+        powerStat: '60 / 60 Puntos Grid Target · Thought Leader Ready',
+      },
+      {
+        id: 'ai-pm-strategist',
+        name: 'AI Product Strategist',
+        auraColors: 'Púrpura Cósmico & Rosa Neón',
+        gradient: 'from-[#8B5CF6] via-[#E6007E] to-[#F59E0B]',
+        tagline: 'Conectas estrategia de negocio, gobierno de datos y adopción con precisión quirúrgica.',
+        topGenre: 'AI & Data Fluency · Business Case Mastery',
+        powerStat: '9 Sesiones · 4 Casos Insignia · 24 Badges',
+      },
+      {
+        id: 'thought-leader',
+        name: 'Consulting Thought Leader',
+        auraColors: 'Azul Artefact & Esmeralda Luminoso',
+        gradient: 'from-[#3B82F6] via-[#8B5CF6] to-[#10B981]',
+        tagline: 'Lideras equipos, crackeas Agentic Labs y elevas el estándar técnico y comercial de LATAM.',
+        topGenre: 'Ownership, Tech Leadership & Agentic Lab',
+        powerStat: '+15 Speakers · 15 Skills · 7 Categorías',
+      },
+    ],
+    cardStats: [
+      { label: 'Sesiones Chapter', value: '9 Hits' },
+      { label: 'Voces en Escena', value: '+15 Speakers' },
+      { label: 'Casos & Demos', value: '4 En Vivo' },
+      { label: 'Nuevo Techo Grid', value: '60 Puntos' },
+      { label: 'Nuevos Badges', value: '24 (3 Familias)' },
+      { label: 'Evolución Rol', value: 'AI PM 2027' },
+    ],
+  },
+};
+
+// ==========================================
+// FILE: src/utils/sound.ts
+// ==========================================
+class SoundManager {
+  private enabled: boolean = true;
+  private audioPool: HTMLAudioElement[] = [];
+  private poolIndex: number = 0;
+
+  constructor() {
+    if (typeof window !== 'undefined') {
+      for (let i = 0; i < 4; i++) {
+        const audio = new Audio(encodeURI(ASSETS.sounds.pop));
+        audio.preload = 'auto';
+        audio.volume = 0.6;
+        this.audioPool.push(audio);
+      }
+    }
+  }
+
+  public isEnabled(): boolean {
+    return this.enabled;
+  }
+
+  public setEnabled(val: boolean): void {
+    this.enabled = val;
+  }
+
+  public toggle(): boolean {
+    this.enabled = !this.enabled;
+    if (this.enabled) {
+      this.playPop();
+    }
+    return this.enabled;
+  }
+
+  public playPop(): void {
+    if (!this.enabled || typeof window === 'undefined') return;
+
+    try {
+      const audio = this.audioPool[this.poolIndex] || new Audio(encodeURI(ASSETS.sounds.pop));
+      this.poolIndex = (this.poolIndex + 1) % Math.max(1, this.audioPool.length);
+      audio.currentTime = 0;
+      audio.volume = 0.6;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Ignore autoplay restriction errors on initial un-interacted render
+        });
+      }
+    } catch {
+      // Ignore audio errors
+    }
+  }
+}
+const soundManager = new SoundManager();
+
+// ==========================================
+// FILE: src/components/ArtefactBackground.tsx
+// ==========================================
+interface ArtefactBackgroundProps {
+  slideIndex: number;
+}
+const ArtefactBackground: React.FC<ArtefactBackgroundProps> = ({ slideIndex }) => {
+  // Shift positions slightly per slide for a dynamic Wrapped story feel
+  const configs = [
+    { top: '-10%', left: '-5%', right: '5%', bottom: '-10%', rot: 0 },
+    { top: '5%', left: '60%', right: '-10%', bottom: '15%', rot: 8 },
+    { top: '-15%', left: '25%', right: '15%', bottom: '-5%', rot: -6 },
+    { top: '10%', left: '-10%', right: '50%', bottom: '5%', rot: 12 },
+    { top: '-8%', left: '45%', right: '-5%', bottom: '-12%', rot: -10 },
+    { top: '12%', left: '10%', right: '30%', bottom: '8%', rot: 5 },
+    { top: '-12%', left: '30%', right: '10%', bottom: '-8%', rot: 0 },
+  ];
+
+  const cfg = configs[slideIndex % configs.length];
+
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-[#051336]">
+      {/* Base radial mesh */}
+      <div
+        className="absolute inset-0 opacity-90"
+        style={{
+          background:
+            'radial-gradient(circle at 15% 20%, rgba(230, 0, 126, 0.24) 0%, transparent 48%), radial-gradient(circle at 85% 25%, rgba(59, 130, 246, 0.25) 0%, transparent 50%), radial-gradient(circle at 50% 85%, rgba(139, 92, 246, 0.28) 0%, transparent 55%)',
+        }}
+      />
+
+      {/* Animated Glowing Blobs */}
+      <motion.div
+        animate={{
+          x: [0, 40, -20, 0],
+          y: [0, -30, 20, 0],
+          scale: [1, 1.12, 0.95, 1],
+        }}
+        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ top: cfg.top, left: cfg.left }}
+        className="absolute w-[34rem] h-[34rem] rounded-full bg-[#E6007E]/20 blur-[130px]"
+      />
+      <motion.div
+        animate={{
+          x: [0, -50, 30, 0],
+          y: [0, 40, -25, 0],
+          scale: [1, 1.08, 1.15, 1],
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ bottom: cfg.bottom, right: cfg.right }}
+        className="absolute w-[38rem] h-[38rem] rounded-full bg-[#3B82F6]/20 blur-[140px]"
+      />
+      <motion.div
+        animate={{
+          x: [0, 25, -35, 0],
+          y: [0, -20, 35, 0],
+        }}
+        transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] rounded-full bg-[#8B5CF6]/18 blur-[125px]"
+      />
+
+      {/* Subtle architectural grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
+          backgroundSize: '64px 64px',
+        }}
+      />
+
+      {/* Geometric Artefact Chevron "A" (Λ) Watermark - Right / Center */}
+      <motion.svg
+        key={`chevron-main-${slideIndex}`}
+        initial={{ opacity: 0, scale: 0.92, rotate: cfg.rot - 4 }}
+        animate={{ opacity: 0.14, scale: 1, rotate: cfg.rot }}
+        transition={{ duration: 1.1, ease: 'easeOut' }}
+        viewBox="0 0 400 400"
+        fill="none"
+        className="absolute -right-24 -bottom-24 w-[36rem] h-[36rem] md:w-[46rem] md:h-[46rem]"
+      >
+        <defs>
+          <linearGradient id="artefactChevronGrad1" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#E6007E" />
+            <stop offset="50%" stopColor="#8B5CF6" />
+            <stop offset="100%" stopColor="#3B82F6" />
+          </linearGradient>
+          <linearGradient id="artefactChevronGrad2" x1="100%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#E6007E" stopOpacity="0.9" />
+          </linearGradient>
+        </defs>
+        {/* Outer Geometric Chevron "A" */}
+        <path
+          d="M200 28 L355 365 L298 365 L200 145 L102 365 L45 365 Z"
+          stroke="url(#artefactChevronGrad1)"
+          strokeWidth="4"
+          fill="url(#artefactChevronGrad1)"
+          fillOpacity="0.06"
+        />
+        {/* Inner Echo Chevron "A" */}
+        <path
+          d="M200 88 L315 345 L278 345 L200 168 L122 345 L85 345 Z"
+          stroke="url(#artefactChevronGrad2)"
+          strokeWidth="2"
+          strokeDasharray="8 6"
+          fill="none"
+        />
+      </motion.svg>
+
+      {/* Secondary Geometric Artefact Chevron "A" Watermark - Top Left */}
+      <motion.svg
+        animate={{ y: [0, -14, 0], rotate: [-12, -8, -12] }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+        viewBox="0 0 400 400"
+        fill="none"
+        className="absolute -left-28 -top-24 w-[24rem] h-[24rem] opacity-[0.08]"
+      >
+        <path
+          d="M200 28 L355 365 L298 365 L200 145 L102 365 L45 365 Z"
+          stroke="#FFFFFF"
+          strokeWidth="3"
+          fill="none"
+        />
+      </motion.svg>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/StoriesHeader.tsx
+// ==========================================
+interface StoriesHeaderProps {
+  currentSlide: number;
+  totalSlides: number;
+  progress: number; // 0 to 100 for current slide
+  isPlaying: boolean;
+  soundEnabled: boolean;
+  isFullscreen: boolean;
+  onSelectSlide: (index: number) => void;
+  onPrev: () => void;
+  onNext: () => void;
+  onTogglePlay: () => void;
+  onToggleSound: () => void;
+  onToggleFullscreen: () => void;
+}
+const StoriesHeader: React.FC<StoriesHeaderProps> = ({
+  currentSlide,
+  totalSlides,
+  progress,
+  isPlaying,
+  soundEnabled,
+  isFullscreen,
+  onSelectSlide,
+  onPrev,
+  onNext,
+  onTogglePlay,
+  onToggleSound,
+  onToggleFullscreen,
+}) => {
+  const currentMeta = WRAPPED_DATA.slides[currentSlide] || WRAPPED_DATA.slides[0];
+
+  return (
+    <header className="relative z-40 w-full px-3 sm:px-6 pt-3 pb-2 select-none">
+      {/* Segmented Stories Progress Bars */}
+      <div className="max-w-7xl mx-auto flex items-center gap-1.5 sm:gap-2 mb-2.5">
+        {WRAPPED_DATA.slides.map((slide, idx) => {
+          let fillWidth = '0%';
+          if (idx < currentSlide) fillWidth = '100%';
+          else if (idx === currentSlide) fillWidth = `${Math.min(100, Math.max(0, progress))}%`;
+
+          return (
+            <button
+              key={slide.id}
+              onClick={() => onSelectSlide(idx)}
+              title={`${slide.number}. ${slide.label}`}
+              className="group relative flex-1 h-2 rounded-full bg-white/15 overflow-hidden cursor-pointer transition-all hover:h-2.5 focus:outline-none"
+            >
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] transition-all duration-150 ease-linear shadow-[0_0_10px_rgba(230,0,126,0.8)]"
+                style={{ width: fillWidth }}
+              />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Top Controls Row */}
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+        {/* Left: Brand + Current Story Info */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => onSelectSlide(0)}
+            className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 backdrop-blur-md transition"
+            title="Ir a Portada"
+          >
+            <img
+              src={encodeURI(ASSETS.logosAndDemos.logoArtefact)}
+              alt="Artefact"
+              className="h-3.5 sm:h-4 w-auto object-contain"
+            />
+            <span className="hidden md:inline-block text-[11px] font-semibold tracking-wider uppercase text-white/70 border-l border-white/20 pl-2.5">
+              Consulting Wrapped 26–27
+            </span>
+          </button>
+
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#051336]/70 border border-white/15 backdrop-blur-md">
+            <span className="text-xs font-bold text-[#E6007E]">
+              0{currentSlide + 1}
+            </span>
+            <span className="text-xs text-white/40">/</span>
+            <span className="text-xs font-medium text-white/60">
+              0{totalSlides}
+            </span>
+            <span className="text-xs font-semibold text-white ml-1">
+              {currentMeta.label}
+            </span>
+          </div>
+        </div>
+
+        {/* Center: Quick Slide Pills on Large Screens */}
+        <div className="hidden xl:flex items-center gap-1 bg-white/5 border border-white/10 rounded-full p-1 backdrop-blur-md">
+          {WRAPPED_DATA.slides.map((s, idx) => {
+            const active = idx === currentSlide;
+            return (
+              <button
+                key={s.id}
+                onClick={() => onSelectSlide(idx)}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
+                  active
+                    ? 'bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] text-white shadow-md shadow-[#E6007E]/30'
+                    : 'text-white/65 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                {s.shortTitle}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Right: Story Controls + Floating Sound ON/OFF */}
+        <div className="flex items-center gap-2">
+          {/* Prev / Next quick buttons */}
+          <div className="flex items-center bg-white/10 border border-white/15 rounded-full p-0.5 backdrop-blur-md">
+            <button
+              onClick={onPrev}
+              disabled={currentSlide === 0}
+              title="Slide anterior (←)"
+              className="p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onTogglePlay}
+              title={isPlaying ? 'Pausar auto-avance (Espacio)' : 'Reanudar auto-avance (Espacio)'}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition ${
+                isPlaying
+                  ? 'bg-[#E6007E]/30 text-white border border-[#E6007E]/50'
+                  : ' text-white/80 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{isPlaying ? 'Auto' : 'Pausa'}</span>
+            </button>
+            <button
+              onClick={onNext}
+              disabled={currentSlide === totalSlides - 1}
+              title="Siguiente slide (→)"
+              className="p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 disabled:opacity-30 disabled:pointer-events-none transition"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Presentation Mode (Fullscreen) */}
+          <button
+            onClick={onToggleFullscreen}
+            title="Modo Presentación (Pantalla Completa)"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white backdrop-blur-md transition"
+          >
+            {isFullscreen ? (
+              <>
+                <Minimize2 className="w-3.5 h-3.5 text-[#3B82F6]" />
+                <span className="hidden sm:inline">Salir Presentación</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="w-3.5 h-3.5 text-[#3B82F6]" />
+                <span className="hidden sm:inline">Modo Presentación</span>
+              </>
+            )}
+          </button>
+
+          {/* Floating Sound ON/OFF Button */}
+          <button
+            onClick={onToggleSound}
+            title={soundEnabled ? 'Sonido Activo (pop.wav) - Clic para silenciar' : 'Sonido Silenciado - Clic para activar'}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all shadow-lg ${
+              soundEnabled
+                ? 'bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] border-white/30 text-white shadow-[#E6007E]/30'
+                : 'bg-white/10 border-white/15 text-white/60 hover:text-white'
+            }`}
+          >
+            {soundEnabled ? (
+              <>
+                <Volume2 className="w-4 h-4 animate-pulse" />
+                <span>Sonido ON</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-4 h-4" />
+                <span>Sonido OFF</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// ==========================================
+// FILE: src/components/LightboxModal.tsx
+// ==========================================
+interface LightboxModalProps {
+  isOpen: boolean;
+  items: DemoScreenshot[];
+  currentIndex: number;
+  onClose: () => void;
+  onSelectIndex: (index: number) => void;
+}
+const LightboxModal: React.FC<LightboxModalProps> = ({
+  isOpen,
+  items,
+  currentIndex,
+  onClose,
+  onSelectIndex,
+}) => {
+  const [zoom, setZoom] = useState<number>(1);
+
+  useEffect(() => {
+    setZoom(1);
+  }, [currentIndex, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        soundManager.playPop();
+        onClose();
+      } else if (e.key === 'ArrowRight' && items.length > 1) {
+        e.stopPropagation();
+        soundManager.playPop();
+        onSelectIndex((currentIndex + 1) % items.length);
+      } else if (e.key === 'ArrowLeft' && items.length > 1) {
+        e.stopPropagation();
+        soundManager.playPop();
+        onSelectIndex((currentIndex - 1 + items.length) % items.length);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [isOpen, currentIndex, items.length, onClose, onSelectIndex]);
+
+  if (!isOpen || items.length === 0) return null;
+
+  const activeItem = items[currentIndex] || items[0];
+
+  const handleZoomIn = () => {
+    soundManager.playPop();
+    setZoom((z) => Math.min(3, +(z + 0.5).toFixed(2)));
+  };
+
+  const handleZoomOut = () => {
+    soundManager.playPop();
+    setZoom((z) => Math.max(1, +(z - 0.5).toFixed(2)));
+  };
+
+  const handleResetZoom = () => {
+    soundManager.playPop();
+    setZoom(1);
+  };
+
+  const handleToggleImageZoom = () => {
+    soundManager.playPop();
+    setZoom((z) => (z === 1 ? 1.85 : 1));
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex flex-col bg-[#051336]/95 backdrop-blur-xl"
+          onClick={() => {
+            soundManager.playPop();
+            onClose();
+          }}
+        >
+          {/* Top Bar */}
+          <div
+            className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-8 py-4 border-b border-white/15 bg-[#051336]/80"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] text-white">
+                <Sparkles className="w-3.5 h-3.5" />
+                {activeItem.badge}
+              </span>
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white">{activeItem.title}</h3>
+                <p className="text-xs text-white/70 hidden sm:block">{activeItem.subtitle}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex items-center bg-white/10 border border-white/15 rounded-full p-1">
+                <button
+                  onClick={handleZoomOut}
+                  disabled={zoom <= 1}
+                  className="p-1.5 rounded-full text-white hover:bg-white/15 disabled:opacity-40 transition"
+                  title="Alejar zoom"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </button>
+                <span className="px-2.5 text-xs font-bold text-white tabular-nums">
+                  {Math.round(zoom * 100)}%
+                </span>
+                <button
+                  onClick={handleZoomIn}
+                  disabled={zoom >= 3}
+                  className="p-1.5 rounded-full text-white hover:bg-white/15 disabled:opacity-40 transition"
+                  title="Acercar zoom"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleResetZoom}
+                  className="p-1.5 rounded-full text-white/80 hover:text-white hover:bg-white/15 transition"
+                  title="Restablecer zoom (100%)"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              <button
+                onClick={() => {
+                  soundManager.playPop();
+                  onClose();
+                }}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/15 hover:bg-[#E6007E] text-white text-xs font-bold transition"
+              >
+                <X className="w-4 h-4" />
+                <span>Cerrar (ESC)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Main Image Viewport */}
+          <div
+            className="relative flex-1 overflow-auto flex items-center justify-center p-4 sm:p-8 select-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {items.length > 1 && (
+              <button
+                onClick={() => {
+                  soundManager.playPop();
+                  onSelectIndex((currentIndex - 1 + items.length) % items.length);
+                }}
+                className="fixed left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-[#051336]/90 hover:bg-[#E6007E] border border-white/20 text-white shadow-xl transition"
+                title="Captura anterior"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            <motion.div
+              key={activeItem.id}
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.25 }}
+              className="relative flex items-center justify-center"
+            >
+              <img
+                src={encodeURI(activeItem.src)}
+                alt={activeItem.title}
+                onClick={handleToggleImageZoom}
+                style={{
+                  transform: `scale(${zoom})`,
+                  transformOrigin: 'center center',
+                }}
+                className={`max-h-[75vh] max-w-[90vw] w-auto h-auto object-contain rounded-xl border border-white/20 shadow-[0_0_60px_rgba(230,0,126,0.3)] transition-transform duration-200 ${
+                  zoom === 1 ? 'cursor-zoom-in' : 'cursor-zoom-out'
+                }`}
+              />
+            </motion.div>
+
+            {items.length > 1 && (
+              <button
+                onClick={() => {
+                  soundManager.playPop();
+                  onSelectIndex((currentIndex + 1) % items.length);
+                }}
+                className="fixed right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-[#051336]/90 hover:bg-[#E6007E] border border-white/20 text-white shadow-xl transition"
+                title="Siguiente captura"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Bottom Thumbnail Strip if multiple demos */}
+          <div
+            className="px-6 py-3 border-t border-white/10 bg-[#051336]/90 flex flex-wrap items-center justify-between gap-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="text-xs text-white/75">
+              💡 <span className="font-semibold text-white">Tip:</span> Haz clic directamente sobre la captura para alternar el zoom (100% / 185%).
+            </p>
+            {items.length > 1 && (
+              <div className="flex items-center gap-2">
+                {items.map((item, idx) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      soundManager.playPop();
+                      onSelectIndex(idx);
+                    }}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold border transition ${
+                      idx === currentIndex
+                        ? 'bg-gradient-to-r from-[#E6007E] to-[#3B82F6] border-white/40 text-white'
+                        : 'bg-white/10 border-white/15 text-white/70 hover:text-white'
+                    }`}
+                  >
+                    {idx + 1}. {item.badge}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/IntroSlide.tsx
+// ==========================================
+interface IntroSlideProps {
+  onStart: () => void;
+  onJumpToSlide: (idx: number) => void;
+}
+const IntroSlide: React.FC<IntroSlideProps> = ({ onStart, onJumpToSlide }) => {
+  const { intro } = WRAPPED_DATA;
+
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 sm:px-8 py-4">
+      <div className="max-w-5xl w-full mx-auto flex flex-col items-center text-center">
+        {/* Top Official Artefact Logo */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-5 flex flex-col items-center gap-3"
+        >
+          <div className="px-6 py-3 rounded-2xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-[0_0_40px_rgba(59,130,246,0.2)]">
+            <img
+              src={encodeURI(intro.logo)}
+              alt="ARTEFACT"
+              className="h-7 sm:h-9 md:h-11 w-auto object-contain mx-auto"
+            />
+          </div>
+
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-[#E6007E]/25 via-[#8B5CF6]/25 to-[#3B82F6]/25 border border-[#E6007E]/40 text-white shadow-lg">
+            <Sparkles className="w-3.5 h-3.5 text-[#E6007E]" />
+            {intro.badge}
+          </span>
+        </motion.div>
+
+        {/* Main Hero Row: Title + Neon-Framed GIF */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 my-2">
+          <motion.div
+            initial={{ opacity: 0, x: -25 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-center lg:text-left max-w-2xl"
+          >
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+              Consulting Wrapped:{' '}
+              <span className="bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] bg-clip-text text-transparent">
+                Nuestro año en modo Agéntico
+              </span>
+            </h1>
+
+            <div className="mt-4 inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white/10 border border-white/20 backdrop-blur-md">
+              <Calendar className="w-4 h-4 text-[#E6007E]" />
+              <span className="text-sm sm:text-lg font-bold tracking-wide text-white">
+                {intro.subtitle}
+              </span>
+            </div>
+
+            <p className="mt-4 text-sm sm:text-base text-white/80 leading-relaxed">
+              {intro.description}
+            </p>
+          </motion.div>
+
+          {/* Neon-Framed GIF */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85, rotate: -3 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 0.65, delay: 0.2, type: 'spring' }}
+            className="relative group shrink-0"
+          >
+            {/* Outer Neon Glow */}
+            <div className="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] opacity-75 blur-xl group-hover:opacity-100 transition duration-500 animate-pulse" />
+            <div className="relative p-1.5 rounded-3xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_40px_rgba(230,0,126,0.5)]">
+              <div className="relative rounded-2xl overflow-hidden bg-[#051336] p-2">
+                <img
+                  src={encodeURI(intro.gif)}
+                  alt="Intro Sparkles"
+                  className="w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 object-cover rounded-xl"
+                />
+                <div className="mt-2 flex items-center justify-between px-2 py-1 rounded-lg bg-white/10 text-[11px] font-bold text-white/90">
+                  <span>WRAPPED EDITION</span>
+                  <span className="text-[#E6007E]">2026–2027</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* CTA Button: Empezar el recorrido */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="mt-6 flex flex-col sm:flex-row items-center gap-4"
+        >
+          <button
+            onClick={() => {
+              soundManager.playPop();
+              onStart();
+            }}
+            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full text-base sm:text-lg font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_35px_rgba(230,0,126,0.6)] hover:shadow-[0_0_50px_rgba(230,0,126,0.9)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          >
+            <span>{intro.ctaText}</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+          </button>
+        </motion.div>
+
+        {/* Bottom Quick Chapter Preview Pills */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-3xl"
+        >
+          {[
+            { idx: 1, icon: Layers, label: '9 Sesiones & 4 Casos', sub: 'El Año en Números' },
+            { idx: 2, icon: Users, label: '+15 Speakers', sub: 'Podio & Equipo' },
+            { idx: 3, icon: Calendar, label: '7 Hits Interactivos', sub: 'Línea de Tiempo' },
+            { idx: 4, icon: Award, label: 'Grid 2027 & 60 Pts', sub: 'Plot Twist & Playlist' },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.idx}
+                onClick={() => {
+                  soundManager.playPop();
+                  onJumpToSlide(item.idx);
+                }}
+                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-[#E6007E]/50 text-left backdrop-blur-md transition group"
+              >
+                <div className="p-2 rounded-lg bg-gradient-to-br from-[#E6007E]/30 to-[#3B82F6]/30 text-white group-hover:scale-110 transition">
+                  <Icon className="w-4 h-4 text-[#E6007E]" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-bold text-white truncate">{item.label}</div>
+                  <div className="text-[11px] text-white/60 truncate">{item.sub}</div>
+                </div>
+              </button>
+            );
+          })}
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/StatsSlide.tsx
+// ==========================================
+interface CountUpNumberProps {
+  target: number;
+  prefix?: string;
+  suffix?: string;
+  durationMs?: number;
+}
+
+const CountUpNumber: React.FC<CountUpNumberProps> = ({
+  target,
+  prefix = '',
+  suffix = '',
+  durationMs = 1400,
+}) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    let rafId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+      const progress = Math.min(elapsed / durationMs, 1);
+      // easeOutExpo
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(Math.round(eased * target));
+      if (progress < 1) {
+        rafId = requestAnimationFrame(step);
+      }
+    };
+
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, [target, durationMs]);
+
+  return (
+    <span className="tabular-nums">
+      {prefix}
+      {count}
+      {suffix}
+    </span>
+  );
+};
+const StatsSlide: React.FC = () => {
+  const { stats } = WRAPPED_DATA;
+  const [activeCardId, setActiveCardId] = useState<string>('cases');
+
+  const iconsMap: Record<string, React.ElementType> = {
+    sessions: Flame,
+    speakers: Users,
+    cases: Briefcase,
+    evolution: Sparkles,
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 py-4">
+      <div className="max-w-6xl w-full mx-auto">
+        {/* Header with Rocket GIF */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: -15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+            className="text-center md:text-left"
+          >
+            <span className="inline-block text-xs font-extrabold tracking-[0.2em] uppercase text-[#E6007E] mb-1">
+              {stats.eyebrow}
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              {stats.title}
+            </h2>
+            <p className="text-xs sm:text-sm text-white/75 mt-1 max-w-2xl">
+              {stats.subtitle}
+            </p>
+          </motion.div>
+
+          {/* Rocket GIF Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.15 }}
+            className="relative shrink-0"
+          >
+            <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-[#E6007E] to-[#3B82F6] opacity-70 blur-lg" />
+            <div className="relative flex items-center gap-3 p-2.5 rounded-2xl bg-[#051336]/90 border border-white/20 backdrop-blur-xl">
+              <img
+                src={encodeURI(stats.gif)}
+                alt="Stats Rocket"
+                className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-white/15"
+              />
+              <div className="pr-2">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-[#E6007E]">
+                  MODO DESPEGUE
+                </div>
+                <div className="text-sm font-extrabold text-white">
+                  Impacto LATAM
+                </div>
+                <div className="text-xs text-white/65">
+                  Sept 2026 – Ene 2027
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* 4 Animated Stat Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {stats.counters.map((item, idx) => {
+            const Icon = iconsMap[item.id] || Sparkles;
+            const isSelected = activeCardId === item.id;
+
+            return (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 25 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                onClick={() => {
+                  soundManager.playPop();
+                  setActiveCardId(item.id);
+                }}
+                className={`group relative rounded-3xl p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl border flex flex-col justify-between ${
+                  isSelected
+                    ? 'bg-white/[0.13] border-[#E6007E] shadow-[0_0_35px_rgba(230,0,126,0.3)] -translate-y-1'
+                    : 'bg-white/[0.06] border-white/15 hover:bg-white/[0.1] hover:border-white/30'
+                }`}
+              >
+                {/* Top Icon & Accent Bar */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <div
+                      className={`p-3 rounded-2xl bg-gradient-to-br ${item.accent} text-white shadow-lg`}
+                    >
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 text-white/75">
+                      0{idx + 1}
+                    </span>
+                  </div>
+
+                  {/* Animated Counter */}
+                  <div className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent my-1">
+                    <CountUpNumber
+                      target={item.value}
+                      prefix={item.prefix}
+                      suffix={item.suffix}
+                    />
+                  </div>
+
+                  <h3 className="text-lg font-extrabold text-white mt-1">
+                    {item.label}
+                  </h3>
+                  <p className="text-xs text-white/70 mt-1.5 leading-relaxed">
+                    {item.sublabel}
+                  </p>
+                </div>
+
+                {/* Tags / Breakdown Pills */}
+                <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap gap-1.5">
+                  {item.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#051336]/75 border border-white/15 text-white/90"
+                    >
+                      <CheckCircle2 className="w-3 h-3 text-[#E6007E] shrink-0" />
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* Bottom Highlight Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.45 }}
+          className="mt-5 p-4 rounded-2xl bg-gradient-to-r from-[#E6007E]/20 via-[#8B5CF6]/20 to-[#3B82F6]/20 border border-white/20 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-3">
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#E6007E] text-white uppercase tracking-wider">
+              Los 4 Grandes Casos & Herramientas
+            </span>
+            <span className="text-xs sm:text-sm text-white/90 font-medium">
+              Cencosud · Carozzi (Catman & Agente Catman) · El Palacio de Hierro (Agentic Lab) · Portal de Diagnóstico RFI & Roadmap
+            </span>
+          </div>
+          <span className="text-xs font-bold text-[#3B82F6] shrink-0">
+            + Nuevo Consulting Grid 2027 →
+          </span>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/SpeakersSlide.tsx
+// ==========================================
+const SpeakersSlide: React.FC = () => {
+  const { speakers } = WRAPPED_DATA;
+  const [selectedId, setSelectedId] = useState<string>('hosts');
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 py-3 overflow-y-auto">
+      <div className="max-w-6xl w-full mx-auto">
+        {/* Top Header with Speakers.gif and microphone.gif */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-4">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.45 }}
+            className="text-center lg:text-left"
+          >
+            <div className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[0.2em] uppercase text-[#E6007E] mb-1">
+              <Mic2 className="w-3.5 h-3.5" />
+              {speakers.eyebrow}
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+              {speakers.title}
+            </h2>
+            <p className="text-xs sm:text-sm text-white/75 mt-1 max-w-2xl">
+              {speakers.subtitle}
+            </p>
+          </motion.div>
+
+          {/* Dual Header GIFs: Speakers.gif & microphone.gif */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="flex items-center gap-3 shrink-0"
+          >
+            <div className="relative p-1 rounded-2xl bg-gradient-to-tr from-[#E6007E] to-[#8B5CF6] shadow-lg shadow-[#E6007E]/30">
+              <img
+                src={encodeURI(speakers.headerGifs.speakers)}
+                alt="Speakers GIF"
+                className="w-14 h-16 sm:w-16 sm:h-20 object-cover rounded-xl bg-[#051336]"
+              />
+            </div>
+            <div className="relative p-1 rounded-2xl bg-gradient-to-tr from-[#8B5CF6] to-[#3B82F6] shadow-lg shadow-[#3B82F6]/30">
+              <img
+                src={encodeURI(speakers.headerGifs.microphone)}
+                alt="Microphone GIF"
+                className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl bg-[#051336]"
+              />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Main Content Layout: #1 Podium Card (Left) + Speakers Grid (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+          {/* Podium #1: Camilo y Guille.png */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            onClick={() => {
+              soundManager.playPop();
+              setSelectedId('hosts');
+            }}
+            className={`lg:col-span-4 relative rounded-3xl p-5 cursor-pointer transition-all flex flex-col justify-between overflow-hidden border ${
+              selectedId === 'hosts'
+                ? 'bg-gradient-to-b from-[#E6007E]/25 via-[#8B5CF6]/20 to-[#051336]/90 border-[#E6007E] shadow-[0_0_40px_rgba(230,0,126,0.35)]'
+                : 'bg-white/[0.08] border-white/20 hover:border-[#E6007E]/60'
+            } backdrop-blur-xl`}
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] text-white shadow-md">
+                  <Crown className="w-3.5 h-3.5 text-amber-300" />
+                  {speakers.podiumHost.rank}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-300 bg-amber-400/15 border border-amber-300/30 px-2.5 py-0.5 rounded-full">
+                  <Radio className="w-3 h-3 animate-pulse" />
+                  {speakers.podiumHost.sessionsCount}
+                </span>
+              </div>
+
+              {/* Photo container for Camilo y Guille.png */}
+              <div className="relative rounded-2xl bg-white p-3 shadow-xl border-2 border-[#E6007E]/60 my-2 flex items-center justify-center">
+                <img
+                  src={encodeURI(speakers.podiumHost.photo)}
+                  alt="Camilo y Guillaume"
+                  className="w-full max-h-40 object-contain rounded-xl"
+                />
+              </div>
+
+              <h3 className="text-xl sm:text-2xl font-black text-white mt-3">
+                {speakers.podiumHost.names}
+              </h3>
+              <p className="text-xs text-white/80 mt-1 leading-relaxed">
+                {speakers.podiumHost.role}
+              </p>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between">
+              <span className="text-xs font-bold text-[#E6007E]">
+                {speakers.podiumHost.badge}
+              </span>
+              <span className="text-[11px] text-white/60">
+                Top #1 Podio Consulting
+              </span>
+            </div>
+          </motion.div>
+
+          {/* Right Column: Real Photos Grid + Initials Avatars Grid */}
+          <div className="lg:col-span-8 flex flex-col gap-3.5 justify-between">
+            {/* Section 1: Speakers con Fotos Reales */}
+            <div className="rounded-3xl bg-white/[0.06] border border-white/15 p-4 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-white/90 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E6007E]" />
+                  Featured Artists · Speakers en Escena
+                </span>
+                <span className="text-[11px] text-white/60">
+                  Haz clic en cada speaker
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                {speakers.featuredPhotoSpeakers.map((sp, i) => {
+                  const isSelected = selectedId === sp.id;
+
+                  if (sp.isTeamCard) {
+                    return (
+                      <motion.div
+                        key={sp.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.35, delay: i * 0.06 }}
+                        onClick={() => {
+                          soundManager.playPop();
+                          setSelectedId(sp.id);
+                        }}
+                        className={`col-span-2 sm:col-span-1 lg:col-span-2 rounded-2xl p-2.5 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
+                          isSelected
+                            ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg'
+                            : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
+                        }`}
+                      >
+                        <div className="w-full h-16 rounded-xl bg-white p-1 flex items-center justify-center overflow-hidden shadow-md border border-[#3B82F6]/40">
+                          <img
+                            src={encodeURI(sp.photo!)}
+                            alt={sp.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div className="mt-2">
+                          <div className="text-xs font-extrabold text-white leading-tight">
+                            {sp.name}
+                          </div>
+                          <div className="text-[10px] text-white/75 mt-0.5">
+                            {sp.role}
+                          </div>
+                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#3B82F6]/30 text-white">
+                            {sp.sessionTag}
+                          </span>
+                        </div>
+                      </motion.div>
+                    );
+                  }
+
+                  return (
+                    <motion.div
+                      key={sp.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.35, delay: i * 0.06 }}
+                      onClick={() => {
+                        soundManager.playPop();
+                        setSelectedId(sp.id);
+                      }}
+                      className={`rounded-2xl p-2.5 cursor-pointer transition-all flex flex-col items-center text-center border ${
+                        isSelected
+                          ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg scale-[1.03]'
+                          : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
+                      }`}
+                    >
+                      {/* Circular Avatar Framing the Portrait */}
+                      <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                          <img
+                            src={encodeURI(sp.photo!)}
+                            alt={sp.name}
+                            style={{
+                              objectPosition: sp.cropStyle?.objectPosition || '50% 18%',
+                              transform: `scale(${sp.cropStyle?.scale || 1.32})`,
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="text-xs font-extrabold text-white mt-2">
+                        {sp.name}
+                      </div>
+                      <div className="text-[10px] text-white/70 line-clamp-2 mt-0.5 leading-tight">
+                        {sp.role}
+                      </div>
+                      <span className="mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-[#E6007E] border border-[#E6007E]/30">
+                        {sp.sessionTag.split('·')[0]}
+                      </span>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Section 2: Initials Avatars (Joaco, Valentina, Laura, Simones, People) */}
+            <div className="rounded-3xl bg-white/[0.06] border border-white/15 p-4 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-2.5">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-white/85">
+                  Colaboradores & Co-Autores Destacados
+                </span>
+                <span className="text-[11px] text-[#3B82F6] font-semibold">
+                  +15 Voces del Chapter
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                {speakers.initialsSpeakers.map((sp, idx) => {
+                  const isSelected = selectedId === sp.id;
+                  return (
+                    <motion.div
+                      key={sp.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, delay: 0.25 + idx * 0.05 }}
+                      onClick={() => {
+                        soundManager.playPop();
+                        setSelectedId(sp.id);
+                      }}
+                      className={`rounded-2xl p-2.5 cursor-pointer transition-all flex items-center gap-2.5 border ${
+                        isSelected
+                          ? 'bg-white/15 border-[#3B82F6] shadow-lg'
+                          : 'bg-[#051336]/60 border-white/10 hover:bg-white/10'
+                      }`}
+                    >
+                      <div
+                        className={`w-11 h-11 rounded-full shrink-0 bg-gradient-to-br ${sp.gradient} flex items-center justify-center text-sm font-black text-white shadow-md border border-white/30`}
+                      >
+                        {sp.initials}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-extrabold text-white truncate">
+                          {sp.name}
+                        </div>
+                        <div className="text-[10px] text-white/70 truncate">
+                          {sp.role}
+                        </div>
+                        <div className="text-[9px] font-bold text-[#3B82F6] truncate mt-0.5">
+                          {sp.sessionTag}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/TimelineSlide.tsx
+// ==========================================
+interface TimelineSlideProps {
+  onOpenLightbox: (items: DemoScreenshot[], index: number) => void;
+}
+const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
+  const { timeline } = WRAPPED_DATA;
+  const [selectedSessionId, setSelectedSessionId] = useState<string>(timeline.sessions[1].id); // Default to Carozzi or Kickoff; let's start at Kick-off (0) or Carozzi
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [bonusRevealed, setBonusRevealed] = useState<boolean>(false);
+
+  const activeSession = timeline.sessions[activeIndex] || timeline.sessions[0];
+
+  const handleSelectSession = (idx: number) => {
+    soundManager.playPop();
+    setActiveIndex(idx);
+    setSelectedSessionId(timeline.sessions[idx].id);
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
+      <div className="max-w-7xl w-full mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-3">
+          <div>
+            <span className="inline-block text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
+              {timeline.eyebrow}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              {timeline.title}
+            </h2>
+          </div>
+          <p className="text-xs text-white/70 max-w-md">
+            {timeline.subtitle}
+          </p>
+        </div>
+
+        {/* Horizontal 7-Session Track Selector Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mb-4">
+          {timeline.sessions.map((session, idx) => {
+            const isActive = idx === activeIndex;
+            return (
+              <button
+                key={session.id}
+                onClick={() => handleSelectSession(idx)}
+                className={`group relative rounded-2xl p-2.5 text-left transition-all cursor-pointer border backdrop-blur-md flex flex-col justify-between ${
+                  isActive
+                    ? 'bg-gradient-to-b from-[#E6007E]/30 via-[#8B5CF6]/25 to-[#051336]/90 border-[#E6007E] shadow-[0_0_25px_rgba(230,0,126,0.35)] -translate-y-0.5'
+                    : 'bg-white/[0.06] border-white/15 hover:bg-white/[0.12] hover:border-white/30'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1 mb-1.5">
+                  <span
+                    className={`px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider ${
+                      isActive
+                        ? 'bg-[#E6007E] text-white'
+                        : 'bg-white/10 text-white/80'
+                    }`}
+                  >
+                    {session.date}
+                  </span>
+                  <img
+                    src={encodeURI(session.gif)}
+                    alt={session.title}
+                    className="w-7 h-7 rounded-lg object-cover border border-white/20 shrink-0"
+                  />
+                </div>
+                <div>
+                  <div className="text-xs font-extrabold text-white leading-tight line-clamp-1">
+                    {session.title}
+                  </div>
+                  <div className="text-[10px] text-white/60 line-clamp-1 mt-0.5">
+                    Hit #0{idx + 1}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Active Session Detail Panel */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSession.id || selectedSessionId}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="rounded-3xl bg-white/[0.07] border border-white/20 backdrop-blur-xl p-4 sm:p-6 shadow-2xl"
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+              {/* Left Column (4 cols): Session GIF + Client Logo + Speakers */}
+              <div className="lg:col-span-4 flex flex-col gap-3.5">
+                {/* Main GIF + Date Header Card */}
+                <div className="relative rounded-2xl bg-[#051336]/80 border border-white/15 p-3.5 flex items-center gap-3.5">
+                  <div className="relative shrink-0 p-1 rounded-2xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6]">
+                    <img
+                      src={encodeURI(activeSession.gif)}
+                      alt={activeSession.title}
+                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover bg-[#051336]"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#E6007E] uppercase tracking-wider">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {activeSession.date} · {activeSession.monthLabel}
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-black text-white leading-tight mt-0.5">
+                      {activeSession.title}
+                    </h3>
+                    <p className="text-xs text-white/75 mt-1 leading-snug">
+                      {activeSession.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Client Logo Pill (if session has clientLogo) */}
+                {activeSession.clientLogo && (
+                  <div className="rounded-2xl bg-white p-3 border border-white/30 shadow-md flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#051336]/70">
+                      Caso Cliente Destacado
+                    </span>
+                    <img
+                      src={encodeURI(activeSession.clientLogo)}
+                      alt={activeSession.clientName || 'Cliente'}
+                      className="h-9 sm:h-10 max-w-[150px] object-contain"
+                    />
+                  </div>
+                )}
+
+                {/* Speakers of this Session */}
+                <div className="rounded-2xl bg-[#051336]/70 border border-white/15 p-3.5">
+                  <div className="text-[11px] font-extrabold uppercase tracking-wider text-white/70 mb-2.5">
+                    Speakers de la Sesión
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {activeSession.speakers.map((sp) => {
+                      const isWidePhoto =
+                        sp.photo &&
+                        (sp.photo.includes('Camilo y Guille') ||
+                          sp.photo.includes('team palacio'));
+
+                      return (
+                        <div
+                          key={sp.name}
+                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/10 border border-white/15"
+                        >
+                          {sp.photo ? (
+                            isWidePhoto ? (
+                              <div className="h-9 px-1.5 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+                                <img
+                                  src={encodeURI(sp.photo)}
+                                  alt={sp.name}
+                                  className="h-8 w-auto object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <div className="w-9 h-9 rounded-full overflow-hidden bg-white border border-[#E6007E]">
+                                <img
+                                  src={encodeURI(sp.photo)}
+                                  alt={sp.name}
+                                  style={{
+                                    objectPosition: sp.cropStyle?.objectPosition || '50% 18%',
+                                    transform: `scale(${sp.cropStyle?.scale || 1.32})`,
+                                  }}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E6007E] to-[#3B82F6] flex items-center justify-center text-xs font-black text-white">
+                              {sp.initials}
+                            </div>
+                          )}
+                          <span className="text-xs font-bold text-white">
+                            {sp.name}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column (8 cols): Summary, Highlights, 5 Carozzi Learnings, Bonus Reveal, or Clickable Demos */}
+              <div className="lg:col-span-8 flex flex-col gap-3.5">
+                {/* Summary & Key Bullet Highlights */}
+                <div className="rounded-2xl bg-[#051336]/60 border border-white/15 p-4">
+                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-medium">
+                    {activeSession.summary}
+                  </p>
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {activeSession.highlights.map((hl, i) => (
+                      <div
+                        key={i}
+                        className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10 flex items-start gap-2"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-[#E6007E] shrink-0 mt-0.5" />
+                        <span className="text-xs text-white/85 leading-snug">
+                          {hl}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Special Section A: 5 Key Learnings for Carozzi (09/10) */}
+                {activeSession.keyLearnings && (
+                  <div className="rounded-2xl bg-gradient-to-r from-[#E6007E]/15 via-[#8B5CF6]/15 to-[#3B82F6]/15 border border-[#E6007E]/40 p-3.5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-white">
+                        <Lightbulb className="w-4 h-4 text-amber-300" />
+                        Los 5 Aprendizajes Clave en Carozzi
+                      </span>
+                      <span className="text-[11px] font-semibold text-white/75">
+                        De PoCs a Producción Agéntica
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                      {activeSession.keyLearnings.map((kl) => (
+                        <div
+                          key={kl.number}
+                          onClick={() => soundManager.playPop()}
+                          className="p-2.5 rounded-xl bg-[#051336]/80 hover:bg-[#051336] border border-white/15 hover:border-[#E6007E] transition cursor-pointer"
+                        >
+                          <div className="text-[10px] font-black text-[#E6007E]">
+                            0{kl.number}
+                          </div>
+                          <div className="text-xs font-extrabold text-white mt-0.5">
+                            {kl.title}
+                          </div>
+                          <div className="text-[10px] text-white/70 mt-1 leading-tight">
+                            {kl.description}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Special Section B: Interactive Demos Lightbox Gallery (Carozzi & Palacio de Hierro) */}
+                {activeSession.demos && activeSession.demos.length > 0 && (
+                  <div className="rounded-2xl bg-[#051336]/75 border border-white/20 p-3.5">
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#3B82F6]">
+                        <Sparkles className="w-4 h-4 text-[#E6007E]" />
+                        Galería de Demos y Capturas (Clic para abrir en Pantalla Completa con Zoom)
+                      </span>
+                    </div>
+
+                    <div
+                      className={`grid grid-cols-1 ${
+                        activeSession.demos.length > 1
+                          ? 'sm:grid-cols-3'
+                          : 'sm:grid-cols-1'
+                      } gap-3`}
+                    >
+                      {activeSession.demos.map((demo, dIdx) => (
+                        <div
+                          key={demo.id}
+                          onClick={() => {
+                            soundManager.playPop();
+                            onOpenLightbox(activeSession.demos!, dIdx);
+                          }}
+                          className="group relative rounded-xl overflow-hidden border border-white/20 hover:border-[#E6007E] bg-[#051336] cursor-pointer transition-all shadow-lg hover:shadow-[0_0_25px_rgba(230,0,126,0.4)]"
+                        >
+                          <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-black/40">
+                            <img
+                              src={encodeURI(demo.src)}
+                              alt={demo.title}
+                              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#051336] via-transparent to-transparent opacity-85" />
+                            <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-[#E6007E] text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
+                              <ZoomIn className="w-3 h-3" />
+                              Ampliar Demo
+                            </div>
+                          </div>
+                          <div className="p-2.5">
+                            <div className="text-[10px] font-bold text-[#3B82F6] uppercase">
+                              {demo.badge}
+                            </div>
+                            <div className="text-xs font-extrabold text-white truncate mt-0.5">
+                              {demo.title}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Special Section C: 08/01 Bono Interactive Dual GIF Reveal (Confused Thinking GIF.gif + congrats.gif) */}
+                {activeSession.bonusInteractive && (
+                  <div className="rounded-2xl bg-gradient-to-r from-[#051336] via-[#8B5CF6]/20 to-[#051336] border border-white/20 p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                      <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5">
+                        <Sparkles className="w-4 h-4 text-[#E6007E]" />
+                        Dinámica de la Sesión: De las Dudas a los Ejemplos Claros
+                      </span>
+                      <button
+                        onClick={() => {
+                          soundManager.playPop();
+                          setBonusRevealed((prev) => !prev);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow-lg hover:scale-105 transition cursor-pointer"
+                      >
+                        <Play className="w-3.5 h-3.5" />
+                        {bonusRevealed
+                          ? 'Ver estado inicial'
+                          : '¡Revelar Ejemplos Claros!'}
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Card 1: Dudas Iniciales + Confused Thinking GIF.gif */}
+                      <div
+                        onClick={() => {
+                          soundManager.playPop();
+                          setBonusRevealed(false);
+                        }}
+                        className={`rounded-2xl p-3 border transition cursor-pointer flex items-center gap-3 ${
+                          !bonusRevealed
+                            ? 'bg-amber-500/15 border-amber-400 shadow-lg'
+                            : 'bg-[#051336]/60 border-white/15 opacity-80 hover:opacity-100'
+                        }`}
+                      >
+                        <img
+                          src={encodeURI(activeSession.bonusInteractive.initialGif)}
+                          alt="Dudas iniciales"
+                          className="w-20 h-20 rounded-xl object-cover border border-amber-300/40 shrink-0"
+                        />
+                        <div>
+                          <div className="inline-flex items-center gap-1 text-xs font-extrabold text-amber-300">
+                            <HelpCircle className="w-3.5 h-3.5" />
+                            Dudas iniciales
+                          </div>
+                          <p className="text-xs text-white/85 mt-1 leading-snug">
+                            {activeSession.bonusInteractive.initialText}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Card 2: Ejemplos Claros + congrats.gif */}
+                      <div
+                        onClick={() => {
+                          soundManager.playPop();
+                          setBonusRevealed(true);
+                        }}
+                        className={`rounded-2xl p-3 border transition cursor-pointer flex items-center gap-3 ${
+                          bonusRevealed
+                            ? 'bg-emerald-500/20 border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.3)] scale-[1.02]'
+                            : 'bg-[#051336]/60 border-white/15 hover:border-emerald-400/50'
+                        }`}
+                      >
+                        <img
+                          src={encodeURI(activeSession.bonusInteractive.revealedGif)}
+                          alt="Ejemplos claros"
+                          className="w-20 h-20 rounded-xl object-cover border border-emerald-300/40 shrink-0"
+                        />
+                        <div>
+                          <div className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-300">
+                            <PartyPopper className="w-3.5 h-3.5" />
+                            Ejemplos claros
+                          </div>
+                          <p className="text-xs text-white/90 mt-1 leading-snug">
+                            {activeSession.bonusInteractive.revealedText}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/GridPlotTwistSlide.tsx
+// ==========================================
+interface GridPlotTwistSlideProps {
+  onOpenLightbox: (items: DemoScreenshot[], index: number) => void;
+}
+const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox }) => {
+  const { grid2027 } = WRAPPED_DATA;
+  const [tilt, setTilt] = useState<{ rotateX: number; rotateY: number; glareX: number; glareY: number }>({
+    rotateX: 0,
+    rotateY: 0,
+    glareX: 50,
+    glareY: 50,
+  });
+  const [activeEvolutionId, setActiveEvolutionId] = useState<string>('ai-data-fluency');
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -10;
+    const rotateY = ((x - centerX) / centerX) * 10;
+    const glareX = (x / rect.width) * 100;
+    const glareY = (y / rect.height) * 100;
+    setTilt({ rotateX, rotateY, glareX, glareY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
+  };
+
+  const iconsMap: Record<string, React.ElementType> = {
+    BrainCircuit,
+    Compass,
+    Rocket,
+    ShieldCheck,
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
+      <div className="max-w-7xl w-full mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-3">
+          <div>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
+              <Sparkles className="w-3.5 h-3.5" />
+              {grid2027.eyebrow}
+            </span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+              {grid2027.title}
+            </h2>
+          </div>
+          <p className="text-xs text-white/75 max-w-lg">
+            {grid2027.subtitle}
+          </p>
+        </div>
+
+        {/* Main Grid Layout: Protagonist 3D Tilt Illustration (Left 5 cols) + Comparative Evolutions (Right 7 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* Left: Interactive 3D Tilt Hero Card with chapter grid (milo y joaco).jpeg */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-5 flex flex-col justify-between"
+            style={{ perspective: '1100px' }}
+          >
+            <div
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => {
+                soundManager.playPop();
+                onOpenLightbox(
+                  [
+                    {
+                      id: 'milo-joaco-grid',
+                      title: 'Consulting Grid 2027 & El Bono · Camilo y Joaco',
+                      subtitle: grid2027.heroCaption,
+                      src: grid2027.heroImage,
+                      badge: 'Ilustración Oficial · 60 Puntos & Bono',
+                    },
+                  ],
+                  0
+                );
+              }}
+              style={{
+                transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+                transition:
+                  tilt.rotateX === 0 && tilt.rotateY === 0
+                    ? 'transform 0.45s ease-out'
+                    : 'transform 0.08s ease-out',
+                transformStyle: 'preserve-3d',
+              }}
+              className="group relative h-full rounded-3xl p-1 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_45px_rgba(230,0,126,0.45)] cursor-pointer select-none"
+            >
+              {/* Animated Outer Glow */}
+              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] opacity-60 blur-xl group-hover:opacity-95 transition duration-500 -z-10" />
+
+              <div className="relative h-full rounded-[22px] bg-[#051336] p-3.5 flex flex-col justify-between overflow-hidden">
+                {/* Interactive Glare Overlay */}
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-30 transition-opacity duration-200"
+                  style={{
+                    background: `radial-gradient(circle at ${tilt.glareX}% ${tilt.glareY}%, rgba(255,255,255,0.45), transparent 55%)`,
+                  }}
+                />
+
+                {/* Top Sticker Header */}
+                <div className="flex items-center justify-between gap-2 mb-2 z-10">
+                  <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow">
+                    ¡Sube a 60 Puntos & El Bono!
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/10 text-white/80 border border-white/15">
+                    <ZoomIn className="w-3 h-3 text-[#E6007E]" />
+                    Efecto 3D Tilt · Clic Zoom
+                  </span>
+                </div>
+
+                {/* Main Illustration Image */}
+                <div className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl my-auto">
+                  <img
+                    src={encodeURI(grid2027.heroImage)}
+                    alt="Camilo y Joaco celebrando los 60 puntos del Grid y el Bono"
+                    className="w-full max-h-[300px] sm:max-h-[340px] object-cover mx-auto"
+                  />
+                </div>
+
+                {/* Caption */}
+                <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-xs text-white/80 z-10">
+                  <span className="font-semibold">{grid2027.heroCaption}</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right: Animated Comparative Cards + 4 Pillars + 24 Badges */}
+          <div className="lg:col-span-7 flex flex-col gap-3 justify-between">
+            {/* Row 1: Before -> After Counters (13->15 skills, 6->7 cats, 52->60 pts, 24 badges) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {grid2027.metricsComparison.map((m, idx) => (
+                <motion.div
+                  key={m.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: idx * 0.08 }}
+                  onClick={() => soundManager.playPop()}
+                  className="rounded-2xl p-3 bg-white/[0.07] hover:bg-white/[0.12] border border-white/15 hover:border-[#E6007E]/60 backdrop-blur-xl cursor-pointer transition"
+                >
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-white/65 truncate">
+                    {m.label}
+                  </div>
+                  <div className="flex items-baseline gap-1.5 mt-1">
+                    {m.from !== '0' && (
+                      <>
+                        <span className="text-sm font-bold text-white/45 line-through">
+                          {m.from}
+                        </span>
+                        <ArrowRight className="w-3.5 h-3.5 text-[#E6007E] self-center" />
+                      </>
+                    )}
+                    <span
+                      className={`text-2xl sm:text-3xl font-black bg-gradient-to-r ${m.accent} bg-clip-text text-transparent`}
+                    >
+                      {m.to}
+                    </span>
+                    <span className="text-xs font-extrabold text-white">
+                      {m.unit}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-white/75 mt-1 truncate">
+                    {m.subtext}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Row 2: 4 Structural Evolutions Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {grid2027.evolutions.map((ev, idx) => {
+                const Icon = iconsMap[ev.iconName] || Sparkles;
+                const isSelected = activeEvolutionId === ev.id;
+                return (
+                  <motion.div
+                    key={ev.id}
+                    initial={{ opacity: 0, x: 15 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.15 + idx * 0.07 }}
+                    onClick={() => {
+                      soundManager.playPop();
+                      setActiveEvolutionId(ev.id);
+                    }}
+                    className={`rounded-2xl p-3.5 cursor-pointer transition-all border backdrop-blur-xl ${
+                      isSelected
+                        ? 'bg-gradient-to-br from-[#E6007E]/25 via-[#8B5CF6]/20 to-[#051336]/90 border-[#E6007E] shadow-lg'
+                        : 'bg-white/[0.06] border-white/15 hover:bg-white/[0.1]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#E6007E]">
+                        {ev.category}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10 text-white/85">
+                        {ev.badgeText}
+                      </span>
+                    </div>
+
+                    <div className="flex items-start gap-2.5">
+                      <div className="p-2 rounded-xl bg-gradient-to-br from-[#E6007E] to-[#3B82F6] text-white shrink-0 mt-0.5">
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-extrabold text-white">
+                          {ev.title}
+                        </h3>
+                        <p className="text-[11px] text-white/75 mt-1 leading-snug">
+                          {ev.description}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Row 3: 24 Nuevos Badges en 3 Familias + Nivel Thought Leader */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.35 }}
+              className="rounded-2xl bg-gradient-to-r from-[#051336]/90 via-[#8B5CF6]/20 to-[#051336]/90 border border-white/20 p-3.5 backdrop-blur-xl"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                <div className="flex items-center gap-2">
+                  <Award className="w-5 h-5 text-[#E6007E]" />
+                  <span className="text-xs sm:text-sm font-black text-white uppercase tracking-wide">
+                    24 Nuevos Badges en 3 Familias
+                  </span>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-amber-400 to-[#E6007E] text-[#051336] shadow-md">
+                  <Star className="w-3.5 h-3.5 fill-current" />
+                  Nuevo Nivel Tope: Thought Leader
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {grid2027.badgesSystem.families.map((fam) => (
+                  <div
+                    key={fam.id}
+                    onClick={() => soundManager.playPop()}
+                    className="p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 transition cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-extrabold text-white">
+                        {fam.name}
+                      </span>
+                      <span
+                        className="px-2 py-0.5 rounded-full text-xs font-black text-white"
+                        style={{ backgroundColor: fam.color }}
+                      >
+                        {fam.count} Badges
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-white/70 mt-1 leading-tight">
+                      {fam.examples}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/PlaylistSlide.tsx
+// ==========================================
+const PlaylistSlide: React.FC = () => {
+  const { playlist } = WRAPPED_DATA;
+  const [selectedLevelId, setSelectedLevelId] = useState<string>('senior-2');
+  const [selectedTierFilter, setSelectedTierFilter] = useState<'ALL' | 'Entry' | 'Senior' | 'Manager'>('ALL');
+  const [playingTrackId, setPlayingTrackId] = useState<string>('s2-t3');
+
+  const activeLevel =
+    playlist.levels.find((l) => l.id === selectedLevelId) || playlist.levels[0];
+
+  const handleSelectTier = (tier: 'ALL' | 'Entry' | 'Senior' | 'Manager') => {
+    soundManager.playPop();
+    setSelectedTierFilter(tier);
+    if (tier !== 'ALL') {
+      const firstInTier = playlist.levels.find((l) => l.tier === tier);
+      if (firstInTier) {
+        setSelectedLevelId(firstInTier.id);
+        if (firstInTier.tracks[0]) {
+          setPlayingTrackId(firstInTier.tracks[0].id);
+        }
+      }
+    }
+  };
+
+  const handleSelectLevel = (levelId: string) => {
+    soundManager.playPop();
+    setSelectedLevelId(levelId);
+    const lvl = playlist.levels.find((l) => l.id === levelId);
+    if (lvl && lvl.tracks[0]) {
+      setPlayingTrackId(lvl.tracks[0].id);
+    }
+  };
+
+  const visibleLevels =
+    selectedTierFilter === 'ALL'
+      ? playlist.levels
+      : playlist.levels.filter((l) => l.tier === selectedTierFilter);
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
+      <div className="max-w-7xl w-full mx-auto">
+        {/* Top Header (Clean Music App Design - NO GIFs) */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-4">
+          <div>
+            <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E] mb-1">
+              <Headphones className="w-3.5 h-3.5" />
+              {playlist.eyebrow}
+            </div>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+              Tu Playlist de Aprendizaje
+            </h2>
+            <p className="text-xs sm:text-sm text-white/70 mt-0.5">
+              {playlist.subtitle}
+            </p>
+          </div>
+
+          {/* Tier Group Selector (Entry 1-3 | Senior 1-3 | Manager 1-2 | Todos) */}
+          <div className="flex flex-wrap items-center gap-1.5 bg-white/[0.06] border border-white/15 rounded-2xl p-1.5 backdrop-blur-xl">
+            {[
+              { id: 'ALL', label: 'Todos (E1–M2)' },
+              { id: 'Entry', label: 'Entry 1–3' },
+              { id: 'Senior', label: 'Senior 1–3' },
+              { id: 'Manager', label: 'Manager 1–2' },
+            ].map((tab) => {
+              const active = selectedTierFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleSelectTier(tab.id as 'ALL' | 'Entry' | 'Senior' | 'Manager')}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                    active
+                      ? 'bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] text-white shadow-md'
+                      : 'text-white/70 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 8-Level Selector Bar */}
+        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 mb-4">
+          {playlist.levels.map((lvl) => {
+            const isSelected = lvl.id === activeLevel.id;
+            const isDimmed =
+              selectedTierFilter !== 'ALL' && lvl.tier !== selectedTierFilter;
+
+            return (
+              <button
+                key={lvl.id}
+                onClick={() => handleSelectLevel(lvl.id)}
+                className={`group relative rounded-2xl p-2.5 text-left transition-all cursor-pointer border backdrop-blur-md ${
+                  isSelected
+                    ? `bg-gradient-to-br ${lvl.gradient} border-white/50 text-white shadow-lg -translate-y-0.5`
+                    : isDimmed
+                    ? 'bg-white/[0.03] border-white/5 text-white/40 hover:opacity-80'
+                    : 'bg-white/[0.07] border-white/15 text-white/85 hover:bg-white/[0.12] hover:border-white/30'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider opacity-80">
+                    {lvl.tier}
+                  </span>
+                  <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-black/25">
+                    {lvl.tracks.length} {lvl.tracks.length === 1 ? 'track' : 'tracks'}
+                  </span>
+                </div>
+                <div className="text-sm font-black mt-1">{lvl.levelName}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Main Spotify-Style Player + Complete Tier Overview */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+          {/* Left (5 cols): Active Level Album Card */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeLevel.id}
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ duration: 0.25 }}
+              className="lg:col-span-5 rounded-3xl bg-white/[0.07] border border-white/20 backdrop-blur-xl p-5 flex flex-col justify-between"
+            >
+              <div>
+                {/* Vinyl / Album Header */}
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`relative w-24 h-24 rounded-2xl bg-gradient-to-br ${activeLevel.gradient} p-3 flex flex-col items-center justify-center shadow-xl border border-white/30 shrink-0`}
+                  >
+                    <Disc3 className="w-10 h-10 text-white animate-spin" style={{ animationDuration: '9s' }} />
+                    <span className="text-xs font-black text-white mt-1">
+                      {activeLevel.shortCode}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-white/15 text-white">
+                      <ListMusic className="w-3 h-3 text-[#E6007E]" />
+                      Playlist Oficial · {activeLevel.tier}
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white mt-1">
+                      {activeLevel.levelName}
+                    </h3>
+                    <p className="text-xs text-white/75 mt-1 leading-snug">
+                      {activeLevel.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Active Level Tracklist */}
+                <div className="mt-5 space-y-2.5">
+                  <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-white/50 px-2">
+                    <span># · Track (Curso Artefactory)</span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" /> Nivel
+                    </span>
+                  </div>
+
+                  {activeLevel.tracks.map((track) => {
+                    const isPlaying = playingTrackId === track.id;
+                    return (
+                      <div
+                        key={track.id}
+                        onClick={() => {
+                          soundManager.playPop();
+                          setPlayingTrackId(track.id);
+                        }}
+                        className={`group rounded-2xl p-3.5 transition-all cursor-pointer border flex items-center justify-between gap-3 ${
+                          isPlaying
+                            ? 'bg-gradient-to-r from-[#E6007E]/25 via-[#8B5CF6]/20 to-[#3B82F6]/20 border-[#E6007E] shadow-lg'
+                            : 'bg-[#051336]/70 border-white/10 hover:bg-white/10 hover:border-white/25'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-black text-xs ${
+                              isPlaying
+                                ? 'bg-[#E6007E] text-white'
+                                : 'bg-white/10 text-white/70 group-hover:bg-white/20 group-hover:text-white'
+                            }`}
+                          >
+                            {isPlaying ? (
+                              <AudioLines className="w-4 h-4 animate-pulse" />
+                            ) : (
+                              track.trackNumber
+                            )}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs sm:text-sm font-extrabold text-white leading-snug">
+                              {track.title}
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[10px] font-bold text-[#3B82F6]">
+                                {track.categoryTag}
+                              </span>
+                              <span className="text-[10px] text-white/40">•</span>
+                              <span className="text-[10px] text-white/65">
+                                {track.durationLabel}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-white/10 text-white/90 shrink-0">
+                          {track.intensity}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Mini Player Footer */}
+              <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-white/75">
+                <span className="inline-flex items-center gap-1.5 font-semibold">
+                  <Play className="w-3.5 h-3.5 text-[#E6007E] fill-current" />
+                  Artefactory Learning Path 2027
+                </span>
+                <span className="font-bold text-white">
+                  {activeLevel.tracks.length}{' '}
+                  {activeLevel.tracks.length === 1 ? 'Curso Oficial' : 'Cursos Oficiales'}
+                </span>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Right (7 cols): Complete All-Levels Matrix View */}
+          <div className="lg:col-span-7 rounded-3xl bg-white/[0.05] border border-white/15 backdrop-blur-xl p-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-white">
+                <Layers className="w-4 h-4 text-[#3B82F6]" />
+                Mapa Completo de Cursos ({selectedTierFilter === 'ALL' ? 'Entry 1 a Manager 2' : `Tier ${selectedTierFilter}`})
+              </span>
+              <span className="text-[11px] text-white/60">
+                Haz clic en cualquier nivel para reproducir
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[370px] overflow-y-auto pr-1">
+              {visibleLevels.map((lvl) => {
+                const isCurrent = lvl.id === activeLevel.id;
+                return (
+                  <div
+                    key={lvl.id}
+                    onClick={() => handleSelectLevel(lvl.id)}
+                    className={`rounded-2xl p-3 cursor-pointer transition-all border ${
+                      isCurrent
+                        ? 'bg-[#051336]/95 border-[#E6007E] shadow-[0_0_20px_rgba(230,0,126,0.25)]'
+                        : 'bg-[#051336]/60 border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-black bg-gradient-to-r ${lvl.gradient} text-white`}
+                      >
+                        {lvl.levelName}
+                      </span>
+                      <BookOpen className="w-3.5 h-3.5 text-white/50" />
+                    </div>
+                    <ul className="space-y-1">
+                      {lvl.tracks.map((t) => (
+                        <li
+                          key={t.id}
+                          className="flex items-start gap-1.5 text-[11px] text-white/85 leading-snug"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#E6007E] shrink-0 mt-0.5" />
+                          <span>{t.title}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/components/slides/OutroAuraSlide.tsx
+// ==========================================
+interface OutroAuraSlideProps {
+  onRestart: () => void;
+}
+const OutroAuraSlide: React.FC<OutroAuraSlideProps> = ({ onRestart }) => {
+  const { outro } = WRAPPED_DATA;
+  const [selectedArchetypeIdx, setSelectedArchetypeIdx] = useState<number>(0);
+  const [isDownloading, setIsDownloading] = useState<boolean>(false);
+  const [downloadedSuccess, setDownloadedSuccess] = useState<boolean>(false);
+
+  const activeAura =
+    outro.auraArchetypes[selectedArchetypeIdx] || outro.auraArchetypes[0];
+
+  const triggerCelebration = useCallback(() => {
+    soundManager.playPop();
+    try {
+      const colors = ['#E6007E', '#8B5CF6', '#3B82F6', '#FFFFFF', '#F59E0B'];
+      confetti({
+        particleCount: 80,
+        spread: 75,
+        origin: { y: 0.6 },
+        colors,
+      });
+      setTimeout(() => {
+        confetti({
+          particleCount: 55,
+          angle: 60,
+          spread: 60,
+          origin: { x: 0.1, y: 0.65 },
+          colors,
+        });
+        confetti({
+          particleCount: 55,
+          angle: 120,
+          spread: 60,
+          origin: { x: 0.9, y: 0.65 },
+          colors,
+        });
+      }, 220);
+    } catch {
+      // Fallback if confetti fails
+    }
+  }, []);
+
+  useEffect(() => {
+    triggerCelebration();
+  }, [triggerCelebration]);
+
+  const handleDownloadCardImage = async () => {
+    soundManager.playPop();
+    setIsDownloading(true);
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = 760;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // 1. Deep Navy Background
+      ctx.fillStyle = '#051336';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 2. Aura Radial Gradients
+      const grad1 = ctx.createRadialGradient(250, 180, 20, 250, 180, 520);
+      grad1.addColorStop(0, 'rgba(230, 0, 126, 0.55)');
+      grad1.addColorStop(0.5, 'rgba(139, 92, 246, 0.28)');
+      grad1.addColorStop(1, 'rgba(5, 19, 54, 0)');
+      ctx.fillStyle = grad1;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const grad2 = ctx.createRadialGradient(980, 580, 20, 980, 580, 540);
+      grad2.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+      grad2.addColorStop(1, 'rgba(5, 19, 54, 0)');
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 3. Geometric Chevron "A" Watermark
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(950, 110);
+      ctx.lineTo(1140, 580);
+      ctx.lineTo(1065, 580);
+      ctx.lineTo(950, 280);
+      ctx.lineTo(835, 580);
+      ctx.lineTo(760, 580);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. Card Frame Border
+      const borderGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      borderGrad.addColorStop(0, '#E6007E');
+      borderGrad.addColorStop(0.5, '#8B5CF6');
+      borderGrad.addColorStop(1, '#3B82F6');
+      ctx.strokeStyle = borderGrad;
+      ctx.lineWidth = 6;
+      ctx.strokeRect(36, 36, canvas.width - 72, canvas.height - 72);
+
+      // 5. Draw ARTEFACT Logo if loaded
+      await new Promise<void>((resolve) => {
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+        logoImg.onload = () => {
+          const targetH = 38;
+          const targetW = (logoImg.width / logoImg.height) * targetH;
+          ctx.drawImage(logoImg, 80, 78, targetW, targetH);
+          resolve();
+        };
+        logoImg.onerror = () => resolve();
+        logoImg.src = encodeURI(outro.logo);
+      });
+
+      // 6. Header Badge
+      ctx.fillStyle = '#E6007E';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('CONSULTING WRAPPED 2026–2027 · ARTEFACT LATAM', 80, 155);
+
+      // 7. Aura Title & Tagline
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 46px sans-serif';
+      ctx.fillText(`Tu Aura: ${activeAura.name}`, 80, 215);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.font = '500 22px sans-serif';
+      ctx.fillText(activeAura.tagline, 80, 260);
+
+      // 8. Genre & Power Stat
+      ctx.fillStyle = '#3B82F6';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText(`Top Genre: ${activeAura.topGenre}`, 80, 310);
+
+      ctx.fillStyle = '#E6007E';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText(`Status: ${activeAura.powerStat}`, 80, 342);
+
+      // 9. 6 Summary Boxes
+      const boxW = 325;
+      const boxH = 115;
+      const startX = 80;
+      const startY = 390;
+      const gapX = 32;
+      const gapY = 24;
+
+      outro.cardStats.forEach((st, i) => {
+        const col = i % 3;
+        const row = Math.floor(i / 3);
+        const x = startX + col * (boxW + gapX);
+        const y = startY + row * (boxH + gapY);
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.fillRect(x, y, boxW, boxH);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, boxW, boxH);
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.font = 'bold 15px sans-serif';
+        ctx.fillText(st.label.toUpperCase(), x + 22, y + 40);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '900 32px sans-serif';
+        ctx.fillText(st.value, x + 22, y + 85);
+      });
+
+      // 10. Footer
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.font = 'bold 16px sans-serif';
+      ctx.fillText(
+        'Septiembre 2026 – Enero 2027 · Nuestro año en modo Agéntico',
+        80,
+        690
+      );
+
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'Consulting-Wrapped-2026-2027-Artefact.png';
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setDownloadedSuccess(true);
+      setTimeout(() => setDownloadedSuccess(false), 3000);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
+      <div className="max-w-6xl w-full mx-auto">
+        {/* Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4">
+          <div>
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
+              <Sparkles className="w-3.5 h-3.5" />
+              {outro.eyebrow}
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+              {outro.title}
+            </h2>
+          </div>
+
+          {/* Archetype Selector Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 bg-white/[0.06] border border-white/15 rounded-2xl p-1.5 backdrop-blur-xl">
+            {outro.auraArchetypes.map((arch, idx) => (
+              <button
+                key={arch.id}
+                onClick={() => {
+                  soundManager.playPop();
+                  setSelectedArchetypeIdx(idx);
+                }}
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                  selectedArchetypeIdx === idx
+                    ? 'bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                Aura #{idx + 1}: {arch.name.split(' ')[0]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Shareable Summary Card */}
+        <motion.div
+          key={activeAura.id}
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="relative rounded-3xl p-1 bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_55px_rgba(230,0,126,0.45)]"
+        >
+          <div className="relative rounded-[22px] bg-[#051336]/95 p-5 sm:p-7 overflow-hidden">
+            {/* Animated Aura Orb inside Card */}
+            <div
+              className={`pointer-events-none absolute -right-20 -top-20 w-80 h-80 rounded-full bg-gradient-to-br ${activeAura.gradient} opacity-35 blur-3xl`}
+            />
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+              {/* Left 7 Cols: Logo + Aura Info + 6 Summary Stats */}
+              <div className="lg:col-span-7 flex flex-col justify-between">
+                <div>
+                  {/* Official Logo + Tag */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/15">
+                    <img
+                      src={encodeURI(outro.logo)}
+                      alt="ARTEFACT"
+                      className="h-6 sm:h-7 w-auto object-contain"
+                    />
+                    <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-white/10 border border-white/20 text-white">
+                      Consulting Wrapped · 2026–2027
+                    </span>
+                  </div>
+
+                  {/* Aura Title */}
+                  <div className="mt-4">
+                    <div className="text-xs font-bold uppercase tracking-widest text-[#E6007E]">
+                      TU AURA AGÉNTICA 2027 · {activeAura.auraColors}
+                    </div>
+                    <h3 className="text-2xl sm:text-4xl font-black text-white mt-1">
+                      {activeAura.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-white/80 mt-1.5 leading-relaxed">
+                      {activeAura.tagline}
+                    </p>
+                  </div>
+
+                  {/* Top Genre & Status */}
+                  <div className="mt-3.5 flex flex-wrap gap-2">
+                    <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#3B82F6]/20 border border-[#3B82F6]/40 text-white">
+                      🎵 Top Genre: {activeAura.topGenre}
+                    </span>
+                    <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#E6007E]/20 border border-[#E6007E]/40 text-white">
+                      ⚡ {activeAura.powerStat}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 6 Summary Stats Grid */}
+                <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                  {outro.cardStats.map((st) => (
+                    <div
+                      key={st.label}
+                      className="p-3 rounded-2xl bg-white/[0.06] border border-white/15"
+                    >
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-white/60">
+                        {st.label}
+                      </div>
+                      <div className="text-base sm:text-lg font-black text-white mt-0.5">
+                        {st.value}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right 5 Cols: Party GIF + Action Buttons */}
+              <div className="lg:col-span-5 flex flex-col items-center text-center bg-white/[0.05] border border-white/15 rounded-3xl p-5">
+                <div className="relative p-1.5 rounded-3xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-2xl">
+                  <img
+                    src={encodeURI(outro.gif)}
+                    alt="Cierre Party GIF"
+                    className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-2xl bg-[#051336]"
+                  />
+                </div>
+
+                <h4 className="text-lg font-black text-white mt-4">
+                  ¡Gracias por construir el Chapter!
+                </h4>
+                <p className="text-xs text-white/75 mt-1 max-w-xs">
+                  Vamos por esos 60 puntos del Grid, los 24 Badges y un 2027 100% Agéntico en Artefact LATAM.
+                </p>
+
+                {/* Action Buttons */}
+                <div className="mt-4 w-full flex flex-col gap-2.5">
+                  <button
+                    onClick={handleDownloadCardImage}
+                    disabled={isDownloading}
+                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] hover:opacity-95 shadow-lg shadow-[#E6007E]/40 transition cursor-pointer"
+                  >
+                    {downloadedSuccess ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>¡Tarjeta PNG Descargada!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4" />
+                        <span>Descargar Tarjeta como Imagen (.PNG)</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={triggerCelebration}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
+                    >
+                      <PartyPopper className="w-4 h-4 text-amber-300" />
+                      <span>¡Más Confetti!</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        soundManager.playPop();
+                        onRestart();
+                      }}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
+                    >
+                      <RotateCcw className="w-4 h-4 text-[#3B82F6]" />
+                      <span>Reiniciar</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// FILE: src/App.tsx
+// ==========================================
+const AUTO_ADVANCE_MS = 18000;
+const App: React.FC = () => {
+  const totalSlides = WRAPPED_DATA.slides.length;
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [direction, setDirection] = useState<number>(1);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(100);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  // Lightbox state
+  const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
+  const [lightboxItems, setLightboxItems] = useState<DemoScreenshot[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(0);
+
+  const goToSlide = useCallback(
+    (targetIdx: number) => {
+      if (targetIdx < 0 || targetIdx >= totalSlides || targetIdx === currentSlide) return;
+      soundManager.playPop();
+      setDirection(targetIdx > currentSlide ? 1 : -1);
+      setCurrentSlide(targetIdx);
+      setProgress(isPlaying ? 0 : 100);
+    },
+    [currentSlide, totalSlides, isPlaying]
+  );
+
+  const handleNext = useCallback(() => {
+    if (currentSlide < totalSlides - 1) {
+      soundManager.playPop();
+      setDirection(1);
+      setCurrentSlide((s) => s + 1);
+      setProgress(isPlaying ? 0 : 100);
+    } else {
+      setIsPlaying(false);
+      setProgress(100);
+    }
+  }, [currentSlide, totalSlides, isPlaying]);
+
+  const handlePrev = useCallback(() => {
+    if (currentSlide > 0) {
+      soundManager.playPop();
+      setDirection(-1);
+      setCurrentSlide((s) => s - 1);
+      setProgress(isPlaying ? 0 : 100);
+    }
+  }, [currentSlide, isPlaying]);
+
+  const handleTogglePlay = useCallback(() => {
+    soundManager.playPop();
+    setIsPlaying((prev) => {
+      const next = !prev;
+      setProgress(next ? 0 : 100);
+      return next;
+    });
+  }, []);
+
+  const handleToggleSound = useCallback(() => {
+    const nextState = soundManager.toggle();
+    setSoundEnabled(nextState);
+  }, []);
+
+  const handleToggleFullscreen = useCallback(() => {
+    soundManager.playPop();
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+
+  // Auto-advance timer when isPlaying is true and lightbox is closed
+  useEffect(() => {
+    if (!isPlaying || lightboxOpen) return;
+
+    const intervalMs = 100;
+    const step = (intervalMs / AUTO_ADVANCE_MS) * 100;
+
+    const timer = setInterval(() => {
+      setProgress((prev) => {
+        if (prev + step >= 100) {
+          handleNext();
+          return 0;
+        }
+        return prev + step;
+      });
+    }, intervalMs);
+
+    return () => clearInterval(timer);
+  }, [isPlaying, lightboxOpen, handleNext]);
+
+  // Global keyboard navigation
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (lightboxOpen) return;
+      if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        handleTogglePlay();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [lightboxOpen, handleNext, handlePrev, handleTogglePlay]);
+
+  const handleOpenLightbox = (items: DemoScreenshot[], index: number) => {
+    setIsPlaying(false);
+    setProgress(100);
+    setLightboxItems(items);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  return (
+    <div className="relative w-screen h-screen overflow-hidden bg-[#051336] text-white flex flex-col justify-between select-none">
+      {/* Animated Geometric Artefact Background */}
+      <ArtefactBackground slideIndex={currentSlide} />
+
+      {/* Top Stories Navigation & Floating Sound / Fullscreen Controls */}
+      <StoriesHeader
+        currentSlide={currentSlide}
+        totalSlides={totalSlides}
+        progress={progress}
+        isPlaying={isPlaying}
+        soundEnabled={soundEnabled}
+        isFullscreen={isFullscreen}
+        onSelectSlide={goToSlide}
+        onPrev={handlePrev}
+        onNext={handleNext}
+        onTogglePlay={handleTogglePlay}
+        onToggleSound={handleToggleSound}
+        onToggleFullscreen={handleToggleFullscreen}
+      />
+
+      {/* Left / Right Edge Click Zones for Stories Navigation */}
+      {currentSlide > 0 && (
+        <button
+          onClick={handlePrev}
+          aria-label="Slide anterior"
+          title="Slide anterior (←)"
+          className="hidden xl:flex fixed left-2 top-1/2 -translate-y-1/2 z-30 w-10 h-28 rounded-2xl items-center justify-center bg-white/[0.03] hover:bg-white/[0.12] border border-transparent hover:border-white/20 text-white/30 hover:text-white transition-all cursor-pointer"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+      )}
+
+      {currentSlide < totalSlides - 1 && (
+        <button
+          onClick={handleNext}
+          aria-label="Siguiente slide"
+          title="Siguiente slide (→)"
+          className="hidden xl:flex fixed right-2 top-1/2 -translate-y-1/2 z-30 w-10 h-28 rounded-2xl items-center justify-center bg-white/[0.03] hover:bg-white/[0.12] border border-transparent hover:border-white/20 text-white/30 hover:text-white transition-all cursor-pointer"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* Main Slide Stage */}
+      <main className="relative z-20 flex-1 w-full overflow-y-auto overflow-x-hidden flex items-center justify-center">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={currentSlide}
+            custom={direction}
+            initial={{ opacity: 0, x: direction > 0 ? 45 : -45, scale: 0.98 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: direction > 0 ? -45 : 45, scale: 0.98 }}
+            transition={{ duration: 0.32, ease: 'easeOut' }}
+            className="w-full h-full flex items-center justify-center"
+          >
+            {currentSlide === 0 && (
+              <IntroSlide
+                onStart={() => goToSlide(1)}
+                onJumpToSlide={(idx) => goToSlide(idx)}
+              />
+            )}
+            {currentSlide === 1 && <StatsSlide />}
+            {currentSlide === 2 && <SpeakersSlide />}
+            {currentSlide === 3 && (
+              <TimelineSlide onOpenLightbox={handleOpenLightbox} />
+            )}
+            {currentSlide === 4 && (
+              <GridPlotTwistSlide onOpenLightbox={handleOpenLightbox} />
+            )}
+            {currentSlide === 5 && <PlaylistSlide />}
+            {currentSlide === 6 && (
+              <OutroAuraSlide onRestart={() => goToSlide(0)} />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+
+      {/* Bottom Subtle Navigation Bar */}
+      <footer className="relative z-30 px-4 sm:px-8 py-2 flex items-center justify-between text-[11px] text-white/50 border-t border-white/10 bg-[#051336]/60 backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-white/80">
+            Artefact LATAM · Chapter de Consulting
+          </span>
+          <span className="hidden sm:inline">•</span>
+          <span className="hidden sm:inline">
+            Usa las flechas ⬅️ ➡️ del teclado o las barras superiores para navegar
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handlePrev}
+            disabled={currentSlide === 0}
+            className="hover:text-white disabled:opacity-30 transition cursor-pointer font-semibold"
+          >
+            ← Anterior
+          </button>
+          <span className="text-white/30">|</span>
+          <button
+            onClick={handleNext}
+            disabled={currentSlide === totalSlides - 1}
+            className="hover:text-[#E6007E] disabled:opacity-30 transition cursor-pointer font-bold text-white/85"
+          >
+            Siguiente →
+          </button>
+        </div>
+      </footer>
+
+      {/* Lightbox Modal for Demos (catman.png, agente catman.png, ARTETALK (PALACIOS).png, etc.) */}
+      <LightboxModal
+        isOpen={lightboxOpen}
+        items={lightboxItems}
+        currentIndex={lightboxIndex}
+        onClose={() => setLightboxOpen(false)}
+        onSelectIndex={(idx) => setLightboxIndex(idx)}
+      />
+    </div>
+  );
+};
+
+      const rootEl = document.getElementById('root');
+      if (rootEl) {
+        ReactDOM.createRoot(rootEl).render(<App />);
+      }
+    </script>
+
+    <script>
+      (function () {
+        try {
+          var src = document.getElementById('wrapped-tsx-source').textContent;
+          var output = Babel.transform(src, {
+            presets: ['react', ['typescript', { isTSX: true, allExtensions: true }]],
+            filename: 'ConsultingWrapped.tsx',
+          }).code;
+          var run = new Function(output);
+          run();
+        } catch (err) {
+          console.error('Error compiling Consulting Wrapped:', err);
+          document.getElementById('root').innerHTML =
+            '<div style="padding:2rem;color:#fff;font-family:sans-serif;"><h2>Error al iniciar aplicación</h2><pre>' +
+            (err && err.message ? err.message : String(err)) +
+            '</pre></div>';
+        }
+      })();
+    </script>
+  </body>
+</html>
