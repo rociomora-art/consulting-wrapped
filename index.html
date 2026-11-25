@@ -140,6 +140,10 @@
       const Download = createIcon(<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></>);
       const Check = createIcon(<path d="M20 6 9 17l-5-5" />);
       const Share2 = createIcon(<><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></>);
+      const MessageSquareHeart = createIcon(<><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M14.8 7.5a1.84 1.84 0 0 0-2.6 0l-.2.3-.3-.3a1.84 1.84 0 1 0-2.4 2.8L12 13l2.7-2.7c.9-.9.8-2.1.1-2.8" /></>);
+      const UserPlus = createIcon(<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" /></>);
+      const ExternalLink = createIcon(<><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></>);
+      const MapPin = createIcon(<><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></>);
 
 // ==========================================
 // FILE: src/data/wrappedData.ts
@@ -154,6 +158,7 @@ interface SpeakerItem {
   gradient?: string;
   isHost?: boolean;
   isTeamCard?: boolean;
+  isRecentAddition?: boolean;
   cropStyle?: {
     objectPosition?: string;
     scale?: number;
@@ -166,17 +171,28 @@ interface DemoScreenshot {
   src: string;
   badge: string;
 }
+interface TimelinePoint {
+  title: string;
+  description: string;
+}
 interface TimelineSession {
   id: string;
   date: string;
   monthLabel: string;
+  status: 'completed' | 'tbd' | 'available';
+  statusBadge: string;
+  isCurrentMarkerAfter?: boolean;
   title: string;
   subtitle: string;
   summary: string;
   gif: string;
+  featuredImage?: string;
+  featuredImageBadge?: string;
   clientLogo?: string;
   clientName?: string;
   clientLogoDarkInvert?: boolean;
+  presentationUrl?: string;
+  presentationLabel?: string;
   speakers: {
     name: string;
     photo?: string;
@@ -186,12 +202,7 @@ interface TimelineSession {
       scale?: number;
     };
   }[];
-  highlights: string[];
-  keyLearnings?: {
-    number: number;
-    title: string;
-    description: string;
-  }[];
+  keyPoints: TimelinePoint[];
   demos?: DemoScreenshot[];
   bonusInteractive?: {
     initialLabel: string;
@@ -200,10 +211,6 @@ interface TimelineSession {
     revealedLabel: string;
     revealedText: string;
     revealedGif: string;
-    examples: {
-      title: string;
-      detail: string;
-    }[];
   };
   accentColor: string;
 }
@@ -253,7 +260,7 @@ const ASSETS = {
     cierreParty: 'assets/gifs/cierre-party.gif',
   },
   drawings: {
-    chapterGridMiloJoaco: 'assets/Imagenes version dibujo/chapter grid (milo y joaco).jpeg',
+    chapterGridIllustration: 'assets/Imagenes version dibujo/chapter grid (milo y joaco).jpeg',
     teamCarozzi: 'assets/Imagenes version dibujo/team carozzi.png',
   },
   logosAndDemos: {
@@ -273,6 +280,9 @@ const ASSETS = {
     javier: 'assets/personas/Javier.png',
     israel: 'assets/personas/israel.png',
     teamPalacioHierro: 'assets/personas/team palacio de hierro.png',
+    ines: 'assets/personas/Ines.jpg',
+    valentinaGana: 'assets/personas/Valentina_Gana.jpg',
+    joaquinRuiz: 'assets/personas/Joaquin_Ruiz.jpg',
   },
   sounds: {
     pop: 'assets/sonidos/pop.wav',
@@ -295,11 +305,11 @@ const WRAPPED_DATA = {
   slides: [
     { id: 'intro', number: 1, label: 'Portada', shortTitle: 'Intro' },
     { id: 'stats', number: 2, label: 'El Año en Números', shortTitle: 'Stats' },
-    { id: 'speakers', number: 3, label: 'Top Speakers', shortTitle: 'Speakers' },
-    { id: 'timeline', number: 4, label: 'Hits del Año', shortTitle: 'Timeline' },
-    { id: 'grid2027', number: 5, label: 'Consulting Grid 2027', shortTitle: 'Grid 2027' },
-    { id: 'playlist', number: 6, label: 'Playlist de Aprendizaje', shortTitle: 'Playlist' },
-    { id: 'outro', number: 7, label: 'Tu Aura 2027', shortTitle: 'Aura 2027' },
+    { id: 'speakers', number: 3, label: 'Equipo & Speakers', shortTitle: 'Equipo' },
+    { id: 'timeline', number: 4, label: 'Línea de Tiempo', shortTitle: 'Timeline' },
+    { id: 'grid2027', number: 5, label: 'Plot Twist: Grid & Bono', shortTitle: 'Plot Twist' },
+    { id: 'playlist', number: 6, label: 'Tu Playlist de Academias', shortTitle: 'Academias' },
+    { id: 'outro', number: 7, label: 'Infografía Grid 2027', shortTitle: 'Grid 2027' },
   ],
 
   intro: {
@@ -308,7 +318,12 @@ const WRAPPED_DATA = {
     highlightedPhrase: 'modo Agéntico',
     subtitle: 'Septiembre 2026 – Enero 2027',
     description:
-      'De las primeras PoCs a sistemas multi-agente en producción, nuevos frameworks de diagnóstico y la evolución hacia el Consulting Grid 2027.',
+      'De soluciones agénticas en producción y prototipado rápido con Vibecoding a la evolución hacia el Nuevo Consulting Grid 2027.',
+    contextBox: {
+      badge: 'ORIGEN · CLIMATE SURVEY',
+      title: '¿Por qué retomamos las sesiones del Chapter?',
+      text: 'Este espacio surgió directamente a raíz de la falta de una instancia dedicada para el equipo de Consulting, una necesidad clave detectada en el Climate Survey del año pasado para compartir experiencias reales, aprendizajes técnicos y construir comunidad.',
+    },
     ctaText: 'Empezar el recorrido',
     gif: ASSETS.gifs.introSparkles,
     logo: ASSETS.logosAndDemos.logoArtefact,
@@ -317,7 +332,7 @@ const WRAPPED_DATA = {
   stats: {
     eyebrow: 'EL AÑO EN NÚMEROS · 2026–2027',
     title: 'Un semestre de alto impacto y evolución continua',
-    subtitle: 'Cada sesión fue una oportunidad para compartir casos reales, herramientas tácticas y construir juntos el estándar del consultor agéntico.',
+    subtitle: 'Cada sesión fue diseñada para responder al Climate Survey: compartir casos reales, herramientas tácticas y construir juntos el estándar del consultor agéntico.',
     gif: ASSETS.gifs.statsRocket,
     counters: [
       {
@@ -326,29 +341,29 @@ const WRAPPED_DATA = {
         prefix: '',
         suffix: '',
         label: 'Sesiones de Chapter',
-        sublabel: 'De Septiembre 2026 a Enero 2027 con asistencia récord del equipo',
+        sublabel: 'Instancia quincenal dedicada al equipo de Consulting (Sep 2026 – Ene 2027)',
         accent: 'from-[#E6007E] to-[#8B5CF6]',
-        tags: ['Kick-off', 'Casos Reales', 'Labs', 'Carrera & Bono'],
+        tags: ['5 Realizadas', '3 Próximamente (TBD)', '1 Espacio Disponible'],
       },
       {
         id: 'speakers',
         value: 15,
         prefix: '+',
         suffix: '',
-        label: 'Speakers en Escena',
+        label: 'Speakers & Equipo',
         sublabel: 'Consultores, Managers, Tech Leads y People compartiendo conocimiento real',
         accent: 'from-[#8B5CF6] to-[#3B82F6]',
-        tags: ['Hosts', 'Speakers de Proyecto', 'Agentic Lab', 'People Team'],
+        tags: ['Equipo Chapter', 'Speakers de Proyecto', 'Agentic Lab', 'People Team'],
       },
       {
         id: 'cases',
         value: 4,
         prefix: '',
         suffix: '',
-        label: 'Grandes Casos y Herramientas',
-        sublabel: 'Soluciones accionables presentadas con demos en vivo al Chapter',
+        label: 'Grandes Casos y ArteTalks',
+        sublabel: 'Soluciones accionables presentadas con demos reales y links a presentaciones',
         accent: 'from-[#3B82F6] to-[#06B6D4]',
-        tags: ['Cencosud', 'Carozzi', 'Palacio de Hierro', 'Portal de Diagnóstico'],
+        tags: ['Cencosud (LIA 2.0)', 'Carozzi (4 PoCs)', 'Vibecoding (4 Demos)', 'Palacio de Hierro'],
       },
       {
         id: 'evolution',
@@ -356,34 +371,51 @@ const WRAPPED_DATA = {
         prefix: '',
         suffix: '',
         label: 'Gran Evolución',
-        sublabel: 'Rediseño estructural del modelo de evaluación, carrera y badges',
+        sublabel: 'Rediseño estructural hacia el Nuevo Consulting Grid 2027 (People Review 2027.1)',
         accent: 'from-[#E6007E] via-[#8B5CF6] to-[#3B82F6]',
-        tags: ['Consulting Grid 2027', '60 Puntos Máx.', '24 Badges', 'AI PM'],
+        tags: ['15 Skills (+2)', '7 Categorías', '60 Puntos Máx.', '24 Badges'],
       },
     ],
   },
 
   speakers: {
     eyebrow: 'NUESTRO LINE-UP ESTELAR',
-    title: 'Top Speakers: Las voces que hicieron vibrar el Chapter',
-    subtitle: 'Como en todo gran Wrapped, estos fueron los artistas principales que compartieron sus aprendizajes, dolores y victorias.',
+    title: 'Equipo del Chapter & Speakers Destacados',
+    subtitle: 'El equipo impulsor del Chapter (con sus recientes incorporaciones) y los speakers que compartieron sus proyectos, aprendizajes y demos.',
     headerGifs: {
       speakers: ASSETS.gifs.speakers,
       microphone: ASSETS.gifs.microphone,
     },
-    podiumHost: {
-      rank: '#1 TOP HOSTS DEL AÑO',
+    podiumTeam: {
+      rank: '#1 EQUIPO DEL CHAPTER',
       names: 'Camilo & Guillaume',
-      role: 'Anfitriones del Chapter · Conducción, Kick-Off, Path del Consultor & Grid 2027',
+      role: 'Equipo impulsor del Chapter · Conducción, Kick-Off, Path del Consultor & Grid 2027',
       photo: ASSETS.personas.camiloYGuille,
-      sessionsCount: '9 sesiones lideradas',
-      badge: 'Chapter Leads & Hosts',
+      sessionsCount: 'Ciclo 2026–2027',
+      badge: 'Equipo Chapter Consulting',
+      recentAdditionsTitle: 'Incorporaciones Recientes al Equipo',
+      recentAdditions: [
+        {
+          id: 'team-ines',
+          name: 'Inés',
+          role: 'Incorporación Reciente · Equipo Chapter',
+          photo: ASSETS.personas.ines,
+          cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
+        },
+        {
+          id: 'team-rocio',
+          name: 'Rocío',
+          role: 'Incorporación Reciente · Equipo Chapter',
+          photo: ASSETS.personas.rocio,
+          cropStyle: { objectPosition: '50% 18%', scale: 1.32 },
+        },
+      ],
     },
     featuredPhotoSpeakers: [
       {
         id: 'maite',
         name: 'Maite',
-        role: 'Experiencia Cencosud & Kick-Off',
+        role: 'Cencosud · LIA 2.0 & Kick-Off',
         sessionTag: '25/09 · Kick-Off & Cenco',
         photo: ASSETS.personas.maite,
         cropStyle: { objectPosition: '50% 18%', scale: 1.35 },
@@ -391,7 +423,7 @@ const WRAPPED_DATA = {
       {
         id: 'clemente',
         name: 'Clemente',
-        role: 'Experiencia Cencosud & Kick-Off',
+        role: 'Cencosud · LIA 2.0 & Kick-Off',
         sessionTag: '25/09 · Kick-Off & Cenco',
         photo: ASSETS.personas.clemente,
         cropStyle: { objectPosition: '50% 16%', scale: 1.32 },
@@ -399,7 +431,7 @@ const WRAPPED_DATA = {
       {
         id: 'rocio',
         name: 'Rocío',
-        role: 'Caso Carozzi: De PoCs a Producción',
+        role: 'Caso Carozzi & Equipo Chapter',
         sessionTag: '09/10 · Experiencia Carozzi',
         photo: ASSETS.personas.rocio,
         cropStyle: { objectPosition: '50% 18%', scale: 1.32 },
@@ -407,7 +439,7 @@ const WRAPPED_DATA = {
       {
         id: 'javier',
         name: 'Javier',
-        role: 'Demo Táctica de 2 PoCs de Agentes',
+        role: 'Caso Carozzi · 4 PoCs Agénticos',
         sessionTag: '09/10 · Experiencia Carozzi',
         photo: ASSETS.personas.javier,
         cropStyle: { objectPosition: '50% 16%', scale: 1.34 },
@@ -415,60 +447,60 @@ const WRAPPED_DATA = {
       {
         id: 'israel',
         name: 'Israel',
-        role: 'Buenas Prácticas & Chatbot de Campaña',
-        sessionTag: '23/10 · Automation',
+        role: 'Del pensamiento consultivo al Vibecoding',
+        sessionTag: '23/10 · Vibecoding',
         photo: ASSETS.personas.israel,
         cropStyle: { objectPosition: '50% 14%', scale: 1.38 },
+      },
+      {
+        id: 'joaquin-ruiz',
+        name: 'Joaquín Ruíz',
+        role: 'Nuevo Consulting Grid 2027 & Bono',
+        sessionTag: '20/11 & 08/01 · Grid & Bono',
+        photo: ASSETS.personas.joaquinRuiz,
+        cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
+      },
+      {
+        id: 'valentina-gana',
+        name: 'Valentina Gana',
+        role: 'Portal RFI + Diagnóstico + Roadmap',
+        sessionTag: '04/12 · Diagnóstico (TBD)',
+        photo: ASSETS.personas.valentinaGana,
+        cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
+      },
+      {
+        id: 'ines',
+        name: 'Inés',
+        role: 'Incorporación Reciente · Equipo Chapter',
+        sessionTag: 'Nuevo Fichaje · Equipo',
+        photo: ASSETS.personas.ines,
+        cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
       },
       {
         id: 'team-palacio',
         name: 'Team Palacio de Hierro',
         role: 'Diego Bendicho, Iñaki & Isabela',
-        sessionTag: '06/11 & 18/12 · Agentic Lab',
+        sessionTag: '06/11 · Agentic Lab',
         photo: ASSETS.personas.teamPalacioHierro,
         isTeamCard: true,
       },
     ] as SpeakerItem[],
     initialsSpeakers: [
       {
-        id: 'joaco',
-        name: 'Joaco (Joaquín)',
-        initials: 'JQ',
-        role: 'Bono & Consulting Grid 2027',
-        sessionTag: '08/01 · Bono & Grid',
-        gradient: 'from-[#E6007E] to-[#8B5CF6]',
-      },
-      {
-        id: 'valentina',
-        name: 'Valentina',
-        initials: 'VA',
-        role: 'Portal RFI + Diagnóstico + Roadmap',
-        sessionTag: '04/12 · Diagnóstico',
-        gradient: 'from-[#8B5CF6] to-[#3B82F6]',
-      },
-      {
-        id: 'laura',
-        name: 'Laura',
-        initials: 'LA',
-        role: 'Palacio de Hierro · Agentic Lab',
-        sessionTag: '06/11 & 18/12 · Agentic Lab',
-        gradient: 'from-[#3B82F6] to-[#06B6D4]',
-      },
-      {
-        id: 'simones',
-        name: 'Simones',
-        initials: 'SI',
-        role: 'Palacio de Hierro · Agentic Lab',
-        sessionTag: '06/11 & 18/12 · Agentic Lab',
-        gradient: 'from-[#EC4899] to-[#F43F5E]',
-      },
-      {
         id: 'people',
         name: 'People Team',
         initials: 'PP',
         role: 'Path del Consultor & Artefactory',
-        sessionTag: '22/01 · Carrera & Cursos',
+        sessionTag: '22/01 · Carrera & Cursos (TBD)',
         gradient: 'from-[#6366F1] to-[#E6007E]',
+      },
+      {
+        id: 'apoyos',
+        name: 'Equipo de Apoyos',
+        initials: 'AP',
+        role: 'Co-construcción Portal de Diagnóstico',
+        sessionTag: '04/12 · Diagnóstico (TBD)',
+        gradient: 'from-[#3B82F6] to-[#06B6D4]',
       },
     ] as SpeakerItem[],
   },
@@ -476,28 +508,56 @@ const WRAPPED_DATA = {
   timeline: {
     eyebrow: 'NUESTROS HITS DEL AÑO · TRACK BY TRACK',
     title: 'Línea de Tiempo Interactiva',
-    subtitle: 'Haz clic en cada sesión para explorar los entregables, aprendizajes clave y abrir las capturas de demos en pantalla completa.',
+    subtitle: 'Explora las sesiones realizadas (con sus 3 puntos clave, capturas y link a presentación) y las sesiones programadas (TBD).',
+    currentDateMarkerLabel: '📍 HOY ESTAMOS ACÁ',
     sessions: [
       {
-        id: '25-09-kickoff',
+        id: '25-09-kickoff-lia',
         date: '25/09',
         monthLabel: 'SEPTIEMBRE 2026',
-        title: 'Kick-Off & Cenco',
-        subtitle: 'One Pager, Encuesta de Clima y experiencia Cencosud',
+        status: 'completed',
+        statusBadge: 'Realizada',
+        title: 'Kick-Off & Cenco — LIA',
+        subtitle: 'Evolución del dominio de Clientes en Cencosud y desarrollo de LIA 2.0 (Loyalty Intelligence Assistant)',
         summary:
-          'Arrancamos la temporada definiendo el propósito del Chapter en el One Pager oficial, revisando el pulso del equipo en la Encuesta de Clima y aterrizando aprendizajes reales del cliente Cencosud.',
+          'Evolución del dominio de Clientes en Cencosud y desarrollo de LIA 2.0 (Loyalty Intelligence Assistant), un chatbot en Teams potenciado por Copilot y Databricks para consultas comerciales en lenguaje natural.',
         gif: ASSETS.gifs.septKickoff,
+        featuredImage: ASSETS.logosAndDemos.logoCencosud,
+        featuredImageBadge: 'Caso Cencosud · LIA 2.0 (Copilot + Databricks)',
         clientLogo: ASSETS.logosAndDemos.logoCencosud,
         clientName: 'Cencosud',
+        presentationUrl: 'https://docs.google.com/presentation/d/1P8G2oMrerPRBGAos6YMonhEvgfDOoWm9ixPWK8pbego/edit?usp=sharing',
+        presentationLabel: 'Ver Presentación Kick-Off & Cenco — LIA',
         speakers: [
-          { name: 'Camilo & Guille', photo: ASSETS.personas.camiloYGuille },
+          { name: 'Camilo & Guillaume', photo: ASSETS.personas.camiloYGuille },
           { name: 'Maite', photo: ASSETS.personas.maite, cropStyle: { objectPosition: '50% 18%', scale: 1.35 } },
           { name: 'Clemente', photo: ASSETS.personas.clemente, cropStyle: { objectPosition: '50% 16%', scale: 1.32 } },
         ],
-        highlights: [
-          'Lanzamiento del One Pager del Chapter con visión, rituales y objetivos del ciclo 2026–2027.',
-          'Análisis abierto de la Encuesta de Clima: foco en visibilidad de proyectos, herramientas técnicas y acompañamiento.',
-          'Deep-dive en la experiencia Cencosud: estructuración del servicio, gestión de stakeholders y valor entregado por Maite y Clemente.',
+        keyPoints: [
+          {
+            title: '1. Arquitectura & Capa Semántica',
+            description:
+              'Flujo automatizado (PBIP → Markdown) que consolida reportería dispersa, audita fórmulas DAX y alimenta a los agentes con definiciones gobernadas sin alucinaciones.',
+          },
+          {
+            title: '2. 4 Genie Agents productivos',
+            description:
+              'Especializados en Prime y suscripciones, Canjes y beneficios, Clientes y engagement y Ventas, TyC y locales (sobre 36 fuentes gobernadas y 75 reglas críticas).',
+          },
+          {
+            title: '3. Impacto y aprendizajes',
+            description:
+              'Salto en precisión del 47% (LIA 1.0) al 94% (LIA 2.0), reducción de ~80% en tiempos de consulta y demostración de que perfiles consulting pueden crear soluciones técnicas de alto nivel.',
+          },
+        ],
+        demos: [
+          {
+            id: 'cenco-lia-card',
+            title: 'Cencosud · LIA 2.0 (Loyalty Intelligence Assistant)',
+            subtitle: 'Salto de precisión del 47% al 94% y reducción de ~80% en tiempos de consulta sobre 36 fuentes gobernadas.',
+            src: ASSETS.logosAndDemos.logoCencosud,
+            badge: 'Caso Cencosud · LIA 2.0',
+          },
         ],
         accentColor: '#3B82F6',
       },
@@ -505,47 +565,38 @@ const WRAPPED_DATA = {
         id: '09-10-carozzi',
         date: '09/10',
         monthLabel: 'OCTUBRE 2026',
+        status: 'completed',
+        statusBadge: 'Realizada',
         title: 'Experiencia Carozzi',
-        subtitle: 'De dolores y PoCs a soluciones agénticas en producción + Demo táctica de 2 PoCs',
+        subtitle: 'Adopción de IA con impacto directo en EBITDA bajo el Journey de Cultura Agéntica',
         summary:
-          'Rocío y Javier nos llevaron por la transformación completa en Carozzi: cómo evolucionar desde pruebas de concepto aisladas hacia productos agénticos en producción con impacto cuantificable en el negocio.',
+          'Proyecto de adopción de IA en Carozzi con impacto directo en EBITDA bajo el Journey de Cultura Agéntica (Escuchar, Construir y Acompañar).',
         gif: ASSETS.gifs.octCarozzi,
+        featuredImage: ASSETS.logosAndDemos.demoCatman,
+        featuredImageBadge: 'Caso Carozzi · 4 PoCs Agénticos en 2 Meses',
         clientLogo: ASSETS.logosAndDemos.logoCarozzi,
         clientName: 'Carozzi',
+        presentationUrl: 'https://docs.google.com/presentation/d/1jMasX0BOvfTftUpzU1RRyP9zAPkEQdWuPGkNbvQueWY/edit?usp=sharing',
+        presentationLabel: 'Ver Presentación Experiencia Carozzi',
         speakers: [
           { name: 'Rocío', photo: ASSETS.personas.rocio, cropStyle: { objectPosition: '50% 18%', scale: 1.32 } },
           { name: 'Javier', photo: ASSETS.personas.javier, cropStyle: { objectPosition: '50% 16%', scale: 1.34 } },
         ],
-        highlights: [
-          'De dolores operativos reales y PoCs iniciales a soluciones agénticas robustas corriendo en producción.',
-          'Demo táctica en vivo por Javi mostrando 2 PoCs de agentes aplicados a Category Management (Catman).',
-          'Flujo end-to-end: configuración de estructura de presentación, generación automatizada por bloques y ensamblado final.',
-        ],
-        keyLearnings: [
+        keyPoints: [
           {
-            number: 1,
-            title: 'Valorización',
-            description: 'Cuantificar desde el día uno el impacto en horas ahorradas y decisiones de negocio para justificar la inversión.',
+            title: '1. 4 PoCs agénticos en 2 meses',
+            description:
+              'Catman y Cobertura Grandes Cuentas (Inteligencia Comercial), más Gastos de Obsolescencia y Variación de Costos (Control de Gestión).',
           },
           {
-            number: 2,
-            title: 'Productos vs. PoCs',
-            description: 'Diseñar pensando en escalabilidad, mantenibilidad y experiencia de usuario final, no solo en una demo funcional.',
+            title: '2. Arquitectura y Capacitación',
+            description:
+              'Diseño de arquitectura To-Be en Microsoft Azure / Fabric y 3 workshops aplicados (Copilot, Claude y Adopción de Soluciones).',
           },
           {
-            number: 3,
-            title: 'Datos Gobernados',
-            description: 'Sin calidad, trazabilidad y gobierno en las fuentes de datos, ningún agente puede sostener resultados confiables en producción.',
-          },
-          {
-            number: 4,
-            title: 'Gestión del Cambio',
-            description: 'Involucrar a los usuarios de negocio en la co-creación para asegurar adopción real y confianza en el agente.',
-          },
-          {
-            number: 5,
-            title: 'Upstream vs. Downstream',
-            description: 'Mapear todo el proceso: entender qué ocurre antes de la ingesta (upstream) y cómo se consume el output en la toma de decisión (downstream).',
+            title: '3. 6 Aprendizajes clave',
+            description:
+              'Pasar de PoCs aisladas a producto funcional, arquitectura gobernada como base, perfiles consulting como puente técnico-negocio y transferencia de valorización al cliente.',
           },
         ],
         demos: [
@@ -554,71 +605,114 @@ const WRAPPED_DATA = {
             title: 'CATMAN · Análisis Canasta Mascotas',
             subtitle: 'Generación automatizada de slides por sección (Apertura, Canasta, Shopper, Cuantitativo) con estado del run en tiempo real.',
             src: ASSETS.logosAndDemos.demoCatman,
-            badge: 'Demo PoC #1 · Catman Run',
+            badge: 'PoC #1 · Catman Run',
           },
           {
             id: 'agente-catman',
             title: 'Agente CATMAN · Orquestador de Estructura',
             subtitle: 'Configuración modular de 22 slides activables por bloque (Canasta, Shopper) antes de disparar la generación agéntica.',
             src: ASSETS.logosAndDemos.demoAgenteCatman,
-            badge: 'Demo PoC #2 · Agente Catman',
+            badge: 'PoC #2 · Agente Catman',
           },
           {
             id: 'team-carozzi-art',
             title: 'Equipo Carozzi · De una idea a impacto real (100%)',
-            subtitle: 'Catman, Cobertura GC, Obsolescencia y Variación de Costos llevados a producción.',
+            subtitle: 'Catman, Cobertura GC, Obsolescencia y Variación de Costos llevados a impacto real.',
             src: ASSETS.drawings.teamCarozzi,
-            badge: 'Arte del Equipo · Carozzi',
+            badge: 'Equipo Carozzi · 4 PoCs',
           },
         ],
         accentColor: '#E6007E',
       },
       {
-        id: '23-10-automation',
+        id: '23-10-vibecoding',
         date: '23/10',
         monthLabel: 'OCTUBRE 2026',
-        title: 'Automation',
-        subtitle: 'Buenas prácticas de levantamiento y Chatbot de Campaña',
+        status: 'completed',
+        statusBadge: 'Realizada',
+        title: '¿Y si lo intento hacer yo? — Vibecoding',
+        subtitle: 'Del pensamiento consultivo al Vibecoding: prototipado rápido como puente entre negocio y tecnología',
         summary:
-          'Israel compartió la metodología práctica para realizar levantamientos de procesos orientados a automatización sin fricción y presentó la arquitectura del Chatbot de Campaña.',
+          'ArteTalk sobre cómo el consultor actúa como puente entre negocio y tecnología, usando el prototipado rápido (Vibecoding) para volver las ideas visibles y discutibles antes de escalar, sin reemplazar al equipo técnico.',
         gif: ASSETS.gifs.octAutomation,
+        featuredImage: ASSETS.gifs.octAutomation,
+        featuredImageBadge: 'ArteTalk · Del pensamiento consultivo al Vibecoding',
+        presentationUrl: 'https://docs.google.com/presentation/d/1mESU0DpsmgXbFK6XlCdwsbcmFFXqVZ08/edit?usp=sharing&ouid=107718354235638921087&rtpof=true&sd=true',
+        presentationLabel: 'Ver Presentación Vibecoding (ArteTalk)',
         speakers: [
           { name: 'Israel', photo: ASSETS.personas.israel, cropStyle: { objectPosition: '50% 14%', scale: 1.38 } },
         ],
-        highlights: [
-          'Framework de buenas prácticas para levantamiento de procesos antes de automatizar: identificación de cuellos de botella, reglas de negocio y excepciones.',
-          'Caso práctico: diseño y despliegue del Chatbot de Campaña para acelerar la atención y conversión.',
-          'Checklist táctico para evitar re-trabajos entre consultoría de negocio y desarrollo técnico.',
+        keyPoints: [
+          {
+            title: '1. El tercer camino (Cabeza, Brazos y Pala)',
+            description:
+              'Combinar el criterio consultivo con la IA para prototipar rápido y reducir la ambigüedad entre la idea de negocio y el desarrollo técnico.',
+          },
+          {
+            title: '2. 4 experimentos reales en vivo',
+            description:
+              'HTML → PPTX (entregables iterables), Campaign OS (orquestación y dependencias), MDP+ (asistente RAG con fuentes verificables) y Journey Viajero (propuesta comercial interactiva).',
+          },
+          {
+            title: '3. Aprendizaje clave',
+            description:
+              'No se trata de hacer más apps, sino de tener mejores conversaciones; el triángulo ideal para el próximo experimento es atacar un problema que duela, se repita y consuma tiempo.',
+          },
+        ],
+        demos: [
+          {
+            id: 'vibecoding-experiments',
+            title: '4 Experimentos en Vivo · Vibecoding en Consultoría',
+            subtitle: 'HTML → PPTX, Campaign OS, MDP+ (RAG verificable) y Journey Viajero: atacar problemas que duelan, se repitan y consuman tiempo.',
+            src: ASSETS.gifs.octAutomation,
+            badge: '4 Demos · Vibecoding',
+          },
         ],
         accentColor: '#8B5CF6',
       },
       {
-        id: '06-11-18-12-palacio',
-        date: '06/11 & 18/12',
-        monthLabel: 'NOV & DIC 2026',
-        title: 'Palacio de Hierro (Agentic Lab)',
-        subtitle: 'Doble entrega práctica: "ArteTalk: Crackeando Palacio – Aprendizajes de un Agentic Lab"',
+        id: '06-11-palacio',
+        date: '06/11',
+        monthLabel: 'NOVIEMBRE 2026',
+        status: 'completed',
+        statusBadge: 'Realizada',
+        title: 'Palacio de Hierro — Agentic Lab',
+        subtitle: 'ArteTalk: Crackeando Palacio · Primer Agentic Lab en retail de lujo junto a AWS',
         summary:
-          'Una sesión doble épica liderada por el equipo de México y LATAM (Diego Bendicho, Iñaki, Isa, Laura y Simones), abriendo la cocina de cómo estructurar y ejecutar un Agentic Lab de alto impacto.',
+          'ArteTalk: Crackeando Palacio. Creación del primer Agentic Lab en retail de lujo junto a AWS, priorizando +30 casos de uso en 4 soluciones clave con impacto directo en P&L.',
         gif: ASSETS.gifs.novLab,
+        featuredImage: ASSETS.logosAndDemos.demoArtetalkPalacios,
+        featuredImageBadge: 'ArteTalk: Crackeando Palacio · Agentic Lab',
         clientLogo: ASSETS.logosAndDemos.logoPalacioHierro,
         clientName: 'El Palacio de Hierro',
         clientLogoDarkInvert: true,
+        presentationUrl: 'https://docs.google.com/presentation/d/10E-SIx3mmUj4yq_orJEgSFT3dUx6jpqOr7Xh0-kbIqA/edit?usp=sharing',
+        presentationLabel: 'Ver Presentación Palacio de Hierro — Agentic Lab',
         speakers: [
-          { name: 'Diego, Iñaki & Isa', photo: ASSETS.personas.teamPalacioHierro },
-          { name: 'Laura', initials: 'LA' },
-          { name: 'Simones', initials: 'SI' },
+          { name: 'Diego Bendicho, Iñaki & Isabela', photo: ASSETS.personas.teamPalacioHierro },
         ],
-        highlights: [
-          'Primera entrega (06/11): Estructuración del Agentic Lab, descubrimiento de casos de uso y alineación con stakeholders de El Palacio de Hierro.',
-          'Segunda entrega (18/12): Resultados tácticos, arquitectura agéntica implementada y lecciones aprendidas para escalar Labs en retail de lujo.',
-          'Presentación insignia "ArteTalk: Crackeando Palacio" con el blueprint replicable para toda la región.',
+        keyPoints: [
+          {
+            title: '1. 4 Casos de Uso en producción',
+            description:
+              'Data para Líderes en Tienda (briefings diarios por WhatsApp), Merchant Copilot (acciones tácticas de margen), Bonificaciones (cálculo automático con backtesting +4,9% en Tecno y +1,9% en Hogar) y Cobranza (modelos ML para Mora 2 y 3).',
+          },
+          {
+            title: '2. Impacto proyectado',
+            description:
+              'Mejoras esperadas de hasta +0,2 pp en venta neta y margen, reducción de mora y liberación de FTEs en piso de venta y áreas comerciales.',
+          },
+          {
+            title: '3. Aprendizajes del Lab',
+            description:
+              'Inmersión total en piso de venta, gestión de múltiples stakeholders, resiliencia frente a cambios de scope y trabajo integrado con AWS ProServe.',
+          },
         ],
         demos: [
           {
             id: 'artetalk-palacios',
             title: 'ArteTalk: Crackeando Palacio',
-            subtitle: 'Aprendizajes de un Agentic Lab para El Palacio de Hierro (Diego Bendicho, Iñaki, Isabela, Laura y Simones).',
+            subtitle: 'Aprendizajes de un Agentic Lab para El Palacio de Hierro junto a AWS ProServe (Diego Bendicho, Iñaki e Isabela).',
             src: ASSETS.logosAndDemos.demoArtetalkPalacios,
             badge: 'Presentación · Agentic Lab',
           },
@@ -626,59 +720,155 @@ const WRAPPED_DATA = {
         accentColor: '#F59E0B',
       },
       {
+        id: '20-11-grid',
+        date: '20/11',
+        monthLabel: 'NOVIEMBRE 2026',
+        status: 'completed',
+        statusBadge: 'Realizada',
+        isCurrentMarkerAfter: true,
+        title: 'Nuevo Consulting Grid 2027',
+        subtitle: 'Evolución a 15 skills, 7 categorías, 60 puntos máximos y 24 nuevos badges (Joaquín Ruíz y Camilo)',
+        summary:
+          'Presentación oficial del Nuevo Consulting Grid 2027 liderada por Joaquín Ruíz y Camilo: rediseño del modelo de evaluación y carrera con foco en AI & Data Fluency, Mindset AI Product Manager y un nuevo catálogo de 24 badges.',
+        gif: ASSETS.gifs.statsRocket,
+        featuredImage: ASSETS.drawings.chapterGridIllustration,
+        featuredImageBadge: 'Consulting Grid 2027 · 60 Puntos & 24 Badges',
+        presentationUrl: '#slide-outro-grid',
+        presentationLabel: 'Ver Infografía Completa del Grid 2027',
+        speakers: [
+          { name: 'Joaquín Ruíz', photo: ASSETS.personas.joaquinRuiz, cropStyle: { objectPosition: '50% 50%', scale: 1.18 } },
+          { name: 'Camilo', photo: ASSETS.personas.camiloYGuille },
+        ],
+        keyPoints: [
+          {
+            title: '1. El salto en cifras y 3 nuevas skills',
+            description:
+              'De 13 a 15 skills (+2), de 6 a 7 categorías (nueva: AI & Data Fluency) y de 52 a 60 puntos máximos. Se suman AI Fluency, Data Analysis y Solution Framing.',
+          },
+          {
+            title: '2. Mindset AI PM y Regla de Skills Esenciales',
+            description:
+              'Uso responsable de IA y pensamiento de producto transversales, junto con calificación mínima obligatoria en skills esenciales según seniority (sin compensación).',
+          },
+          {
+            title: '3. 24 Badges y Timeline Oficial',
+            description:
+              '24 badges (10 Técnicas, 7 Oferta, 7 Industria) con nivel máximo Thought Leader sin regla de tiempo mínimo. H2 2026 evalúa con grid actual; el nuevo aplica en People Review 2027.1.',
+          },
+        ],
+        demos: [
+          {
+            id: 'grid-2027-illustration',
+            title: 'Nuevo Consulting Grid 2027 · 60 Puntos & Bono',
+            subtitle: 'Camilo y Joaquín Ruíz presentando la evolución a 60 puntos, 15 skills y 24 badges.',
+            src: ASSETS.drawings.chapterGridIllustration,
+            badge: 'Ilustración · Grid 2027',
+          },
+        ],
+        accentColor: '#E6007E',
+      },
+      {
         id: '04-12-diagnostico',
         date: '04/12',
         monthLabel: 'DICIEMBRE 2026',
+        status: 'tbd',
+        statusBadge: 'Próximamente · TBD',
         title: 'Herramienta de Diagnóstico',
-        subtitle: 'Portal que construye RFI + Diagnóstico + Entregable de Roadmap (Valentina + Apoyos)',
+        subtitle: 'Portal que construye RFI + Diagnóstico + Entregable de Roadmap (Valentina Gana + Apoyos)',
         summary:
-          'Valentina y el equipo de apoyo presentaron un acelerador clave para consultoría: un portal integral que automatiza desde la creación del RFI hasta el diagnóstico de madurez y el entregable final de Roadmap.',
+          'Sesión programada (TBD): Valentina Gana y el equipo de apoyos presentarán el portal integral que automatiza desde la creación del RFI hasta el diagnóstico de madurez y el entregable final de Roadmap.',
         gif: ASSETS.gifs.dicDiagnostico,
+        presentationUrl: '#',
+        presentationLabel: 'Link a presentación (Disponible tras la sesión)',
         speakers: [
-          { name: 'Valentina', initials: 'VA' },
+          { name: 'Valentina Gana', photo: ASSETS.personas.valentinaGana, cropStyle: { objectPosition: '50% 50%', scale: 1.18 } },
           { name: 'Equipo de Apoyos', initials: 'AP' },
         ],
-        highlights: [
-          'Generación estructurada de RFI adaptada a la industria y dolor del cliente en minutos.',
-          'Motor de Diagnóstico que procesa los hallazgos y evalúa dimensiones clave de madurez.',
-          'Construcción automática del Entregable de Roadmap listo para presentar a dirección.',
+        keyPoints: [
+          {
+            title: '1. Generación de RFI automatizada',
+            description: 'Construcción estructurada de cuestionarios RFI adaptados a la industria y dolores del cliente.',
+          },
+          {
+            title: '2. Motor de Diagnóstico de Madurez',
+            description: 'Procesamiento estandarizado de hallazgos para evaluar dimensiones técnicas y de negocio.',
+          },
+          {
+            title: '3. Entregable de Roadmap accionable',
+            description: 'Generación directa del roadmap de iniciativas priorizadas listo para presentar a stakeholders.',
+          },
         ],
         accentColor: '#06B6D4',
+      },
+      {
+        id: '18-12-disponible',
+        date: '18/12',
+        monthLabel: 'DICIEMBRE 2026',
+        status: 'available',
+        statusBadge: 'Espacio Disponible · TBD',
+        title: 'Espacio Disponible',
+        subtitle: 'Slot abierto para nueva iniciativa o caso del Chapter de Consulting',
+        summary:
+          'Espacio disponible en la agenda del Chapter (el caso de Palacio de Hierro fue consolidado y presentado integralmente en la sesión del Agentic Lab del 06/11). Abierto para postular un nuevo caso o herramienta del equipo.',
+        gif: ASSETS.gifs.introSparkles,
+        presentationUrl: '#',
+        presentationLabel: 'Espacio disponible para presentación',
+        speakers: [
+          { name: 'Por definir (Espacio Abierto)', initials: 'TBD' },
+        ],
+        keyPoints: [
+          {
+            title: '1. Slot abierto para el equipo',
+            description: 'Espacio liberado tras integrar la experiencia de Palacio de Hierro en la sesión del Agentic Lab.',
+          },
+          {
+            title: '2. Formato estándar ArteTalk / Caso',
+            description: 'Oportunidad para presentar un nuevo experimento, PoC agéntico o aprendizaje de proyecto en 3 puntos clave.',
+          },
+          {
+            title: '3. Postulación abierta',
+            description: 'Coordina con el Equipo del Chapter para agendar tu demo o caso en esta fecha.',
+          },
+        ],
+        accentColor: '#64748B',
       },
       {
         id: '08-01-bono',
         date: '08/01',
         monthLabel: 'ENERO 2027',
-        title: 'Bono (Joaquín)',
-        subtitle: 'Aclaración de bono con ejemplos claros y resolución de dudas en vivo',
+        status: 'tbd',
+        statusBadge: 'Próximamente · TBD',
+        title: 'Bono (Joaquín Ruíz)',
+        subtitle: 'Aclaración de bono con ejemplos claros y resolución de dudas',
         summary:
-          'Joaco lideró una sesión 100% transparente para despejar todas las incógnitas sobre el esquema de bonos: pasamos de las dudas iniciales a simulaciones y ejemplos numéricos clarísimos.',
+          'Sesión programada (TBD): Joaquín Ruíz liderará una sesión práctica para despejar todas las dudas sobre el esquema de bonos mediante simulaciones y ejemplos claros.',
         gif: ASSETS.gifs.confusedThinking,
+        presentationUrl: '#',
+        presentationLabel: 'Link a presentación (Disponible tras la sesión)',
         speakers: [
-          { name: 'Joaquín (Joaco)', initials: 'JQ' },
+          { name: 'Joaquín Ruíz', photo: ASSETS.personas.joaquinRuiz, cropStyle: { objectPosition: '50% 50%', scale: 1.18 } },
         ],
-        highlights: [
-          'Espacio abierto para resolver todas las preguntas sobre métricas individuales, performance de compañía y ponderaciones.',
-          'Modelado paso a paso con casos prácticos por nivel para que cada consultor entienda exactamente cómo se calcula su bono.',
-          'Alineación directa con los objetivos del nuevo ciclo 2027.',
+        keyPoints: [
+          {
+            title: '1. Resolución de dudas iniciales',
+            description: 'Espacio abierto para aclarar ponderaciones, métricas individuales y objetivos de compañía.',
+          },
+          {
+            title: '2. Simulación con ejemplos claros',
+            description: 'Casos prácticos numéricos por nivel para comprender el cálculo exacto del bono.',
+          },
+          {
+            title: '3. Alineación ciclo 2027',
+            description: 'Conexión directa entre el desempeño en el Consulting Grid y los incentivos anuales.',
+          },
         ],
         bonusInteractive: {
           initialLabel: 'Fase 1: Dudas Iniciales',
-          initialText: '¿Cómo pondera cada variable? ¿Qué pasa en cambios de nivel o sobrecumplimiento? El equipo llegó con mil preguntas...',
+          initialText: '¿Cómo pondera cada variable? ¿Qué pasa en cambios de nivel o sobrecumplimiento? Resolviendo todas las preguntas del equipo...',
           initialGif: ASSETS.gifs.confusedThinking,
-          revealedLabel: 'Fase 2: ¡Ejemplos Claros Revelados!',
-          revealedText: 'Con tablas comparativas y escenarios concretos de Joaco, todo quedó 100% claro y transparente para buscar el máximo bono.',
+          revealedLabel: 'Fase 2: ¡Ejemplos Claros!',
+          revealedText: 'Con tablas comparativas y escenarios concretos presentados por Joaquín Ruíz, todo queda 100% claro y transparente.',
           revealedGif: ASSETS.gifs.congrats,
-          examples: [
-            {
-              title: 'Fórmula Desglosada',
-              detail: 'Visibilidad total del peso entre desempeño individual (Grid) y resultados colectivos de Artefact LATAM.',
-            },
-            {
-              title: 'Escenarios Reales Simulados',
-              detail: 'Ejemplos numéricos de cumplimiento al 100% y sobrecumplimiento explicados paso a paso.',
-            },
-          ],
         },
         accentColor: '#10B981',
       },
@@ -686,19 +876,32 @@ const WRAPPED_DATA = {
         id: '22-01-path',
         date: '22/01',
         monthLabel: 'ENERO 2027',
+        status: 'tbd',
+        statusBadge: 'Próximamente · TBD',
         title: 'Path del Consultor & Artefactory',
         subtitle: 'Carrera por nivel y capacitaciones técnicas (Camilo + People)',
         summary:
-          'Cerramos el ciclo conectando el crecimiento profesional con la formación continua: expectativas claras por seniority junto a la malla completa de cursos en Artefactory.',
+          'Sesión programada (TBD): cierre del ciclo conectando el desarrollo de carrera por seniority con la malla oficial de academias y cursos en Artefactory.',
         gif: ASSETS.gifs.eneLevelup,
+        presentationUrl: '#',
+        presentationLabel: 'Link a presentación (Disponible tras la sesión)',
         speakers: [
           { name: 'Camilo', photo: ASSETS.personas.camiloYGuille },
           { name: 'People Team', initials: 'PP' },
         ],
-        highlights: [
-          'Mapa de carrera transparente desde Entry (1–3), pasando por Senior (1–3) hasta Manager (1–2).',
-          'Integración con Artefactory: rutas de aprendizaje curadas en negocio, estructuración, delivery técnico y liderazgo.',
-          'Puente directo hacia el nuevo Consulting Grid 2027 y el sistema de 24 badges.',
+        keyPoints: [
+          {
+            title: '1. Path de carrera por nivel',
+            description: 'Expectativas claras de evolución desde Entry (1–3), pasando por Senior (1–3) hasta Manager (1–2).',
+          },
+          {
+            title: '2. Conexión con Tu Playlist de Academias',
+            description: 'Rutas formativas curadas en Artefactory alineadas a las 15 skills del nuevo Grid.',
+          },
+          {
+            title: '3. Preparación People Review 2027.1',
+            description: 'Guía práctica para planificar objetivos, certificaciones y badges durante el primer semestre de 2027.',
+          },
         ],
         accentColor: '#E6007E',
       },
@@ -709,16 +912,16 @@ const WRAPPED_DATA = {
     eyebrow: 'EL GRAN PLOT TWIST DEL AÑO',
     title: 'Nuevo Consulting Grid 2027 (& Bonus)',
     subtitle: 'Evolucionamos nuestra matriz de talento para reflejar el verdadero ADN del consultor Artefact en la era de la IA Agéntica.',
-    heroImage: ASSETS.drawings.chapterGridMiloJoaco,
-    heroCaption: 'Camilo y Joaco celebrando el salto a los 60 puntos del Consulting Grid 2027 y el Bono.',
+    heroImage: ASSETS.drawings.chapterGridIllustration,
+    heroCaption: 'Camilo y Joaquín Ruíz celebrando el salto a los 60 puntos del Consulting Grid 2027 y el Bono.',
     metricsComparison: [
       {
         id: 'skills-count',
         label: 'Total de Skills Evaluadas',
         from: '13',
         to: '15',
-        unit: 'Skills',
-        subtext: 'De 6 a 7 categorías estratégicas',
+        unit: 'Skills (+2)',
+        subtext: 'AI Fluency, Data Analysis & Solution Framing',
         accent: 'from-[#E6007E] to-[#8B5CF6]',
       },
       {
@@ -727,7 +930,7 @@ const WRAPPED_DATA = {
         from: '6',
         to: '7',
         unit: 'Categorías',
-        subtext: 'Suma AI & Data Fluency al core',
+        subtext: 'Nueva: AI & Data Fluency',
         accent: 'from-[#8B5CF6] to-[#3B82F6]',
       },
       {
@@ -735,68 +938,68 @@ const WRAPPED_DATA = {
         label: 'Puntaje Máximo Posible',
         from: '52',
         to: '60',
-        unit: 'Puntos',
-        subtext: '+8 puntos de techo en la matriz',
+        unit: 'Puntos Máx.',
+        subtext: 'Mismo % de exigencia para promociones',
         accent: 'from-[#3B82F6] to-[#10B981]',
       },
       {
         id: 'badges-count',
-        label: 'Ecosistema de Especialización',
+        label: 'Nuevo Catálogo de Badges',
         from: '0',
         to: '24',
-        unit: 'Nuevos Badges',
-        subtext: 'Distribuidos en 3 familias + Thought Leader',
+        unit: 'Badges',
+        subtext: '3 familias + nivel Thought Leader',
         accent: 'from-[#F59E0B] to-[#E6007E]',
       },
     ],
     evolutions: [
       {
-        id: 'ai-data-fluency',
-        category: 'NUEVA CATEGORÍA (#7)',
-        title: 'AI & Data Fluency',
-        before: '6 categorías tradicionales',
-        after: '7 categorías con IA y Datos en el centro',
-        badgeText: 'Core Category',
+        id: 'three-new-skills',
+        category: '3 NUEVAS SKILLS CLAVE',
+        title: 'AI Fluency, Data Analysis & Solution Framing',
+        before: '13 skills en 6 categorías',
+        after: '15 skills en 7 categorías (AI & Data Fluency)',
+        badgeText: '+3 Skills Clave',
         description:
-          'Se incorpora formalmente como la 7ª categoría del Grid para medir la fluidez real en arquitecturas de datos, GenAI y sistemas agénticos.',
+          'Incorpora AI Fluency, Data Analysis y Solution Framing (validar ideas con prototipos antes de construir) dentro de la nueva categoría AI & Data Fluency.',
         iconName: 'BrainCircuit',
         accent: 'magenta',
       },
       {
-        id: 'solution-framing',
-        category: 'NUEVA SKILL',
-        title: 'Solution Framing',
-        before: '13 skills en el modelo anterior',
-        after: '15 skills (+Solution Framing & AI Fluency)',
-        badgeText: 'Skill #14/#15',
-        description:
-          'Capacidad de traducir problemas ambiguos de negocio en arquitecturas de solución claras, viables y escalables desde la preventa hasta el delivery.',
-        iconName: 'Compass',
-        accent: 'blue',
-      },
-      {
         id: 'ai-pm',
-        category: 'EVOLUCIÓN DE ROL',
-        title: 'Transición a AI Product Manager',
-        before: 'Project / Delivery Management clásico',
-        after: 'AI Product Manager mindset',
-        badgeText: 'Role Evolution',
+        category: 'MINDSET TRANSVERSAL',
+        title: 'Mindset AI Product Manager',
+        before: 'Gestión de delivery tradicional',
+        after: 'Pensamiento de producto + IA responsable',
+        badgeText: 'Transversal',
         description:
-          'Pasamos de gestionar proyectos aislados a liderar productos impulsados por IA con visión de ciclo de vida, adopción, discovery continuo y valor de negocio.',
+          'Uso responsable de IA y pensamiento de producto integrados transversalmente en todas las skills de la matriz.',
         iconName: 'Rocket',
         accent: 'purple',
       },
       {
         id: 'essential-skills',
-        category: 'REGLA DE EXCELENCIA',
-        title: 'Skills Esenciales Sin Compensación',
-        before: 'Promedios que compensaban brechas críticas',
-        after: 'Piso mínimo obligatorio en skills esenciales',
-        badgeText: 'No Compensation Rule',
+        category: 'NUEVA REGLA CORE',
+        title: 'Regla de Skills Esenciales',
+        before: 'Promedios que compensaban brechas',
+        after: 'Calificación mínima obligatoria sin compensación',
+        badgeText: 'Sin Compensación',
         description:
-          'Las skills esenciales de cada nivel son no-negociables: un puntaje alto en otra dimensión ya no compensa estar bajo el estándar en una skill esencial.',
+          'Calificación mínima obligatoria en skills core según seniority, sin posibilidad de compensarlas con puntajes altos en otras skills.',
         iconName: 'ShieldCheck',
         accent: 'emerald',
+      },
+      {
+        id: 'official-timeline',
+        category: 'TIMELINE OFICIAL',
+        title: 'Transición en People Review 2027.1',
+        before: 'H2 2026: Evaluación con Grid actual',
+        after: 'Ene–Jun 2027: Aplica nuevo Grid en PR 2027.1',
+        badgeText: 'PR 2027.1',
+        description:
+          'H2 2026 se evalúa con el grid actual; el nuevo grid de transición aplica oficialmente en el People Review 2027.1 (enero–junio 2027).',
+        iconName: 'Compass',
+        accent: 'blue',
       },
     ] as GridComparisonItem[],
     badgesSystem: {
@@ -804,37 +1007,37 @@ const WRAPPED_DATA = {
       familiesCount: 3,
       topLevel: 'Thought Leader',
       description:
-        'Un sistema de reconocimiento verificable con 24 nuevos badges divididos en 3 familias estratégicas, coronado por el nuevo nivel experto Thought Leader.',
+        '24 nuevos badges en 3 familias, nuevo nivel máximo Thought Leader y eliminación de la regla de tiempo mínimo (cuenta la experiencia demostrada).',
       families: [
         {
           id: 'tech',
           name: 'Familia Técnica',
           count: 10,
           color: '#3B82F6',
-          examples: 'Agentes, RAG, Cloud Architecture, Data Engineering, MLOps & Automation',
+          examples: '10 badges técnicos: Agentes, RAG, Cloud, Data Engineering, MLOps & Automation',
         },
         {
           id: 'offer',
           name: 'Familia de Oferta',
           count: 7,
           color: '#E6007E',
-          examples: 'Data & AI Strategy, Marketing Tech, Customer Data, Agentic Transformation',
+          examples: '7 badges de oferta: Data & AI Strategy, Marketing Tech, Agentic Transformation',
         },
         {
           id: 'industry',
           name: 'Familia de Industria',
           count: 7,
           color: '#8B5CF6',
-          examples: 'Retail & CPG, Financial Services, Telco, Latam Enterprise Verticals',
+          examples: '7 badges de industria: Retail & CPG, Financial Services, Telco & Enterprise',
         },
       ],
     },
   },
 
   playlist: {
-    eyebrow: 'ARTEFACTORY · TU PLAYLIST DE APRENDIZAJE 2027',
-    title: 'Grilla de Cursos por Nivel',
-    subtitle: 'Selecciona tu nivel (Entry 1–3, Senior 1–3, Manager 1–2) para explorar los tracks oficiales de formación continua.',
+    eyebrow: 'ARTEFACTORY · FORMACIÓN CONTINUA 2027',
+    title: 'Tu Playlist de Academias',
+    subtitle: 'Selecciona tu nivel (Entry 1–3, Senior 1–3, Manager 1–2) para explorar las academias y tracks oficiales.',
     levels: [
       {
         id: 'entry-1',
@@ -1064,47 +1267,98 @@ const WRAPPED_DATA = {
   },
 
   outro: {
-    eyebrow: 'TU RESUMEN OFICIAL · CONSULTING WRAPPED',
-    title: 'Tu Aura de Consultor 2027',
-    subtitle: 'Comparte o descarga la tarjeta oficial del Chapter de Consulting de Artefact LATAM.',
+    eyebrow: 'INFOGRAFÍA OFICIAL · CONSULTING WRAPPED 2027',
+    title: 'Nuevo Consulting Grid 2027: Cambios y Aprendizajes Clave',
+    subtitle: 'Todo lo que necesitas saber sobre nuestra evolución hacia el People Review 2027.1 en una infografía estilo Wrapped.',
     logo: ASSETS.logosAndDemos.logoArtefact,
     gif: ASSETS.gifs.cierreParty,
-    auraArchetypes: [
+    bigMetrics: [
       {
-        id: 'agentic-architect',
-        name: 'Agentic Solution Builder',
-        auraColors: 'Magenta Vibrante & Azul Eléctrico',
-        gradient: 'from-[#E6007E] via-[#8B5CF6] to-[#3B82F6]',
-        tagline: 'Transformas PoCs en productos agénticos escalables en producción con impacto real.',
-        topGenre: 'AI Product Management & Solution Framing',
-        powerStat: '60 / 60 Puntos Grid Target · Thought Leader Ready',
+        id: 'm-skills',
+        from: '13',
+        to: '15',
+        delta: '+2',
+        label: 'Skills en el Grid',
+        detail: 'Suma capacidades críticas de IA, datos y prototipado',
+        gradient: 'from-[#E6007E] to-[#8B5CF6]',
       },
       {
-        id: 'ai-pm-strategist',
-        name: 'AI Product Strategist',
-        auraColors: 'Púrpura Cósmico & Rosa Neón',
-        gradient: 'from-[#8B5CF6] via-[#E6007E] to-[#F59E0B]',
-        tagline: 'Conectas estrategia de negocio, gobierno de datos y adopción con precisión quirúrgica.',
-        topGenre: 'AI & Data Fluency · Business Case Mastery',
-        powerStat: '9 Sesiones · 4 Casos Insignia · 24 Badges',
+        id: 'm-cats',
+        from: '6',
+        to: '7',
+        delta: '+1',
+        label: 'Categorías',
+        detail: 'Nueva categoría core: AI & Data Fluency',
+        gradient: 'from-[#8B5CF6] to-[#3B82F6]',
       },
       {
-        id: 'thought-leader',
-        name: 'Consulting Thought Leader',
-        auraColors: 'Azul Artefact & Esmeralda Luminoso',
-        gradient: 'from-[#3B82F6] via-[#8B5CF6] to-[#10B981]',
-        tagline: 'Lideras equipos, crackeas Agentic Labs y elevas el estándar técnico y comercial de LATAM.',
-        topGenre: 'Ownership, Tech Leadership & Agentic Lab',
-        powerStat: '+15 Speakers · 15 Skills · 7 Categorías',
+        id: 'm-points',
+        from: '52',
+        to: '60',
+        delta: '+8',
+        label: 'Puntos Máximos',
+        detail: 'Se mantiene el mismo % de exigencia para promociones',
+        gradient: 'from-[#3B82F6] to-[#10B981]',
       },
     ],
-    cardStats: [
-      { label: 'Sesiones Chapter', value: '9 Hits' },
-      { label: 'Voces en Escena', value: '+15 Speakers' },
-      { label: 'Casos & Demos', value: '4 En Vivo' },
-      { label: 'Nuevo Techo Grid', value: '60 Puntos' },
-      { label: 'Nuevos Badges', value: '24 (3 Familias)' },
-      { label: 'Evolución Rol', value: 'AI PM 2027' },
+    threeNewSkills: [
+      {
+        name: 'AI Fluency',
+        tag: 'Nueva Skill #1',
+        desc: 'Dominio práctico de herramientas GenAI, arquitecturas de agentes y criterios de adopción.',
+      },
+      {
+        name: 'Data Analysis',
+        tag: 'Nueva Skill #2',
+        desc: 'Capacidad analítica para estructurar, gobernar e interpretar datos con impacto en decisiones.',
+      },
+      {
+        name: 'Solution Framing',
+        tag: 'Nueva Skill #3',
+        desc: 'Validar ideas con prototipos rápidos antes de construir y escalar con el equipo técnico.',
+      },
+    ],
+    pillars: [
+      {
+        id: 'mindset-aipm',
+        badge: 'TRANSVERSAL EN TODAS LAS SKILLS',
+        title: 'Mindset AI Product Manager',
+        description:
+          'Uso responsable de IA y pensamiento de producto integrados de forma transversal en todas las skills del Grid.',
+        color: '#E6007E',
+      },
+      {
+        id: 'essential-rule',
+        badge: 'NUEVA REGLA CORE',
+        title: 'Regla de Skills Esenciales',
+        description:
+          'Calificación mínima obligatoria en skills core según seniority, sin posibilidad de compensarlas con otras skills.',
+        color: '#10B981',
+      },
+    ],
+    badgesCatalog: {
+      total: 24,
+      topLevel: 'Thought Leader',
+      noMinTimeRule: 'Eliminación de la regla de tiempo mínimo: cuenta la experiencia demostrada.',
+      families: [
+        { name: 'Técnicas', count: 10, color: '#3B82F6' },
+        { name: 'Oferta', count: 7, color: '#E6007E' },
+        { name: 'Industria', count: 7, color: '#8B5CF6' },
+      ],
+    },
+    officialTimeline: [
+      {
+        period: 'H2 2026 (Actual)',
+        status: 'Grid Actual',
+        detail: 'El cierre de H2 2026 se evalúa íntegramente con el Consulting Grid actual.',
+        active: false,
+      },
+      {
+        period: 'People Review 2027.1 (Ene – Jun 2027)',
+        status: 'Nuevo Grid de Transición',
+        detail: 'El nuevo Consulting Grid 2027 aplica oficialmente en el ciclo enero–junio 2027.',
+        active: true,
+      },
     ],
   },
 };
@@ -1724,54 +1978,70 @@ const IntroSlide: React.FC<IntroSlideProps> = ({ onStart, onJumpToSlide }) => {
   const { intro } = WRAPPED_DATA;
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-4 sm:px-8 py-4">
+    <div className="w-full h-full flex flex-col items-center justify-center px-4 sm:px-8 py-3 overflow-y-auto">
       <div className="max-w-5xl w-full mx-auto flex flex-col items-center text-center">
         {/* Top Official Artefact Logo */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-5 flex flex-col items-center gap-3"
+          className="mb-3 flex flex-col items-center gap-2.5"
         >
-          <div className="px-6 py-3 rounded-2xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-[0_0_40px_rgba(59,130,246,0.2)]">
+          <div className="px-6 py-2.5 rounded-2xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-[0_0_40px_rgba(59,130,246,0.2)]">
             <img
               src={encodeURI(intro.logo)}
               alt="ARTEFACT"
-              className="h-7 sm:h-9 md:h-11 w-auto object-contain mx-auto"
+              className="h-6 sm:h-8 md:h-9 w-auto object-contain mx-auto"
             />
           </div>
 
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-[#E6007E]/25 via-[#8B5CF6]/25 to-[#3B82F6]/25 border border-[#E6007E]/40 text-white shadow-lg">
+          <span className="inline-flex items-center gap-2 px-4 py-1 rounded-full text-[11px] font-bold tracking-[0.2em] uppercase bg-gradient-to-r from-[#E6007E]/25 via-[#8B5CF6]/25 to-[#3B82F6]/25 border border-[#E6007E]/40 text-white shadow-lg">
             <Sparkles className="w-3.5 h-3.5 text-[#E6007E]" />
             {intro.badge}
           </span>
         </motion.div>
 
-        {/* Main Hero Row: Title + Neon-Framed GIF */}
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 my-2">
+        {/* Main Hero Row: Title + Context Block + Neon-Framed GIF */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-9 my-1">
           <motion.div
             initial={{ opacity: 0, x: -25 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-center lg:text-left max-w-2xl"
           >
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
               Consulting Wrapped:{' '}
               <span className="bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] bg-clip-text text-transparent">
                 Nuestro año en modo Agéntico
               </span>
             </h1>
 
-            <div className="mt-4 inline-flex items-center gap-2.5 px-4 py-2 rounded-xl bg-white/10 border border-white/20 backdrop-blur-md">
+            <div className="mt-3 inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-md">
               <Calendar className="w-4 h-4 text-[#E6007E]" />
-              <span className="text-sm sm:text-lg font-bold tracking-wide text-white">
+              <span className="text-xs sm:text-sm font-bold tracking-wide text-white">
                 {intro.subtitle}
               </span>
             </div>
 
-            <p className="mt-4 text-sm sm:text-base text-white/80 leading-relaxed">
+            <p className="mt-2.5 text-xs sm:text-sm text-white/80 leading-relaxed">
               {intro.description}
             </p>
+
+            {/* Context Block: Climate Survey Origin */}
+            <div className="mt-3.5 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[#E6007E]/15 via-[#8B5CF6]/15 to-[#3B82F6]/15 border border-[#E6007E]/40 backdrop-blur-xl text-left shadow-lg">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-[#E6007E] text-white">
+                  <MessageSquareHeart className="w-3 h-3" />
+                  {intro.contextBox.badge}
+                </span>
+                <span className="text-xs font-extrabold text-white">
+                  {intro.contextBox.title}
+                </span>
+              </div>
+              <p className="text-xs text-white/90 leading-relaxed">
+                {intro.contextBox.text}
+              </p>
+            </div>
           </motion.div>
 
           {/* Neon-Framed GIF */}
@@ -1781,14 +2051,13 @@ const IntroSlide: React.FC<IntroSlideProps> = ({ onStart, onJumpToSlide }) => {
             transition={{ duration: 0.65, delay: 0.2, type: 'spring' }}
             className="relative group shrink-0"
           >
-            {/* Outer Neon Glow */}
             <div className="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] opacity-75 blur-xl group-hover:opacity-100 transition duration-500 animate-pulse" />
             <div className="relative p-1.5 rounded-3xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_40px_rgba(230,0,126,0.5)]">
               <div className="relative rounded-2xl overflow-hidden bg-[#051336] p-2">
                 <img
                   src={encodeURI(intro.gif)}
                   alt="Intro Sparkles"
-                  className="w-36 h-36 sm:w-44 sm:h-44 lg:w-52 lg:h-52 object-cover rounded-xl"
+                  className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-cover rounded-xl"
                 />
                 <div className="mt-2 flex items-center justify-between px-2 py-1 rounded-lg bg-white/10 text-[11px] font-bold text-white/90">
                   <span>WRAPPED EDITION</span>
@@ -1804,14 +2073,14 @@ const IntroSlide: React.FC<IntroSlideProps> = ({ onStart, onJumpToSlide }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.35 }}
-          className="mt-6 flex flex-col sm:flex-row items-center gap-4"
+          className="mt-4 flex flex-col sm:flex-row items-center gap-4"
         >
           <button
             onClick={() => {
               soundManager.playPop();
               onStart();
             }}
-            className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full text-base sm:text-lg font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_35px_rgba(230,0,126,0.6)] hover:shadow-[0_0_50px_rgba(230,0,126,0.9)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            className="group relative inline-flex items-center gap-3 px-7 py-3.5 rounded-full text-sm sm:text-base font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_35px_rgba(230,0,126,0.6)] hover:shadow-[0_0_50px_rgba(230,0,126,0.9)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
             <span>{intro.ctaText}</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
@@ -1823,13 +2092,13 @@ const IntroSlide: React.FC<IntroSlideProps> = ({ onStart, onJumpToSlide }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-7 grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-3xl"
+          className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full max-w-3xl"
         >
           {[
             { idx: 1, icon: Layers, label: '9 Sesiones & 4 Casos', sub: 'El Año en Números' },
-            { idx: 2, icon: Users, label: '+15 Speakers', sub: 'Podio & Equipo' },
-            { idx: 3, icon: Calendar, label: '7 Hits Interactivos', sub: 'Línea de Tiempo' },
-            { idx: 4, icon: Award, label: 'Grid 2027 & 60 Pts', sub: 'Plot Twist & Playlist' },
+            { idx: 2, icon: Users, label: 'Equipo & Speakers', sub: '+Inés & Rocío' },
+            { idx: 3, icon: Calendar, label: 'Línea de Tiempo', sub: 'Realizadas & TBD' },
+            { idx: 6, icon: Award, label: 'Infografía Grid 2027', sub: '15 Skills · 60 Pts' },
           ].map((item) => {
             const Icon = item.icon;
             return (
@@ -1839,7 +2108,7 @@ const IntroSlide: React.FC<IntroSlideProps> = ({ onStart, onJumpToSlide }) => {
                   soundManager.playPop();
                   onJumpToSlide(item.idx);
                 }}
-                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-[#E6007E]/50 text-left backdrop-blur-md transition group"
+                className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-[#E6007E]/50 text-left backdrop-blur-md transition group cursor-pointer"
               >
                 <div className="p-2 rounded-lg bg-gradient-to-br from-[#E6007E]/30 to-[#3B82F6]/30 text-white group-hover:scale-110 transition">
                   <Icon className="w-4 h-4 text-[#E6007E]" />
@@ -2063,13 +2332,13 @@ const StatsSlide: React.FC = () => {
 // ==========================================
 const SpeakersSlide: React.FC = () => {
   const { speakers } = WRAPPED_DATA;
-  const [selectedId, setSelectedId] = useState<string>('hosts');
+  const [selectedId, setSelectedId] = useState<string>('equipo');
 
   return (
-    <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 py-3 overflow-y-auto">
-      <div className="max-w-6xl w-full mx-auto">
+    <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 py-2 overflow-y-auto">
+      <div className="max-w-7xl w-full mx-auto">
         {/* Top Header with Speakers.gif and microphone.gif */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-4">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-3 mb-3.5">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -2083,7 +2352,7 @@ const SpeakersSlide: React.FC = () => {
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
               {speakers.title}
             </h2>
-            <p className="text-xs sm:text-sm text-white/75 mt-1 max-w-2xl">
+            <p className="text-xs sm:text-sm text-white/75 mt-0.5 max-w-2xl">
               {speakers.subtitle}
             </p>
           </motion.div>
@@ -2099,90 +2368,129 @@ const SpeakersSlide: React.FC = () => {
               <img
                 src={encodeURI(speakers.headerGifs.speakers)}
                 alt="Speakers GIF"
-                className="w-14 h-16 sm:w-16 sm:h-20 object-cover rounded-xl bg-[#051336]"
+                className="w-12 h-14 sm:w-14 sm:h-16 object-cover rounded-xl bg-[#051336]"
               />
             </div>
             <div className="relative p-1 rounded-2xl bg-gradient-to-tr from-[#8B5CF6] to-[#3B82F6] shadow-lg shadow-[#3B82F6]/30">
               <img
                 src={encodeURI(speakers.headerGifs.microphone)}
                 alt="Microphone GIF"
-                className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl bg-[#051336]"
+                className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-xl bg-[#051336]"
               />
             </div>
           </motion.div>
         </div>
 
-        {/* Main Content Layout: #1 Podium Card (Left) + Speakers Grid (Right) */}
+        {/* Main Content Layout: Equipo del Chapter Card (Left 4 cols) + Speakers Grid (Right 8 cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-          {/* Podium #1: Camilo y Guille.png */}
+          {/* Left Column: Equipo del Chapter (Camilo & Guillaume + Incorporaciones recientes: Inés & Rocío) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             onClick={() => {
               soundManager.playPop();
-              setSelectedId('hosts');
+              setSelectedId('equipo');
             }}
-            className={`lg:col-span-4 relative rounded-3xl p-5 cursor-pointer transition-all flex flex-col justify-between overflow-hidden border ${
-              selectedId === 'hosts'
+            className={`lg:col-span-4 relative rounded-3xl p-4 sm:p-5 cursor-pointer transition-all flex flex-col justify-between overflow-hidden border ${
+              selectedId === 'equipo'
                 ? 'bg-gradient-to-b from-[#E6007E]/25 via-[#8B5CF6]/20 to-[#051336]/90 border-[#E6007E] shadow-[0_0_40px_rgba(230,0,126,0.35)]'
                 : 'bg-white/[0.08] border-white/20 hover:border-[#E6007E]/60'
             } backdrop-blur-xl`}
           >
             <div>
-              <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center justify-between gap-2 mb-2.5">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] text-white shadow-md">
                   <Crown className="w-3.5 h-3.5 text-amber-300" />
-                  {speakers.podiumHost.rank}
+                  {speakers.podiumTeam.rank}
                 </span>
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-300 bg-amber-400/15 border border-amber-300/30 px-2.5 py-0.5 rounded-full">
                   <Radio className="w-3 h-3 animate-pulse" />
-                  {speakers.podiumHost.sessionsCount}
+                  {speakers.podiumTeam.sessionsCount}
                 </span>
               </div>
 
               {/* Photo container for Camilo y Guille.png */}
-              <div className="relative rounded-2xl bg-white p-3 shadow-xl border-2 border-[#E6007E]/60 my-2 flex items-center justify-center">
+              <div className="relative rounded-2xl bg-white p-2.5 shadow-xl border-2 border-[#E6007E]/60 flex items-center justify-center">
                 <img
-                  src={encodeURI(speakers.podiumHost.photo)}
+                  src={encodeURI(speakers.podiumTeam.photo)}
                   alt="Camilo y Guillaume"
-                  className="w-full max-h-40 object-contain rounded-xl"
+                  className="w-full max-h-32 object-contain rounded-xl"
                 />
               </div>
 
-              <h3 className="text-xl sm:text-2xl font-black text-white mt-3">
-                {speakers.podiumHost.names}
+              <h3 className="text-lg sm:text-xl font-black text-white mt-2.5">
+                {speakers.podiumTeam.names}
               </h3>
-              <p className="text-xs text-white/80 mt-1 leading-relaxed">
-                {speakers.podiumHost.role}
+              <p className="text-xs text-white/80 mt-0.5 leading-relaxed">
+                {speakers.podiumTeam.role}
               </p>
+
+              {/* Recent Additions to Equipo: Inés & Rocío */}
+              <div className="mt-3.5 pt-3 border-t border-white/15">
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-300 mb-2">
+                  <UserPlus className="w-3.5 h-3.5" />
+                  {speakers.podiumTeam.recentAdditionsTitle}
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  {speakers.podiumTeam.recentAdditions.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center gap-2.5 p-2 rounded-2xl bg-[#051336]/80 border border-emerald-400/40 shadow-md"
+                    >
+                      <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-emerald-400 to-[#3B82F6] shrink-0">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                          <img
+                            src={encodeURI(member.photo)}
+                            alt={member.name}
+                            style={{
+                              objectPosition: member.cropStyle?.objectPosition || '50% 50%',
+                              transform: `scale(${member.cropStyle?.scale || 1.2})`,
+                            }}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-extrabold text-white truncate">
+                          {member.name}
+                        </div>
+                        <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                          Nuevo en Equipo
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between">
+            <div className="mt-3 pt-2.5 border-t border-white/15 flex items-center justify-between">
               <span className="text-xs font-bold text-[#E6007E]">
-                {speakers.podiumHost.badge}
+                {speakers.podiumTeam.badge}
               </span>
               <span className="text-[11px] text-white/60">
-                Top #1 Podio Consulting
+                Camilo, Guillaume, Inés & Rocío
               </span>
             </div>
           </motion.div>
 
-          {/* Right Column: Real Photos Grid + Initials Avatars Grid */}
-          <div className="lg:col-span-8 flex flex-col gap-3.5 justify-between">
-            {/* Section 1: Speakers con Fotos Reales */}
+          {/* Right Column (8 cols): Real Photos Grid + Support Team */}
+          <div className="lg:col-span-8 flex flex-col gap-3 justify-between">
+            {/* Section 1: Speakers con Fotos Reales (Maite, Clemente, Rocío, Javier, Israel, Joaquín Ruíz, Valentina Gana, Inés, Team Palacio de Hierro) */}
             <div className="rounded-3xl bg-white/[0.06] border border-white/15 p-4 backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2.5">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-white/90 flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-[#E6007E]" />
-                  Featured Artists · Speakers en Escena
+                  Speakers y Equipo en Escena
                 </span>
                 <span className="text-[11px] text-white/60">
-                  Haz clic en cada speaker
+                  Haz clic en cada integrante
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                 {speakers.featuredPhotoSpeakers.map((sp, i) => {
                   const isSelected = selectedId === sp.id;
 
@@ -2192,12 +2500,12 @@ const SpeakersSlide: React.FC = () => {
                         key={sp.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.35, delay: i * 0.06 }}
+                        transition={{ duration: 0.35, delay: i * 0.05 }}
                         onClick={() => {
                           soundManager.playPop();
                           setSelectedId(sp.id);
                         }}
-                        className={`col-span-2 sm:col-span-1 lg:col-span-2 rounded-2xl p-2.5 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
+                        className={`col-span-2 rounded-2xl p-2.5 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
                           isSelected
                             ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg'
                             : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
@@ -2210,7 +2518,7 @@ const SpeakersSlide: React.FC = () => {
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-1.5">
                           <div className="text-xs font-extrabold text-white leading-tight">
                             {sp.name}
                           </div>
@@ -2230,19 +2538,18 @@ const SpeakersSlide: React.FC = () => {
                       key={sp.id}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.35, delay: i * 0.06 }}
+                      transition={{ duration: 0.35, delay: i * 0.05 }}
                       onClick={() => {
                         soundManager.playPop();
                         setSelectedId(sp.id);
                       }}
                       className={`rounded-2xl p-2.5 cursor-pointer transition-all flex flex-col items-center text-center border ${
                         isSelected
-                          ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg scale-[1.03]'
+                          ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg scale-[1.02]'
                           : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
                       }`}
                     >
-                      {/* Circular Avatar Framing the Portrait */}
-                      <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
+                      <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
                         <div className="w-full h-full rounded-full overflow-hidden bg-white">
                           <img
                             src={encodeURI(sp.photo!)}
@@ -2256,13 +2563,13 @@ const SpeakersSlide: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="text-xs font-extrabold text-white mt-2">
+                      <div className="text-xs font-extrabold text-white mt-1.5">
                         {sp.name}
                       </div>
                       <div className="text-[10px] text-white/70 line-clamp-2 mt-0.5 leading-tight">
                         {sp.role}
                       </div>
-                      <span className="mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-[#E6007E] border border-[#E6007E]/30">
+                      <span className="mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-[#E6007E] border border-[#E6007E]/30">
                         {sp.sessionTag.split('·')[0]}
                       </span>
                     </motion.div>
@@ -2271,18 +2578,18 @@ const SpeakersSlide: React.FC = () => {
               </div>
             </div>
 
-            {/* Section 2: Initials Avatars (Joaco, Valentina, Laura, Simones, People) */}
-            <div className="rounded-3xl bg-white/[0.06] border border-white/15 p-4 backdrop-blur-xl">
-              <div className="flex items-center justify-between mb-2.5">
+            {/* Section 2: Equipos Colaboradores (People Team & Equipo de Apoyos) */}
+            <div className="rounded-3xl bg-white/[0.06] border border-white/15 p-3.5 backdrop-blur-xl">
+              <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-white/85">
-                  Colaboradores & Co-Autores Destacados
+                  Equipos Transversales & Co-Autores
                 </span>
                 <span className="text-[11px] text-[#3B82F6] font-semibold">
-                  +15 Voces del Chapter
+                  Comunidad Consulting Artefact LATAM
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {speakers.initialsSpeakers.map((sp, idx) => {
                   const isSelected = selectedId === sp.id;
                   return (
@@ -2295,14 +2602,14 @@ const SpeakersSlide: React.FC = () => {
                         soundManager.playPop();
                         setSelectedId(sp.id);
                       }}
-                      className={`rounded-2xl p-2.5 cursor-pointer transition-all flex items-center gap-2.5 border ${
+                      className={`rounded-2xl p-2.5 cursor-pointer transition-all flex items-center gap-3 border ${
                         isSelected
                           ? 'bg-white/15 border-[#3B82F6] shadow-lg'
                           : 'bg-[#051336]/60 border-white/10 hover:bg-white/10'
                       }`}
                     >
                       <div
-                        className={`w-11 h-11 rounded-full shrink-0 bg-gradient-to-br ${sp.gradient} flex items-center justify-center text-sm font-black text-white shadow-md border border-white/30`}
+                        className={`w-10 h-10 rounded-full shrink-0 bg-gradient-to-br ${sp.gradient} flex items-center justify-center text-xs font-black text-white shadow-md border border-white/30`}
                       >
                         {sp.initials}
                       </div>
@@ -2334,10 +2641,13 @@ const SpeakersSlide: React.FC = () => {
 // ==========================================
 interface TimelineSlideProps {
   onOpenLightbox: (items: DemoScreenshot[], index: number) => void;
+  onJumpToSlide?: (idx: number) => void;
 }
-const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
+const TimelineSlide: React.FC<TimelineSlideProps> = ({
+  onOpenLightbox,
+  onJumpToSlide,
+}) => {
   const { timeline } = WRAPPED_DATA;
-  const [selectedSessionId, setSelectedSessionId] = useState<string>(timeline.sessions[1].id); // Default to Carozzi or Kickoff; let's start at Kick-off (0) or Carozzi
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [bonusRevealed, setBonusRevealed] = useState<boolean>(false);
 
@@ -2346,101 +2656,159 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
   const handleSelectSession = (idx: number) => {
     soundManager.playPop();
     setActiveIndex(idx);
-    setSelectedSessionId(timeline.sessions[idx].id);
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-6 py-2 overflow-y-auto">
       <div className="max-w-7xl w-full mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-3">
+        {/* Header + Legend (Realizadas vs TBD + Hoy estamos acá) */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 mb-3">
           <div>
             <span className="inline-block text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
               {timeline.eyebrow}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               {timeline.title}
             </h2>
           </div>
-          <p className="text-xs text-white/70 max-w-md">
-            {timeline.subtitle}
-          </p>
+
+          {/* Visual Status Legend */}
+          <div className="flex flex-wrap items-center gap-2 text-[11px]">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-200 font-bold">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              Sesión Realizada
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#E6007E] to-amber-500 text-white font-black shadow-[0_0_15px_rgba(230,0,126,0.6)] animate-pulse">
+              <MapPin className="w-3.5 h-3.5" />
+              Hoy estamos acá
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-dashed border-white/35 text-white/65 font-semibold">
+              <Clock className="w-3.5 h-3.5 text-amber-300" />
+              Próximamente (TBD) / Disponible
+            </span>
+          </div>
         </div>
 
-        {/* Horizontal 7-Session Track Selector Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mb-4">
+        {/* Horizontal Timeline Track Strip with "Hoy estamos acá" Marker */}
+        <div className="flex items-stretch gap-1.5 overflow-x-auto pb-2 mb-3">
           {timeline.sessions.map((session, idx) => {
             const isActive = idx === activeIndex;
+            const isCompleted = session.status === 'completed';
+            const isAvailable = session.status === 'available';
+
             return (
-              <button
-                key={session.id}
-                onClick={() => handleSelectSession(idx)}
-                className={`group relative rounded-2xl p-2.5 text-left transition-all cursor-pointer border backdrop-blur-md flex flex-col justify-between ${
-                  isActive
-                    ? 'bg-gradient-to-b from-[#E6007E]/30 via-[#8B5CF6]/25 to-[#051336]/90 border-[#E6007E] shadow-[0_0_25px_rgba(230,0,126,0.35)] -translate-y-0.5'
-                    : 'bg-white/[0.06] border-white/15 hover:bg-white/[0.12] hover:border-white/30'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-1 mb-1.5">
-                  <span
-                    className={`px-2 py-0.5 rounded-md text-[10px] font-black tracking-wider ${
-                      isActive
-                        ? 'bg-[#E6007E] text-white'
-                        : 'bg-white/10 text-white/80'
-                    }`}
-                  >
-                    {session.date}
-                  </span>
-                  <img
-                    src={encodeURI(session.gif)}
-                    alt={session.title}
-                    className="w-7 h-7 rounded-lg object-cover border border-white/20 shrink-0"
-                  />
-                </div>
-                <div>
-                  <div className="text-xs font-extrabold text-white leading-tight line-clamp-1">
-                    {session.title}
+              <React.Fragment key={session.id}>
+                <button
+                  onClick={() => handleSelectSession(idx)}
+                  className={`group relative min-w-[118px] sm:min-w-[126px] flex-1 rounded-2xl p-2 text-left transition-all cursor-pointer backdrop-blur-md flex flex-col justify-between ${
+                    isActive
+                      ? 'bg-gradient-to-b from-[#E6007E]/35 via-[#8B5CF6]/30 to-[#051336]/95 border-2 border-[#E6007E] shadow-[0_0_25px_rgba(230,0,126,0.4)] -translate-y-0.5 opacity-100'
+                      : isCompleted
+                      ? 'bg-white/[0.09] border border-white/25 hover:bg-white/[0.15] hover:border-white/40 opacity-100'
+                      : isAvailable
+                      ? 'bg-white/[0.02] border border-dashed border-white/25 hover:border-white/45 opacity-55 hover:opacity-85'
+                      : 'bg-white/[0.03] border border-dashed border-amber-300/35 hover:border-amber-300/60 opacity-65 hover:opacity-90'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <span
+                      className={`px-1.5 py-0.5 rounded text-[10px] font-black tracking-wider ${
+                        isActive
+                          ? 'bg-[#E6007E] text-white'
+                          : isCompleted
+                          ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/30'
+                          : 'bg-white/10 text-amber-200/80 border border-dashed border-white/20'
+                      }`}
+                    >
+                      {session.date}
+                    </span>
+
+                    <span
+                      className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${
+                        isCompleted
+                          ? 'bg-emerald-500/20 text-emerald-300'
+                          : isAvailable
+                          ? 'bg-white/10 text-white/60'
+                          : 'bg-amber-500/20 text-amber-300'
+                      }`}
+                    >
+                      {isCompleted ? '✓ Realizada' : isAvailable ? 'Disponible' : 'TBD'}
+                    </span>
                   </div>
-                  <div className="text-[10px] text-white/60 line-clamp-1 mt-0.5">
-                    Hit #0{idx + 1}
+
+                  <div>
+                    <div className="text-[11px] font-extrabold text-white leading-tight line-clamp-1">
+                      {session.title}
+                    </div>
+                    <div className="text-[9px] text-white/60 line-clamp-1 mt-0.5">
+                      {session.statusBadge}
+                    </div>
                   </div>
-                </div>
-              </button>
+                </button>
+
+                {/* Highlighted Marker: "Hoy estamos acá" right after 20/11 (Grid) */}
+                {session.isCurrentMarkerAfter && (
+                  <div className="shrink-0 flex flex-col items-center justify-center px-1.5">
+                    <div className="h-full w-0.5 bg-gradient-to-b from-[#E6007E] via-amber-400 to-[#3B82F6] rounded-full relative flex items-center justify-center">
+                      <div className="px-2 py-1 rounded-xl bg-gradient-to-r from-[#E6007E] to-amber-500 text-white text-[9px] font-black uppercase tracking-wider whitespace-nowrap shadow-[0_0_20px_rgba(230,0,126,0.8)] border border-white/40 flex flex-col items-center gap-0.5">
+                        <MapPin className="w-3 h-3 animate-bounce" />
+                        <span>Hoy estamos</span>
+                        <span>acá</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </React.Fragment>
             );
           })}
         </div>
 
-        {/* Active Session Detail Panel */}
+        {/* Standardized Session Detail Panel (Palacio de Hierro Format) */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeSession.id || selectedSessionId}
-            initial={{ opacity: 0, y: 14 }}
+            key={activeSession.id}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="rounded-3xl bg-white/[0.07] border border-white/20 backdrop-blur-xl p-4 sm:p-6 shadow-2xl"
+            transition={{ duration: 0.28 }}
+            className={`rounded-3xl backdrop-blur-xl p-4 sm:p-5 shadow-2xl ${
+              activeSession.status === 'completed'
+                ? 'bg-white/[0.08] border border-white/25'
+                : 'bg-white/[0.04] border-2 border-dashed border-white/25'
+            }`}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-              {/* Left Column (4 cols): Session GIF + Client Logo + Speakers */}
-              <div className="lg:col-span-4 flex flex-col gap-3.5">
-                {/* Main GIF + Date Header Card */}
-                <div className="relative rounded-2xl bg-[#051336]/80 border border-white/15 p-3.5 flex items-center gap-3.5">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+              {/* Left Column (4 cols): Featured Header, Client Logo & Speakers */}
+              <div className="lg:col-span-4 flex flex-col gap-3">
+                {/* Session Header Card with GIF & Status Badge */}
+                <div className="relative rounded-2xl bg-[#051336]/85 border border-white/15 p-3.5 flex items-center gap-3.5">
                   <div className="relative shrink-0 p-1 rounded-2xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6]">
                     <img
                       src={encodeURI(activeSession.gif)}
                       alt={activeSession.title}
-                      className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover bg-[#051336]"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover bg-[#051336]"
                     />
                   </div>
                   <div className="min-w-0">
-                    <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[#E6007E] uppercase tracking-wider">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {activeSession.date} · {activeSession.monthLabel}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#E6007E] uppercase tracking-wider">
+                        <Calendar className="w-3 h-3" />
+                        {activeSession.date} · {activeSession.monthLabel}
+                      </span>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
+                          activeSession.status === 'completed'
+                            ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/40'
+                            : 'bg-amber-500/25 text-amber-200 border border-dashed border-amber-300/50'
+                        }`}
+                      >
+                        {activeSession.statusBadge}
+                      </span>
                     </div>
-                    <h3 className="text-lg sm:text-xl font-black text-white leading-tight mt-0.5">
+                    <h3 className="text-base sm:text-lg font-black text-white leading-tight mt-1">
                       {activeSession.title}
                     </h3>
-                    <p className="text-xs text-white/75 mt-1 leading-snug">
+                    <p className="text-[11px] text-white/75 mt-0.5 leading-snug line-clamp-2">
                       {activeSession.subtitle}
                     </p>
                   </div>
@@ -2448,24 +2816,24 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
 
                 {/* Client Logo Pill (if session has clientLogo) */}
                 {activeSession.clientLogo && (
-                  <div className="rounded-2xl bg-white p-3 border border-white/30 shadow-md flex items-center justify-between gap-3">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#051336]/70">
-                      Caso Cliente Destacado
+                  <div className="rounded-2xl bg-white p-2.5 border border-white/30 shadow-md flex items-center justify-between gap-3">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#051336]/70 pl-1">
+                      Cliente / Caso
                     </span>
                     <img
                       src={encodeURI(activeSession.clientLogo)}
                       alt={activeSession.clientName || 'Cliente'}
-                      className="h-9 sm:h-10 max-w-[150px] object-contain"
+                      className="h-8 sm:h-9 max-w-[150px] object-contain"
                     />
                   </div>
                 )}
 
-                {/* Speakers of this Session */}
-                <div className="rounded-2xl bg-[#051336]/70 border border-white/15 p-3.5">
-                  <div className="text-[11px] font-extrabold uppercase tracking-wider text-white/70 mb-2.5">
+                {/* Speakers Block */}
+                <div className="rounded-2xl bg-[#051336]/75 border border-white/15 p-3">
+                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-white/70 mb-2">
                     Speakers de la Sesión
                   </div>
-                  <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     {activeSession.speakers.map((sp) => {
                       const isWidePhoto =
                         sp.photo &&
@@ -2479,15 +2847,15 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                         >
                           {sp.photo ? (
                             isWidePhoto ? (
-                              <div className="h-9 px-1.5 rounded-lg bg-white flex items-center justify-center overflow-hidden">
+                              <div className="h-8 px-1.5 rounded-lg bg-white flex items-center justify-center overflow-hidden">
                                 <img
                                   src={encodeURI(sp.photo)}
                                   alt={sp.name}
-                                  className="h-8 w-auto object-contain"
+                                  className="h-7 w-auto object-contain"
                                 />
                               </div>
                             ) : (
-                              <div className="w-9 h-9 rounded-full overflow-hidden bg-white border border-[#E6007E]">
+                              <div className="w-8 h-8 rounded-full overflow-hidden bg-white border border-[#E6007E]">
                                 <img
                                   src={encodeURI(sp.photo)}
                                   alt={sp.name}
@@ -2500,7 +2868,7 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                               </div>
                             )
                           ) : (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E6007E] to-[#3B82F6] flex items-center justify-center text-xs font-black text-white">
+                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#E6007E] to-[#3B82F6] flex items-center justify-center text-[10px] font-black text-white">
                               {sp.initials}
                             </div>
                           )}
@@ -2514,69 +2882,43 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                 </div>
               </div>
 
-              {/* Right Column (8 cols): Summary, Highlights, 5 Carozzi Learnings, Bonus Reveal, or Clickable Demos */}
-              <div className="lg:col-span-8 flex flex-col gap-3.5">
-                {/* Summary & Key Bullet Highlights */}
-                <div className="rounded-2xl bg-[#051336]/60 border border-white/15 p-4">
-                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed font-medium">
+              {/* Right Column (8 cols): Standardized Palacio de Hierro Layout (Summary + 3 Key Points + Gallery/Demos + Direct Presentation Link Button) */}
+              <div className="lg:col-span-8 flex flex-col gap-3">
+                {/* Brief Description + 3 Key Points */}
+                <div className="rounded-2xl bg-[#051336]/65 border border-white/15 p-3.5">
+                  <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-medium">
                     {activeSession.summary}
                   </p>
-                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {activeSession.highlights.map((hl, i) => (
+
+                  {/* 3 Puntos Clave */}
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {activeSession.keyPoints.map((kp, i) => (
                       <div
                         key={i}
-                        className="p-2.5 rounded-xl bg-white/[0.05] border border-white/10 flex items-start gap-2"
+                        onClick={() => soundManager.playPop()}
+                        className="p-3 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] border border-white/15 hover:border-[#E6007E]/50 transition cursor-pointer flex flex-col justify-between"
                       >
-                        <CheckCircle2 className="w-4 h-4 text-[#E6007E] shrink-0 mt-0.5" />
-                        <span className="text-xs text-white/85 leading-snug">
-                          {hl}
-                        </span>
+                        <div>
+                          <div className="flex items-center gap-1.5 text-xs font-extrabold text-[#E6007E]">
+                            <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                            <span>{kp.title}</span>
+                          </div>
+                          <p className="text-[11px] text-white/85 mt-1.5 leading-snug">
+                            {kp.description}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Special Section A: 5 Key Learnings for Carozzi (09/10) */}
-                {activeSession.keyLearnings && (
-                  <div className="rounded-2xl bg-gradient-to-r from-[#E6007E]/15 via-[#8B5CF6]/15 to-[#3B82F6]/15 border border-[#E6007E]/40 p-3.5">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-white">
-                        <Lightbulb className="w-4 h-4 text-amber-300" />
-                        Los 5 Aprendizajes Clave en Carozzi
-                      </span>
-                      <span className="text-[11px] font-semibold text-white/75">
-                        De PoCs a Producción Agéntica
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
-                      {activeSession.keyLearnings.map((kl) => (
-                        <div
-                          key={kl.number}
-                          onClick={() => soundManager.playPop()}
-                          className="p-2.5 rounded-xl bg-[#051336]/80 hover:bg-[#051336] border border-white/15 hover:border-[#E6007E] transition cursor-pointer"
-                        >
-                          <div className="text-[10px] font-black text-[#E6007E]">
-                            0{kl.number}
-                          </div>
-                          <div className="text-xs font-extrabold text-white mt-0.5">
-                            {kl.title}
-                          </div>
-                          <div className="text-[10px] text-white/70 mt-1 leading-tight">
-                            {kl.description}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Special Section B: Interactive Demos Lightbox Gallery (Carozzi & Palacio de Hierro) */}
+                {/* Lower Section: Gallery of Demos / Captures + Direct Presentation Link Button */}
                 {activeSession.demos && activeSession.demos.length > 0 && (
-                  <div className="rounded-2xl bg-[#051336]/75 border border-white/20 p-3.5">
-                    <div className="flex items-center justify-between mb-2.5">
+                  <div className="rounded-2xl bg-[#051336]/80 border border-white/20 p-3.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                       <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#3B82F6]">
                         <Sparkles className="w-4 h-4 text-[#E6007E]" />
-                        Galería de Demos y Capturas (Clic para abrir en Pantalla Completa con Zoom)
+                        Galería de Demos y Capturas Destacadas (Clic para ampliar en Zoom)
                       </span>
                     </div>
 
@@ -2585,7 +2927,7 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                         activeSession.demos.length > 1
                           ? 'sm:grid-cols-3'
                           : 'sm:grid-cols-1'
-                      } gap-3`}
+                      } gap-2.5`}
                     >
                       {activeSession.demos.map((demo, dIdx) => (
                         <div
@@ -2594,25 +2936,25 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                             soundManager.playPop();
                             onOpenLightbox(activeSession.demos!, dIdx);
                           }}
-                          className="group relative rounded-xl overflow-hidden border border-white/20 hover:border-[#E6007E] bg-[#051336] cursor-pointer transition-all shadow-lg hover:shadow-[0_0_25px_rgba(230,0,126,0.4)]"
+                          className="group relative rounded-xl overflow-hidden border border-white/20 hover:border-[#E6007E] bg-[#051336] cursor-pointer transition-all shadow-lg"
                         >
-                          <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-black/40">
+                          <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-white/95 flex items-center justify-center">
                             <img
                               src={encodeURI(demo.src)}
                               alt={demo.title}
-                              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#051336] via-transparent to-transparent opacity-85" />
-                            <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-[#E6007E] text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#051336] via-transparent to-transparent opacity-80" />
+                            <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-[#E6007E] text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
                               <ZoomIn className="w-3 h-3" />
-                              Ampliar Demo
+                              Zoom
                             </div>
                           </div>
-                          <div className="p-2.5">
-                            <div className="text-[10px] font-bold text-[#3B82F6] uppercase">
+                          <div className="p-2">
+                            <div className="text-[9px] font-bold text-[#3B82F6] uppercase">
                               {demo.badge}
                             </div>
-                            <div className="text-xs font-extrabold text-white truncate mt-0.5">
+                            <div className="text-xs font-extrabold text-white truncate">
                               {demo.title}
                             </div>
                           </div>
@@ -2622,10 +2964,10 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                   </div>
                 )}
 
-                {/* Special Section C: 08/01 Bono Interactive Dual GIF Reveal (Confused Thinking GIF.gif + congrats.gif) */}
+                {/* Bonus Interactive Dual GIF Reveal for 08/01 */}
                 {activeSession.bonusInteractive && (
-                  <div className="rounded-2xl bg-gradient-to-r from-[#051336] via-[#8B5CF6]/20 to-[#051336] border border-white/20 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                  <div className="rounded-2xl bg-gradient-to-r from-[#051336] via-[#8B5CF6]/20 to-[#051336] border border-white/20 p-3.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                       <span className="text-xs font-extrabold uppercase tracking-wider text-white flex items-center gap-1.5">
                         <Sparkles className="w-4 h-4 text-[#E6007E]" />
                         Dinámica de la Sesión: De las Dudas a los Ejemplos Claros
@@ -2635,67 +2977,63 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                           soundManager.playPop();
                           setBonusRevealed((prev) => !prev);
                         }}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow-lg hover:scale-105 transition cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow-lg hover:scale-105 transition cursor-pointer"
                       >
-                        <Play className="w-3.5 h-3.5" />
-                        {bonusRevealed
-                          ? 'Ver estado inicial'
-                          : '¡Revelar Ejemplos Claros!'}
+                        <Play className="w-3 h-3" />
+                        {bonusRevealed ? 'Ver estado inicial' : '¡Revelar Ejemplos Claros!'}
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {/* Card 1: Dudas Iniciales + Confused Thinking GIF.gif */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                       <div
                         onClick={() => {
                           soundManager.playPop();
                           setBonusRevealed(false);
                         }}
-                        className={`rounded-2xl p-3 border transition cursor-pointer flex items-center gap-3 ${
+                        className={`rounded-xl p-2.5 border transition cursor-pointer flex items-center gap-2.5 ${
                           !bonusRevealed
                             ? 'bg-amber-500/15 border-amber-400 shadow-lg'
-                            : 'bg-[#051336]/60 border-white/15 opacity-80 hover:opacity-100'
+                            : 'bg-[#051336]/60 border-white/15 opacity-80'
                         }`}
                       >
                         <img
                           src={encodeURI(activeSession.bonusInteractive.initialGif)}
                           alt="Dudas iniciales"
-                          className="w-20 h-20 rounded-xl object-cover border border-amber-300/40 shrink-0"
+                          className="w-16 h-16 rounded-lg object-cover border border-amber-300/40 shrink-0"
                         />
                         <div>
                           <div className="inline-flex items-center gap-1 text-xs font-extrabold text-amber-300">
                             <HelpCircle className="w-3.5 h-3.5" />
                             Dudas iniciales
                           </div>
-                          <p className="text-xs text-white/85 mt-1 leading-snug">
+                          <p className="text-[11px] text-white/85 mt-0.5 leading-snug">
                             {activeSession.bonusInteractive.initialText}
                           </p>
                         </div>
                       </div>
 
-                      {/* Card 2: Ejemplos Claros + congrats.gif */}
                       <div
                         onClick={() => {
                           soundManager.playPop();
                           setBonusRevealed(true);
                         }}
-                        className={`rounded-2xl p-3 border transition cursor-pointer flex items-center gap-3 ${
+                        className={`rounded-xl p-2.5 border transition cursor-pointer flex items-center gap-2.5 ${
                           bonusRevealed
-                            ? 'bg-emerald-500/20 border-emerald-400 shadow-[0_0_25px_rgba(16,185,129,0.3)] scale-[1.02]'
-                            : 'bg-[#051336]/60 border-white/15 hover:border-emerald-400/50'
+                            ? 'bg-emerald-500/20 border-emerald-400 shadow-lg'
+                            : 'bg-[#051336]/60 border-white/15'
                         }`}
                       >
                         <img
                           src={encodeURI(activeSession.bonusInteractive.revealedGif)}
                           alt="Ejemplos claros"
-                          className="w-20 h-20 rounded-xl object-cover border border-emerald-300/40 shrink-0"
+                          className="w-16 h-16 rounded-lg object-cover border border-emerald-300/40 shrink-0"
                         />
                         <div>
                           <div className="inline-flex items-center gap-1 text-xs font-extrabold text-emerald-300">
                             <PartyPopper className="w-3.5 h-3.5" />
                             Ejemplos claros
                           </div>
-                          <p className="text-xs text-white/90 mt-1 leading-snug">
+                          <p className="text-[11px] text-white/90 mt-0.5 leading-snug">
                             {activeSession.bonusInteractive.revealedText}
                           </p>
                         </div>
@@ -2703,6 +3041,46 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({ onOpenLightbox }) => {
                     </div>
                   </div>
                 )}
+
+                {/* Direct Link to Presentation Footer Button */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                  <span className="text-[11px] text-white/60">
+                    {activeSession.status === 'completed'
+                      ? '📎 Material oficial presentado en la sesión del Chapter:'
+                      : '⏳ Sesión pendiente en el calendario del Chapter:'}
+                  </span>
+
+                  {activeSession.presentationUrl &&
+                  activeSession.presentationUrl.startsWith('http') ? (
+                    <a
+                      href={activeSession.presentationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => soundManager.playPop()}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] hover:opacity-95 shadow-[0_0_20px_rgba(230,0,126,0.45)] transition"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>{activeSession.presentationLabel || 'Abrir Presentación Oficial'}</span>
+                    </a>
+                  ) : activeSession.presentationUrl === '#slide-outro-grid' &&
+                    onJumpToSlide ? (
+                    <button
+                      onClick={() => {
+                        soundManager.playPop();
+                        onJumpToSlide(6);
+                      }}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] hover:opacity-95 shadow-[0_0_20px_rgba(230,0,126,0.45)] transition cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>{activeSession.presentationLabel}</span>
+                    </button>
+                  ) : (
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold text-white/60 bg-white/5 border border-dashed border-white/25">
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>{activeSession.presentationLabel || 'Link a presentación (Próximamente)'}</span>
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -2726,7 +3104,7 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
     glareX: 50,
     glareY: 50,
   });
-  const [activeEvolutionId, setActiveEvolutionId] = useState<string>('ai-data-fluency');
+  const [activeEvolutionId, setActiveEvolutionId] = useState<string>('three-new-skills');
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -2773,7 +3151,7 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
 
         {/* Main Grid Layout: Protagonist 3D Tilt Illustration (Left 5 cols) + Comparative Evolutions (Right 7 cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-          {/* Left: Interactive 3D Tilt Hero Card with chapter grid (milo y joaco).jpeg */}
+          {/* Left: Interactive 3D Tilt Hero Card */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -2789,8 +3167,8 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
                 onOpenLightbox(
                   [
                     {
-                      id: 'milo-joaco-grid',
-                      title: 'Consulting Grid 2027 & El Bono · Camilo y Joaco',
+                      id: 'camilo-joaquin-grid',
+                      title: 'Consulting Grid 2027 & El Bono · Camilo y Joaquín Ruíz',
                       subtitle: grid2027.heroCaption,
                       src: grid2027.heroImage,
                       badge: 'Ilustración Oficial · 60 Puntos & Bono',
@@ -2809,11 +3187,9 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
               }}
               className="group relative h-full rounded-3xl p-1 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_45px_rgba(230,0,126,0.45)] cursor-pointer select-none"
             >
-              {/* Animated Outer Glow */}
               <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] opacity-60 blur-xl group-hover:opacity-95 transition duration-500 -z-10" />
 
               <div className="relative h-full rounded-[22px] bg-[#051336] p-3.5 flex flex-col justify-between overflow-hidden">
-                {/* Interactive Glare Overlay */}
                 <div
                   className="pointer-events-none absolute inset-0 opacity-30 transition-opacity duration-200"
                   style={{
@@ -2821,7 +3197,6 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
                   }}
                 />
 
-                {/* Top Sticker Header */}
                 <div className="flex items-center justify-between gap-2 mb-2 z-10">
                   <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow">
                     ¡Sube a 60 Puntos & El Bono!
@@ -2832,16 +3207,14 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
                   </span>
                 </div>
 
-                {/* Main Illustration Image */}
                 <div className="relative rounded-2xl overflow-hidden border border-white/20 shadow-2xl my-auto">
                   <img
                     src={encodeURI(grid2027.heroImage)}
-                    alt="Camilo y Joaco celebrando los 60 puntos del Grid y el Bono"
+                    alt="Camilo y Joaquín Ruíz celebrando los 60 puntos del Grid y el Bono"
                     className="w-full max-h-[300px] sm:max-h-[340px] object-cover mx-auto"
                   />
                 </div>
 
-                {/* Caption */}
                 <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-xs text-white/80 z-10">
                   <span className="font-semibold">{grid2027.heroCaption}</span>
                 </div>
@@ -2851,7 +3224,7 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
 
           {/* Right: Animated Comparative Cards + 4 Pillars + 24 Badges */}
           <div className="lg:col-span-7 flex flex-col gap-3 justify-between">
-            {/* Row 1: Before -> After Counters (13->15 skills, 6->7 cats, 52->60 pts, 24 badges) */}
+            {/* Row 1: Before -> After Counters */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {grid2027.metricsComparison.map((m, idx) => (
                 <motion.div
@@ -2949,12 +3322,12 @@ const GridPlotTwistSlide: React.FC<GridPlotTwistSlideProps> = ({ onOpenLightbox 
                 <div className="flex items-center gap-2">
                   <Award className="w-5 h-5 text-[#E6007E]" />
                   <span className="text-xs sm:text-sm font-black text-white uppercase tracking-wide">
-                    24 Nuevos Badges en 3 Familias
+                    24 Nuevos Badges (Sin regla de tiempo mínimo)
                   </span>
                 </div>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-amber-400 to-[#E6007E] text-[#051336] shadow-md">
                   <Star className="w-3.5 h-3.5 fill-current" />
-                  Nuevo Nivel Tope: Thought Leader
+                  Nivel Máximo: Thought Leader
                 </span>
               </div>
 
@@ -3041,7 +3414,7 @@ const PlaylistSlide: React.FC = () => {
               {playlist.eyebrow}
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-              Tu Playlist de Aprendizaje
+              {playlist.title}
             </h2>
             <p className="text-xs sm:text-sm text-white/70 mt-0.5">
               {playlist.subtitle}
@@ -3120,7 +3493,6 @@ const PlaylistSlide: React.FC = () => {
               className="lg:col-span-5 rounded-3xl bg-white/[0.07] border border-white/20 backdrop-blur-xl p-5 flex flex-col justify-between"
             >
               <div>
-                {/* Vinyl / Album Header */}
                 <div className="flex items-center gap-4">
                   <div
                     className={`relative w-24 h-24 rounded-2xl bg-gradient-to-br ${activeLevel.gradient} p-3 flex flex-col items-center justify-center shadow-xl border border-white/30 shrink-0`}
@@ -3134,7 +3506,7 @@ const PlaylistSlide: React.FC = () => {
                   <div>
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-white/15 text-white">
                       <ListMusic className="w-3 h-3 text-[#E6007E]" />
-                      Playlist Oficial · {activeLevel.tier}
+                      Tu Playlist de Academias · {activeLevel.tier}
                     </span>
                     <h3 className="text-2xl sm:text-3xl font-black text-white mt-1">
                       {activeLevel.levelName}
@@ -3145,10 +3517,9 @@ const PlaylistSlide: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Active Level Tracklist */}
                 <div className="mt-5 space-y-2.5">
                   <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-white/50 px-2">
-                    <span># · Track (Curso Artefactory)</span>
+                    <span># · Track (Academia Artefactory)</span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" /> Nivel
                     </span>
@@ -3208,15 +3579,14 @@ const PlaylistSlide: React.FC = () => {
                 </div>
               </div>
 
-              {/* Mini Player Footer */}
               <div className="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-white/75">
                 <span className="inline-flex items-center gap-1.5 font-semibold">
                   <Play className="w-3.5 h-3.5 text-[#E6007E] fill-current" />
-                  Artefactory Learning Path 2027
+                  Tu Playlist de Academias 2027
                 </span>
                 <span className="font-bold text-white">
                   {activeLevel.tracks.length}{' '}
-                  {activeLevel.tracks.length === 1 ? 'Curso Oficial' : 'Cursos Oficiales'}
+                  {activeLevel.tracks.length === 1 ? 'Academia Oficial' : 'Academias Oficiales'}
                 </span>
               </div>
             </motion.div>
@@ -3227,10 +3597,10 @@ const PlaylistSlide: React.FC = () => {
             <div className="flex items-center justify-between mb-2.5">
               <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-white">
                 <Layers className="w-4 h-4 text-[#3B82F6]" />
-                Mapa Completo de Cursos ({selectedTierFilter === 'ALL' ? 'Entry 1 a Manager 2' : `Tier ${selectedTierFilter}`})
+                Mapa Completo de Academias ({selectedTierFilter === 'ALL' ? 'Entry 1 a Manager 2' : `Tier ${selectedTierFilter}`})
               </span>
               <span className="text-[11px] text-white/60">
-                Haz clic en cualquier nivel para reproducir
+                Haz clic en cualquier nivel para explorar
               </span>
             </div>
 
@@ -3285,17 +3655,13 @@ interface OutroAuraSlideProps {
 }
 const OutroAuraSlide: React.FC<OutroAuraSlideProps> = ({ onRestart }) => {
   const { outro } = WRAPPED_DATA;
-  const [selectedArchetypeIdx, setSelectedArchetypeIdx] = useState<number>(0);
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
   const [downloadedSuccess, setDownloadedSuccess] = useState<boolean>(false);
-
-  const activeAura =
-    outro.auraArchetypes[selectedArchetypeIdx] || outro.auraArchetypes[0];
 
   const triggerCelebration = useCallback(() => {
     soundManager.playPop();
     try {
-      const colors = ['#E6007E', '#8B5CF6', '#3B82F6', '#FFFFFF', '#F59E0B'];
+      const colors = ['#E6007E', '#8B5CF6', '#3B82F6', '#FFFFFF', '#10B981'];
       confetti({
         particleCount: 80,
         spread: 75,
@@ -3319,7 +3685,7 @@ const OutroAuraSlide: React.FC<OutroAuraSlideProps> = ({ onRestart }) => {
         });
       }, 220);
     } catch {
-      // Fallback if confetti fails
+      // Ignore confetti errors
     }
   }, []);
 
@@ -3327,13 +3693,13 @@ const OutroAuraSlide: React.FC<OutroAuraSlideProps> = ({ onRestart }) => {
     triggerCelebration();
   }, [triggerCelebration]);
 
-  const handleDownloadCardImage = async () => {
+  const handleDownloadInfographicImage = async () => {
     soundManager.playPop();
     setIsDownloading(true);
     try {
       const canvas = document.createElement('canvas');
-      canvas.width = 1200;
-      canvas.height = 760;
+      canvas.width = 1400;
+      canvas.height = 860;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
@@ -3341,122 +3707,136 @@ const OutroAuraSlide: React.FC<OutroAuraSlideProps> = ({ onRestart }) => {
       ctx.fillStyle = '#051336';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 2. Aura Radial Gradients
-      const grad1 = ctx.createRadialGradient(250, 180, 20, 250, 180, 520);
-      grad1.addColorStop(0, 'rgba(230, 0, 126, 0.55)');
-      grad1.addColorStop(0.5, 'rgba(139, 92, 246, 0.28)');
+      // 2. Radial Glows
+      const grad1 = ctx.createRadialGradient(260, 180, 20, 260, 180, 560);
+      grad1.addColorStop(0, 'rgba(230, 0, 126, 0.5)');
+      grad1.addColorStop(0.5, 'rgba(139, 92, 246, 0.25)');
       grad1.addColorStop(1, 'rgba(5, 19, 54, 0)');
       ctx.fillStyle = grad1;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const grad2 = ctx.createRadialGradient(980, 580, 20, 980, 580, 540);
-      grad2.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
+      const grad2 = ctx.createRadialGradient(1150, 680, 20, 1150, 680, 580);
+      grad2.addColorStop(0, 'rgba(59, 130, 246, 0.45)');
       grad2.addColorStop(1, 'rgba(5, 19, 54, 0)');
       ctx.fillStyle = grad2;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // 3. Geometric Chevron "A" Watermark
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.moveTo(950, 110);
-      ctx.lineTo(1140, 580);
-      ctx.lineTo(1065, 580);
-      ctx.lineTo(950, 280);
-      ctx.lineTo(835, 580);
-      ctx.lineTo(760, 580);
-      ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
-
-      // 4. Card Frame Border
+      // 3. Outer Neon Border
       const borderGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       borderGrad.addColorStop(0, '#E6007E');
       borderGrad.addColorStop(0.5, '#8B5CF6');
       borderGrad.addColorStop(1, '#3B82F6');
       ctx.strokeStyle = borderGrad;
       ctx.lineWidth = 6;
-      ctx.strokeRect(36, 36, canvas.width - 72, canvas.height - 72);
+      ctx.strokeRect(32, 32, canvas.width - 64, canvas.height - 64);
 
-      // 5. Draw ARTEFACT Logo if loaded
+      // 4. Logo ARTEFACT
       await new Promise<void>((resolve) => {
         const logoImg = new Image();
         logoImg.crossOrigin = 'anonymous';
         logoImg.onload = () => {
-          const targetH = 38;
+          const targetH = 36;
           const targetW = (logoImg.width / logoImg.height) * targetH;
-          ctx.drawImage(logoImg, 80, 78, targetW, targetH);
+          ctx.drawImage(logoImg, 70, 68, targetW, targetH);
           resolve();
         };
         logoImg.onerror = () => resolve();
         logoImg.src = encodeURI(outro.logo);
       });
 
-      // 6. Header Badge
+      // 5. Title & Subtitle
       ctx.fillStyle = '#E6007E';
-      ctx.font = 'bold 18px sans-serif';
-      ctx.fillText('CONSULTING WRAPPED 2026–2027 · ARTEFACT LATAM', 80, 155);
+      ctx.font = 'bold 17px sans-serif';
+      ctx.fillText('INFOGRAFÍA OFICIAL · CONSULTING WRAPPED 2026–2027', 70, 138);
 
-      // 7. Aura Title & Tagline
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = '900 46px sans-serif';
-      ctx.fillText(`Tu Aura: ${activeAura.name}`, 80, 215);
+      ctx.font = '900 40px sans-serif';
+      ctx.fillText('Nuevo Consulting Grid 2027: Cambios y Aprendizajes', 70, 186);
 
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-      ctx.font = '500 22px sans-serif';
-      ctx.fillText(activeAura.tagline, 80, 260);
-
-      // 8. Genre & Power Stat
-      ctx.fillStyle = '#3B82F6';
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillText(`Top Genre: ${activeAura.topGenre}`, 80, 310);
-
-      ctx.fillStyle = '#E6007E';
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillText(`Status: ${activeAura.powerStat}`, 80, 342);
-
-      // 9. 6 Summary Boxes
-      const boxW = 325;
-      const boxH = 115;
-      const startX = 80;
-      const startY = 390;
-      const gapX = 32;
-      const gapY = 24;
-
-      outro.cardStats.forEach((st, i) => {
-        const col = i % 3;
-        const row = Math.floor(i / 3);
-        const x = startX + col * (boxW + gapX);
-        const y = startY + row * (boxH + gapY);
-
+      // 6. Big Metrics Row (13->15 Skills, 6->7 Categorías, 52->60 Puntos)
+      outro.bigMetrics.forEach((m, i) => {
+        const x = 70 + i * 425;
+        const y = 215;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-        ctx.fillRect(x, y, boxW, boxH);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.fillRect(x, y, 400, 125);
+        ctx.strokeStyle = 'rgba(230, 0, 126, 0.5)';
         ctx.lineWidth = 2;
-        ctx.strokeRect(x, y, boxW, boxH);
+        ctx.strokeRect(x, y, 400, 125);
 
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-        ctx.font = 'bold 15px sans-serif';
-        ctx.fillText(st.label.toUpperCase(), x + 22, y + 40);
+        ctx.fillStyle = '#E6007E';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillText(`${m.label.toUpperCase()} (${m.delta})`, x + 20, y + 34);
 
         ctx.fillStyle = '#FFFFFF';
-        ctx.font = '900 32px sans-serif';
-        ctx.fillText(st.value, x + 22, y + 85);
+        ctx.font = '900 38px sans-serif';
+        ctx.fillText(`${m.from} → ${m.to}`, x + 20, y + 82);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.font = '500 14px sans-serif';
+        ctx.fillText(m.detail, x + 20, y + 108);
       });
 
-      // 10. Footer
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-      ctx.font = 'bold 16px sans-serif';
-      ctx.fillText(
-        'Septiembre 2026 – Enero 2027 · Nuestro año en modo Agéntico',
-        80,
-        690
-      );
+      // 7. 3 Nuevas Skills Clave
+      ctx.fillStyle = '#3B82F6';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('3 NUEVAS SKILLS CLAVE (DENTRO DE AI & DATA FLUENCY):', 70, 380);
+
+      outro.threeNewSkills.forEach((sk, i) => {
+        const x = 70 + i * 425;
+        const y = 398;
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.14)';
+        ctx.fillRect(x, y, 400, 100);
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.45)';
+        ctx.strokeRect(x, y, 400, 100);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 22px sans-serif';
+        ctx.fillText(`${i + 1}. ${sk.name}`, x + 18, y + 36);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+        ctx.font = '500 13px sans-serif';
+        ctx.fillText(sk.desc.slice(0, 62), x + 18, y + 66);
+        if (sk.desc.length > 62) {
+          ctx.fillText(sk.desc.slice(62), x + 18, y + 84);
+        }
+      });
+
+      // 8. Mindset AI PM + Regla de Skills Esenciales + 24 Badges
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
+      ctx.fillRect(70, 522, 615, 130);
+      ctx.fillStyle = '#E6007E';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('MINDSET AI PRODUCT MANAGER & REGLA DE SKILLS ESENCIALES', 90, 554);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '500 15px sans-serif';
+      ctx.fillText('• Mindset AI PM: IA responsable y pensamiento de producto transversales.', 90, 588);
+      ctx.fillText('• Skills Esenciales: Mínimo obligatorio según seniority, sin compensación.', 90, 618);
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.07)';
+      ctx.fillRect(710, 522, 615, 130);
+      ctx.fillStyle = '#10B981';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('CATÁLOGO DE 24 BADGES + NIVEL THOUGHT LEADER', 730, 554);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '500 15px sans-serif';
+      ctx.fillText('• 10 Técnicas | 7 de Oferta | 7 de Industria · Nivel máx: Thought Leader.', 730, 588);
+      ctx.fillText('• Sin regla de tiempo mínimo: cuenta la experiencia demostrada.', 730, 618);
+
+      // 9. Official Timeline
+      ctx.fillStyle = 'rgba(139, 92, 246, 0.2)';
+      ctx.fillRect(70, 675, 1255, 110);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 19px sans-serif';
+      ctx.fillText('TIMELINE OFICIAL DE APLICACIÓN:', 95, 710);
+      ctx.font = '600 17px sans-serif';
+      ctx.fillStyle = '#FBBF24';
+      ctx.fillText('• H2 2026: Se evalúa con el Grid actual.', 95, 742);
+      ctx.fillStyle = '#34D399';
+      ctx.fillText('• People Review 2027.1 (Enero–Junio 2027): Aplica el Nuevo Consulting Grid de transición.', 520, 742);
 
       const dataUrl = canvas.toDataURL('image/png');
       const link = document.createElement('a');
-      link.download = 'Consulting-Wrapped-2026-2027-Artefact.png';
+      link.download = 'Infografia-Consulting-Grid-2027-Artefact.png';
       link.href = dataUrl;
       document.body.appendChild(link);
       link.click();
@@ -3470,171 +3850,282 @@ const OutroAuraSlide: React.FC<OutroAuraSlideProps> = ({ onRestart }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
-      <div className="max-w-6xl w-full mx-auto">
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-6 py-2 overflow-y-auto">
+      <div className="max-w-7xl w-full mx-auto">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-3">
           <div>
             <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
               <Sparkles className="w-3.5 h-3.5" />
               {outro.eyebrow}
             </span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               {outro.title}
             </h2>
           </div>
 
-          {/* Archetype Selector Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-white/[0.06] border border-white/15 rounded-2xl p-1.5 backdrop-blur-xl">
-            {outro.auraArchetypes.map((arch, idx) => (
-              <button
-                key={arch.id}
-                onClick={() => {
-                  soundManager.playPop();
-                  setSelectedArchetypeIdx(idx);
-                }}
-                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
-                  selectedArchetypeIdx === idx
-                    ? 'bg-gradient-to-r from-[#E6007E] to-[#3B82F6] text-white shadow'
-                    : 'text-white/70 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                Aura #{idx + 1}: {arch.name.split(' ')[0]}
-              </button>
-            ))}
+          <div className="flex items-center gap-2">
+            <img
+              src={encodeURI(outro.logo)}
+              alt="ARTEFACT"
+              className="h-5 sm:h-6 w-auto object-contain hidden sm:block mr-2"
+            />
+            <button
+              onClick={handleDownloadInfographicImage}
+              disabled={isDownloading}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-lg shadow-[#E6007E]/40 hover:scale-105 transition cursor-pointer"
+            >
+              {downloadedSuccess ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>¡Infografía Descargada!</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Descargar Infografía (.PNG)</span>
+                </>
+              )}
+            </button>
+
+            <button
+              onClick={triggerCelebration}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-extrabold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
+              title="Lanzar Confetti"
+            >
+              <PartyPopper className="w-3.5 h-3.5 text-amber-300" />
+              <span className="hidden sm:inline">Celebrar</span>
+            </button>
+
+            <button
+              onClick={() => {
+                soundManager.playPop();
+                onRestart();
+              }}
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-extrabold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
+              title="Reiniciar Wrapped"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-[#3B82F6]" />
+              <span className="hidden sm:inline">Reiniciar</span>
+            </button>
           </div>
         </div>
 
-        {/* Shareable Summary Card */}
+        {/* Main Spotify Wrapped Infographic Container */}
         <motion.div
-          key={activeAura.id}
-          initial={{ opacity: 0, scale: 0.96 }}
+          initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="relative rounded-3xl p-1 bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_55px_rgba(230,0,126,0.45)]"
+          className="relative rounded-3xl p-1 bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_50px_rgba(230,0,126,0.4)]"
         >
-          <div className="relative rounded-[22px] bg-[#051336]/95 p-5 sm:p-7 overflow-hidden">
-            {/* Animated Aura Orb inside Card */}
-            <div
-              className={`pointer-events-none absolute -right-20 -top-20 w-80 h-80 rounded-full bg-gradient-to-br ${activeAura.gradient} opacity-35 blur-3xl`}
-            />
-
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-              {/* Left 7 Cols: Logo + Aura Info + 6 Summary Stats */}
-              <div className="lg:col-span-7 flex flex-col justify-between">
-                <div>
-                  {/* Official Logo + Tag */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/15">
-                    <img
-                      src={encodeURI(outro.logo)}
-                      alt="ARTEFACT"
-                      className="h-6 sm:h-7 w-auto object-contain"
-                    />
-                    <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-white/10 border border-white/20 text-white">
-                      Consulting Wrapped · 2026–2027
+          <div className="relative rounded-[22px] bg-[#051336]/95 p-4 sm:p-5 overflow-hidden">
+            {/* ROW 1: El Salto en Cifras (3 Big Metric Cards) + Party GIF */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 mb-3.5 items-stretch">
+              {outro.bigMetrics.map((m) => (
+                <div
+                  key={m.id}
+                  onClick={() => soundManager.playPop()}
+                  className="lg:col-span-3 rounded-2xl p-3.5 bg-white/[0.07] hover:bg-white/[0.11] border border-white/20 transition cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-white/75">
+                      {m.label}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[11px] font-black bg-gradient-to-r ${m.gradient} text-white`}
+                    >
+                      {m.delta}
                     </span>
                   </div>
 
-                  {/* Aura Title */}
-                  <div className="mt-4">
-                    <div className="text-xs font-bold uppercase tracking-widest text-[#E6007E]">
-                      TU AURA AGÉNTICA 2027 · {activeAura.auraColors}
+                  <div className="flex items-baseline gap-2 my-1">
+                    <span className="text-lg font-bold text-white/40 line-through">
+                      {m.from}
+                    </span>
+                    <ArrowRight className="w-4 h-4 text-[#E6007E] self-center" />
+                    <span
+                      className={`text-4xl sm:text-5xl font-black bg-gradient-to-r ${m.gradient} bg-clip-text text-transparent`}
+                    >
+                      {m.to}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-white/80 leading-snug">
+                    {m.detail}
+                  </p>
+                </div>
+              ))}
+
+              {/* Party GIF Mini Card */}
+              <div className="lg:col-span-3 rounded-2xl p-3 bg-gradient-to-br from-[#E6007E]/25 via-[#8B5CF6]/20 to-[#3B82F6]/25 border border-[#E6007E]/50 flex items-center gap-3">
+                <img
+                  src={encodeURI(outro.gif)}
+                  alt="Party GIF"
+                  className="w-20 h-20 rounded-xl object-cover border border-white/25 shrink-0"
+                />
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-300">
+                    EVOLUCIÓN 2027
+                  </span>
+                  <div className="text-sm font-black text-white leading-tight mt-0.5">
+                    El Salto en Cifras
+                  </div>
+                  <p className="text-[11px] text-white/80 mt-1 leading-tight">
+                    Mismo % de exigencia para promociones con un techo de 60 pts.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* ROW 2: 3 Nuevas Skills Clave (AI Fluency, Data Analysis, Solution Framing) */}
+            <div className="rounded-2xl bg-white/[0.05] border border-white/15 p-3.5 mb-3.5">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-white">
+                  <BrainCircuit className="w-4 h-4 text-[#E6007E]" />
+                  3 Nuevas Skills Clave · Nueva Categoría AI & Data Fluency
+                </span>
+                <span className="text-[11px] font-bold text-[#3B82F6]">
+                  Validar ideas con prototipos antes de construir
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                {outro.threeNewSkills.map((sk, i) => (
+                  <div
+                    key={sk.name}
+                    onClick={() => soundManager.playPop()}
+                    className="p-3 rounded-xl bg-[#051336]/85 border border-[#3B82F6]/40 hover:border-[#E6007E] transition cursor-pointer"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-black text-white">
+                        0{i + 1}. {sk.name}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#3B82F6]/25 text-[#3B82F6]">
+                        {sk.tag}
+                      </span>
                     </div>
-                    <h3 className="text-2xl sm:text-4xl font-black text-white mt-1">
-                      {activeAura.name}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-white/80 mt-1.5 leading-relaxed">
-                      {activeAura.tagline}
+                    <p className="text-[11px] text-white/80 leading-snug">
+                      {sk.desc}
                     </p>
                   </div>
+                ))}
+              </div>
+            </div>
 
-                  {/* Top Genre & Status */}
-                  <div className="mt-3.5 flex flex-wrap gap-2">
-                    <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#3B82F6]/20 border border-[#3B82F6]/40 text-white">
-                      🎵 Top Genre: {activeAura.topGenre}
-                    </span>
-                    <span className="px-3 py-1 rounded-xl text-xs font-bold bg-[#E6007E]/20 border border-[#E6007E]/40 text-white">
-                      ⚡ {activeAura.powerStat}
+            {/* ROW 3: Mindset AI PM + Regla de Skills Esenciales + Catálogo de 24 Badges */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3.5 items-stretch">
+              {/* Mindset AI PM + Regla Skills Esenciales (6 cols) */}
+              <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {outro.pillars.map((pil) => (
+                  <div
+                    key={pil.id}
+                    onClick={() => soundManager.playPop()}
+                    className="rounded-2xl p-3.5 bg-white/[0.06] border border-white/15 hover:border-white/35 transition cursor-pointer flex flex-col justify-between"
+                  >
+                    <div>
+                      <span
+                        className="inline-block px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider text-white mb-1.5"
+                        style={{ backgroundColor: pil.color }}
+                      >
+                        {pil.badge}
+                      </span>
+                      <h3 className="text-sm font-black text-white flex items-center gap-1.5">
+                        {pil.id === 'mindset-aipm' ? (
+                          <Rocket className="w-4 h-4 text-[#E6007E] shrink-0" />
+                        ) : (
+                          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                        )}
+                        {pil.title}
+                      </h3>
+                      <p className="text-[11px] text-white/80 mt-1.5 leading-snug">
+                        {pil.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Nuevo Catálogo de 24 Badges (6 cols) */}
+              <div className="lg:col-span-6 rounded-2xl p-3.5 bg-gradient-to-r from-[#051336] via-[#8B5CF6]/20 to-[#051336] border border-white/20 flex flex-col justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-[#E6007E]" />
+                    <span className="text-xs font-black uppercase tracking-wider text-white">
+                      Nuevo Catálogo: {outro.badgesCatalog.total} Badges en 3 Familias
                     </span>
                   </div>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-amber-400 to-[#E6007E] text-[#051336]">
+                    <Star className="w-3 h-3 fill-current" />
+                    Nivel Máx: {outro.badgesCatalog.topLevel}
+                  </span>
                 </div>
 
-                {/* 6 Summary Stats Grid */}
-                <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {outro.cardStats.map((st) => (
+                <div className="grid grid-cols-3 gap-2 mb-2">
+                  {outro.badgesCatalog.families.map((f) => (
                     <div
-                      key={st.label}
-                      className="p-3 rounded-2xl bg-white/[0.06] border border-white/15"
+                      key={f.name}
+                      className="p-2 rounded-xl bg-white/[0.07] border border-white/15 text-center"
                     >
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-white/60">
-                        {st.label}
+                      <div
+                        className="text-xl font-black"
+                        style={{ color: f.color }}
+                      >
+                        {f.count}
                       </div>
-                      <div className="text-base sm:text-lg font-black text-white mt-0.5">
-                        {st.value}
+                      <div className="text-[11px] font-bold text-white">
+                        {f.name}
                       </div>
                     </div>
                   ))}
                 </div>
+
+                <div className="text-[11px] font-semibold text-emerald-300 flex items-center gap-1.5">
+                  <Check className="w-3.5 h-3.5 shrink-0" />
+                  <span>{outro.badgesCatalog.noMinTimeRule}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ROW 4: Timeline Oficial (H2 2026 vs People Review 2027.1) */}
+            <div className="rounded-2xl bg-gradient-to-r from-[#E6007E]/20 via-[#8B5CF6]/20 to-[#3B82F6]/20 border border-white/25 p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2 shrink-0">
+                <Calendar className="w-4 h-4 text-[#E6007E]" />
+                <span className="text-xs font-black uppercase tracking-wider text-white">
+                  Timeline Oficial:
+                </span>
               </div>
 
-              {/* Right 5 Cols: Party GIF + Action Buttons */}
-              <div className="lg:col-span-5 flex flex-col items-center text-center bg-white/[0.05] border border-white/15 rounded-3xl p-5">
-                <div className="relative p-1.5 rounded-3xl bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-2xl">
-                  <img
-                    src={encodeURI(outro.gif)}
-                    alt="Cierre Party GIF"
-                    className="w-40 h-40 sm:w-48 sm:h-48 object-cover rounded-2xl bg-[#051336]"
-                  />
-                </div>
-
-                <h4 className="text-lg font-black text-white mt-4">
-                  ¡Gracias por construir el Chapter!
-                </h4>
-                <p className="text-xs text-white/75 mt-1 max-w-xs">
-                  Vamos por esos 60 puntos del Grid, los 24 Badges y un 2027 100% Agéntico en Artefact LATAM.
-                </p>
-
-                {/* Action Buttons */}
-                <div className="mt-4 w-full flex flex-col gap-2.5">
-                  <button
-                    onClick={handleDownloadCardImage}
-                    disabled={isDownloading}
-                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] hover:opacity-95 shadow-lg shadow-[#E6007E]/40 transition cursor-pointer"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+                {outro.officialTimeline.map((tl) => (
+                  <div
+                    key={tl.period}
+                    className={`px-3.5 py-2 rounded-xl border flex items-center justify-between gap-3 ${
+                      tl.active
+                        ? 'bg-[#051336]/90 border-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]'
+                        : 'bg-[#051336]/65 border-white/15'
+                    }`}
                   >
-                    {downloadedSuccess ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span>¡Tarjeta PNG Descargada!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Download className="w-4 h-4" />
-                        <span>Descargar Tarjeta como Imagen (.PNG)</span>
-                      </>
-                    )}
-                  </button>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={triggerCelebration}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
-                    >
-                      <PartyPopper className="w-4 h-4 text-amber-300" />
-                      <span>¡Más Confetti!</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        soundManager.playPop();
-                        onRestart();
-                      }}
-                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-white/10 hover:bg-white/20 border border-white/20 text-white transition cursor-pointer"
-                    >
-                      <RotateCcw className="w-4 h-4 text-[#3B82F6]" />
-                      <span>Reiniciar</span>
-                    </button>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-black text-white">
+                          {tl.period}
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
+                            tl.active
+                              ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/40'
+                              : 'bg-amber-500/20 text-amber-300'
+                          }`}
+                        >
+                          {tl.status}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-white/80 mt-0.5">
+                        {tl.detail}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -3835,7 +4326,10 @@ const App: React.FC = () => {
             {currentSlide === 1 && <StatsSlide />}
             {currentSlide === 2 && <SpeakersSlide />}
             {currentSlide === 3 && (
-              <TimelineSlide onOpenLightbox={handleOpenLightbox} />
+              <TimelineSlide
+                onOpenLightbox={handleOpenLightbox}
+                onJumpToSlide={(idx) => goToSlide(idx)}
+              />
             )}
             {currentSlide === 4 && (
               <GridPlotTwistSlide onOpenLightbox={handleOpenLightbox} />
