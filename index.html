@@ -144,6 +144,7 @@
       const UserPlus = createIcon(<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" /></>);
       const ExternalLink = createIcon(<><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></>);
       const MapPin = createIcon(<><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></>);
+      const TrendingUp = createIcon(<><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></>);
 
 // ==========================================
 // FILE: src/data/wrappedData.ts
@@ -154,15 +155,12 @@ interface SpeakerItem {
   role: string;
   sessionTag: string;
   photo?: string;
+  teamPhotos?: { name: string; photo: string }[];
   initials?: string;
   gradient?: string;
   isHost?: boolean;
   isTeamCard?: boolean;
   isRecentAddition?: boolean;
-  cropStyle?: {
-    objectPosition?: string;
-    scale?: number;
-  };
 }
 interface DemoScreenshot {
   id: string;
@@ -179,28 +177,21 @@ interface TimelineSession {
   id: string;
   date: string;
   monthLabel: string;
-  status: 'completed' | 'tbd' | 'available';
+  status: 'completed' | 'tbd';
   statusBadge: string;
   isCurrentMarkerAfter?: boolean;
   title: string;
   subtitle: string;
   summary: string;
   gif: string;
-  featuredImage?: string;
-  featuredImageBadge?: string;
   clientLogo?: string;
   clientName?: string;
-  clientLogoDarkInvert?: boolean;
   presentationUrl?: string;
   presentationLabel?: string;
   speakers: {
     name: string;
     photo?: string;
     initials?: string;
-    cropStyle?: {
-      objectPosition?: string;
-      scale?: number;
-    };
   }[];
   keyPoints: TimelinePoint[];
   demos?: DemoScreenshot[];
@@ -268,18 +259,24 @@ const ASSETS = {
     logoCencosud: 'assets/logos y presentaciones/cencosud.png',
     logoCarozzi: 'assets/logos y presentaciones/logo carozzi.png',
     logoPalacioHierro: 'assets/logos y presentaciones/El_Palacio_de_Hierro_logo.svg.webp',
+    demoCencosudLia: 'assets/logos y presentaciones/demo_cencosud_lia.jpg',
     demoCatman: 'assets/logos y presentaciones/catman.png',
     demoAgenteCatman: 'assets/logos y presentaciones/agente catman.png',
+    demoVibecoding: 'assets/logos y presentaciones/demo_vibecoding.jpg',
     demoArtetalkPalacios: 'assets/logos y presentaciones/ARTETALK (PALACIOS).png',
+    demoGrid2027: 'assets/logos y presentaciones/demo_grid_2027.jpg',
   },
   personas: {
-    camiloYGuille: 'assets/personas/Camilo y Guille.png',
+    camilo: 'assets/personas/Camilo.jpg',
+    guillaume: 'assets/personas/Guillaume.png',
     clemente: 'assets/personas/Clemente.png',
     maite: 'assets/personas/Maite.png',
     rocio: 'assets/personas/Rocio.png',
     javier: 'assets/personas/Javier.png',
     israel: 'assets/personas/israel.png',
-    teamPalacioHierro: 'assets/personas/team palacio de hierro.png',
+    diego: 'assets/personas/Diego.png',
+    inaki: 'assets/personas/Inaki.png',
+    isabela: 'assets/personas/Isabela.png',
     ines: 'assets/personas/Ines.jpg',
     valentinaGana: 'assets/personas/Valentina_Gana.jpg',
     joaquinRuiz: 'assets/personas/Joaquin_Ruiz.jpg',
@@ -331,7 +328,7 @@ const WRAPPED_DATA = {
 
   stats: {
     eyebrow: 'EL AÑO EN NÚMEROS · 2026–2027',
-    title: 'Un semestre de alto impacto y evolución continua',
+    title: 'Un semestre de alto impacto y asistencia creciente',
     subtitle: 'Cada sesión fue diseñada para responder al Climate Survey: compartir casos reales, herramientas tácticas y construir juntos el estándar del consultor agéntico.',
     gif: ASSETS.gifs.statsRocket,
     counters: [
@@ -343,7 +340,7 @@ const WRAPPED_DATA = {
         label: 'Sesiones de Chapter',
         sublabel: 'Instancia quincenal dedicada al equipo de Consulting (Sep 2026 – Ene 2027)',
         accent: 'from-[#E6007E] to-[#8B5CF6]',
-        tags: ['5 Realizadas', '3 Próximamente (TBD)', '1 Espacio Disponible'],
+        tags: ['5 Realizadas', '3 Próximamente (TBD)'],
       },
       {
         id: 'speakers',
@@ -360,10 +357,10 @@ const WRAPPED_DATA = {
         value: 4,
         prefix: '',
         suffix: '',
-        label: 'Grandes Casos y ArteTalks',
-        sublabel: 'Soluciones accionables presentadas con demos reales y links a presentaciones',
+        label: 'Pitch your project',
+        sublabel: 'Presentaciones de casos reales y herramientas tácticas en vivo al Chapter',
         accent: 'from-[#3B82F6] to-[#06B6D4]',
-        tags: ['Cencosud (LIA 2.0)', 'Carozzi (4 PoCs)', 'Vibecoding (4 Demos)', 'Palacio de Hierro'],
+        tags: ['1. Cencosud', '2. Carozzi', '3. Vibecoding', '4. Palacio de Hierro'],
       },
       {
         id: 'evolution',
@@ -376,6 +373,43 @@ const WRAPPED_DATA = {
         tags: ['15 Skills (+2)', '7 Categorías', '60 Puntos Máx.', '24 Badges'],
       },
     ],
+    attendanceChart: {
+      title: 'Evolución de Asistencia Única por Sesión',
+      subtitle: 'Crecimiento sostenido en la participación del equipo a lo largo del ciclo',
+      points: [
+        { date: '09/10', label: 'Experiencia Carozzi', attendees: 17, isPeak: false },
+        { date: '23/10', label: 'Vibecoding', attendees: 18, isPeak: false },
+        { date: '06/11', label: 'Palacio de Hierro', attendees: 24, isPeak: true },
+        { date: '20/11', label: 'Nuevo Consulting Grid', attendees: 23, isPeak: false },
+      ],
+      kpis: [
+        {
+          id: 'growth',
+          value: '+41%',
+          label: 'De crecimiento en asistencia',
+          detail: 'Hasta el pico máximo (de 17 a 24 asistentes)',
+          color: '#E6007E',
+        },
+        {
+          id: 'unique',
+          value: '35',
+          label: 'Personas únicas conectadas',
+          detail: 'A lo largo del ciclo (82 participaciones totales)',
+          color: '#8B5CF6',
+        },
+        {
+          id: 'average',
+          value: '20,5',
+          label: 'Asistentes promedio',
+          detail: 'Promedio de conexión por sesión del Chapter',
+          color: '#3B82F6',
+        },
+      ],
+    },
+    pitchBanner: {
+      badge: 'Pitch your project',
+      projectsList: '1. Cencosud · 2. Carozzi · 3. Vibecoding · 4. Palacio de Hierro',
+    },
   },
 
   speakers: {
@@ -390,7 +424,10 @@ const WRAPPED_DATA = {
       rank: '#1 EQUIPO DEL CHAPTER',
       names: 'Camilo & Guillaume',
       role: 'Equipo impulsor del Chapter · Conducción, Kick-Off, Path del Consultor & Grid 2027',
-      photo: ASSETS.personas.camiloYGuille,
+      members: [
+        { name: 'Camilo', photo: ASSETS.personas.camilo },
+        { name: 'Guillaume', photo: ASSETS.personas.guillaume },
+      ],
       sessionsCount: 'Ciclo 2026–2027',
       badge: 'Equipo Chapter Consulting',
       recentAdditionsTitle: 'Incorporaciones Recientes al Equipo',
@@ -400,14 +437,12 @@ const WRAPPED_DATA = {
           name: 'Inés',
           role: 'Incorporación Reciente · Equipo Chapter',
           photo: ASSETS.personas.ines,
-          cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
         },
         {
           id: 'team-rocio',
           name: 'Rocío',
           role: 'Incorporación Reciente · Equipo Chapter',
           photo: ASSETS.personas.rocio,
-          cropStyle: { objectPosition: '50% 18%', scale: 1.32 },
         },
       ],
     },
@@ -418,7 +453,6 @@ const WRAPPED_DATA = {
         role: 'Cencosud · LIA 2.0 & Kick-Off',
         sessionTag: '25/09 · Kick-Off & Cenco',
         photo: ASSETS.personas.maite,
-        cropStyle: { objectPosition: '50% 18%', scale: 1.35 },
       },
       {
         id: 'clemente',
@@ -426,7 +460,6 @@ const WRAPPED_DATA = {
         role: 'Cencosud · LIA 2.0 & Kick-Off',
         sessionTag: '25/09 · Kick-Off & Cenco',
         photo: ASSETS.personas.clemente,
-        cropStyle: { objectPosition: '50% 16%', scale: 1.32 },
       },
       {
         id: 'rocio',
@@ -434,7 +467,6 @@ const WRAPPED_DATA = {
         role: 'Caso Carozzi & Equipo Chapter',
         sessionTag: '09/10 · Experiencia Carozzi',
         photo: ASSETS.personas.rocio,
-        cropStyle: { objectPosition: '50% 18%', scale: 1.32 },
       },
       {
         id: 'javier',
@@ -442,7 +474,6 @@ const WRAPPED_DATA = {
         role: 'Caso Carozzi · 4 PoCs Agénticos',
         sessionTag: '09/10 · Experiencia Carozzi',
         photo: ASSETS.personas.javier,
-        cropStyle: { objectPosition: '50% 16%', scale: 1.34 },
       },
       {
         id: 'israel',
@@ -450,7 +481,6 @@ const WRAPPED_DATA = {
         role: 'Del pensamiento consultivo al Vibecoding',
         sessionTag: '23/10 · Vibecoding',
         photo: ASSETS.personas.israel,
-        cropStyle: { objectPosition: '50% 14%', scale: 1.38 },
       },
       {
         id: 'joaquin-ruiz',
@@ -458,7 +488,6 @@ const WRAPPED_DATA = {
         role: 'Nuevo Consulting Grid 2027 & Bono',
         sessionTag: '20/11 & 08/01 · Grid & Bono',
         photo: ASSETS.personas.joaquinRuiz,
-        cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
       },
       {
         id: 'valentina-gana',
@@ -466,7 +495,6 @@ const WRAPPED_DATA = {
         role: 'Portal RFI + Diagnóstico + Roadmap',
         sessionTag: '04/12 · Diagnóstico (TBD)',
         photo: ASSETS.personas.valentinaGana,
-        cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
       },
       {
         id: 'ines',
@@ -474,15 +502,18 @@ const WRAPPED_DATA = {
         role: 'Incorporación Reciente · Equipo Chapter',
         sessionTag: 'Nuevo Fichaje · Equipo',
         photo: ASSETS.personas.ines,
-        cropStyle: { objectPosition: '50% 50%', scale: 1.18 },
       },
       {
         id: 'team-palacio',
         name: 'Team Palacio de Hierro',
         role: 'Diego Bendicho, Iñaki & Isabela',
         sessionTag: '06/11 · Agentic Lab',
-        photo: ASSETS.personas.teamPalacioHierro,
         isTeamCard: true,
+        teamPhotos: [
+          { name: 'Diego', photo: ASSETS.personas.diego },
+          { name: 'Iñaki', photo: ASSETS.personas.inaki },
+          { name: 'Isabela', photo: ASSETS.personas.isabela },
+        ],
       },
     ] as SpeakerItem[],
     initialsSpeakers: [
@@ -508,7 +539,7 @@ const WRAPPED_DATA = {
   timeline: {
     eyebrow: 'NUESTROS HITS DEL AÑO · TRACK BY TRACK',
     title: 'Línea de Tiempo Interactiva',
-    subtitle: 'Explora las sesiones realizadas (con sus 3 puntos clave, capturas y link a presentación) y las sesiones programadas (TBD).',
+    subtitle: 'Explora las sesiones realizadas (con sus 3 puntos clave, capturas y link a presentación) y las sesiones programadas.',
     currentDateMarkerLabel: '📍 HOY ESTAMOS ACÁ',
     sessions: [
       {
@@ -522,16 +553,15 @@ const WRAPPED_DATA = {
         summary:
           'Evolución del dominio de Clientes en Cencosud y desarrollo de LIA 2.0 (Loyalty Intelligence Assistant), un chatbot en Teams potenciado por Copilot y Databricks para consultas comerciales en lenguaje natural.',
         gif: ASSETS.gifs.septKickoff,
-        featuredImage: ASSETS.logosAndDemos.logoCencosud,
-        featuredImageBadge: 'Caso Cencosud · LIA 2.0 (Copilot + Databricks)',
         clientLogo: ASSETS.logosAndDemos.logoCencosud,
         clientName: 'Cencosud',
         presentationUrl: 'https://docs.google.com/presentation/d/1P8G2oMrerPRBGAos6YMonhEvgfDOoWm9ixPWK8pbego/edit?usp=sharing',
         presentationLabel: 'Ver Presentación Kick-Off & Cenco — LIA',
         speakers: [
-          { name: 'Camilo & Guillaume', photo: ASSETS.personas.camiloYGuille },
-          { name: 'Maite', photo: ASSETS.personas.maite, cropStyle: { objectPosition: '50% 18%', scale: 1.35 } },
-          { name: 'Clemente', photo: ASSETS.personas.clemente, cropStyle: { objectPosition: '50% 16%', scale: 1.32 } },
+          { name: 'Camilo', photo: ASSETS.personas.camilo },
+          { name: 'Guillaume', photo: ASSETS.personas.guillaume },
+          { name: 'Maite', photo: ASSETS.personas.maite },
+          { name: 'Clemente', photo: ASSETS.personas.clemente },
         ],
         keyPoints: [
           {
@@ -553,9 +583,9 @@ const WRAPPED_DATA = {
         demos: [
           {
             id: 'cenco-lia-card',
-            title: 'Cencosud · LIA 2.0 (Loyalty Intelligence Assistant)',
-            subtitle: 'Salto de precisión del 47% al 94% y reducción de ~80% en tiempos de consulta sobre 36 fuentes gobernadas.',
-            src: ASSETS.logosAndDemos.logoCencosud,
+            title: 'Cencosud · Capa Contexto Semántica & LIA 2.0',
+            subtitle: 'Un flujo único de consolidación transforma reportería dispersa en una capa semántica viva para auditoría y agentes de IA.',
+            src: ASSETS.logosAndDemos.demoCencosudLia,
             badge: 'Caso Cencosud · LIA 2.0',
           },
         ],
@@ -572,15 +602,13 @@ const WRAPPED_DATA = {
         summary:
           'Proyecto de adopción de IA en Carozzi con impacto directo en EBITDA bajo el Journey de Cultura Agéntica (Escuchar, Construir y Acompañar).',
         gif: ASSETS.gifs.octCarozzi,
-        featuredImage: ASSETS.logosAndDemos.demoCatman,
-        featuredImageBadge: 'Caso Carozzi · 4 PoCs Agénticos en 2 Meses',
         clientLogo: ASSETS.logosAndDemos.logoCarozzi,
         clientName: 'Carozzi',
         presentationUrl: 'https://docs.google.com/presentation/d/1jMasX0BOvfTftUpzU1RRyP9zAPkEQdWuPGkNbvQueWY/edit?usp=sharing',
         presentationLabel: 'Ver Presentación Experiencia Carozzi',
         speakers: [
-          { name: 'Rocío', photo: ASSETS.personas.rocio, cropStyle: { objectPosition: '50% 18%', scale: 1.32 } },
-          { name: 'Javier', photo: ASSETS.personas.javier, cropStyle: { objectPosition: '50% 16%', scale: 1.34 } },
+          { name: 'Rocío', photo: ASSETS.personas.rocio },
+          { name: 'Javier', photo: ASSETS.personas.javier },
         ],
         keyPoints: [
           {
@@ -602,17 +630,17 @@ const WRAPPED_DATA = {
         demos: [
           {
             id: 'catman-slide',
-            title: 'CATMAN · Análisis Canasta Mascotas',
+            title: 'POC#1 - CATMAN | CATMAN - Análisis canasta mascotas',
             subtitle: 'Generación automatizada de slides por sección (Apertura, Canasta, Shopper, Cuantitativo) con estado del run en tiempo real.',
             src: ASSETS.logosAndDemos.demoCatman,
-            badge: 'PoC #1 · Catman Run',
+            badge: 'POC#1 - CATMAN',
           },
           {
             id: 'agente-catman',
-            title: 'Agente CATMAN · Orquestador de Estructura',
+            title: 'Poc#1 - AGENTE CATMAN| Orquestador de estructura',
             subtitle: 'Configuración modular de 22 slides activables por bloque (Canasta, Shopper) antes de disparar la generación agéntica.',
             src: ASSETS.logosAndDemos.demoAgenteCatman,
-            badge: 'PoC #2 · Agente Catman',
+            badge: 'Poc#1 - AGENTE CATMAN',
           },
           {
             id: 'team-carozzi-art',
@@ -635,12 +663,10 @@ const WRAPPED_DATA = {
         summary:
           'ArteTalk sobre cómo el consultor actúa como puente entre negocio y tecnología, usando el prototipado rápido (Vibecoding) para volver las ideas visibles y discutibles antes de escalar, sin reemplazar al equipo técnico.',
         gif: ASSETS.gifs.octAutomation,
-        featuredImage: ASSETS.gifs.octAutomation,
-        featuredImageBadge: 'ArteTalk · Del pensamiento consultivo al Vibecoding',
         presentationUrl: 'https://docs.google.com/presentation/d/1mESU0DpsmgXbFK6XlCdwsbcmFFXqVZ08/edit?usp=sharing&ouid=107718354235638921087&rtpof=true&sd=true',
         presentationLabel: 'Ver Presentación Vibecoding (ArteTalk)',
         speakers: [
-          { name: 'Israel', photo: ASSETS.personas.israel, cropStyle: { objectPosition: '50% 14%', scale: 1.38 } },
+          { name: 'Israel', photo: ASSETS.personas.israel },
         ],
         keyPoints: [
           {
@@ -662,10 +688,10 @@ const WRAPPED_DATA = {
         demos: [
           {
             id: 'vibecoding-experiments',
-            title: '4 Experimentos en Vivo · Vibecoding en Consultoría',
-            subtitle: 'HTML → PPTX, Campaign OS, MDP+ (RAG verificable) y Journey Viajero: atacar problemas que duelan, se repitan y consuman tiempo.',
-            src: ASSETS.gifs.octAutomation,
-            badge: '4 Demos · Vibecoding',
+            title: 'La cabeza, los brazos y la pala · Del pensamiento consultivo al Vibecoding',
+            subtitle: 'Criterio consultivo (Cabeza) + IA que amplifica (Brazos) + Experimentar con prototipos visibles (Pala).',
+            src: ASSETS.logosAndDemos.demoVibecoding,
+            badge: 'ArteTalk · Vibecoding',
           },
         ],
         accentColor: '#8B5CF6',
@@ -681,15 +707,14 @@ const WRAPPED_DATA = {
         summary:
           'ArteTalk: Crackeando Palacio. Creación del primer Agentic Lab en retail de lujo junto a AWS, priorizando +30 casos de uso en 4 soluciones clave con impacto directo en P&L.',
         gif: ASSETS.gifs.novLab,
-        featuredImage: ASSETS.logosAndDemos.demoArtetalkPalacios,
-        featuredImageBadge: 'ArteTalk: Crackeando Palacio · Agentic Lab',
         clientLogo: ASSETS.logosAndDemos.logoPalacioHierro,
         clientName: 'El Palacio de Hierro',
-        clientLogoDarkInvert: true,
         presentationUrl: 'https://docs.google.com/presentation/d/10E-SIx3mmUj4yq_orJEgSFT3dUx6jpqOr7Xh0-kbIqA/edit?usp=sharing',
         presentationLabel: 'Ver Presentación Palacio de Hierro — Agentic Lab',
         speakers: [
-          { name: 'Diego Bendicho, Iñaki & Isabela', photo: ASSETS.personas.teamPalacioHierro },
+          { name: 'Diego Bendicho', photo: ASSETS.personas.diego },
+          { name: 'Iñaki', photo: ASSETS.personas.inaki },
+          { name: 'Isabela', photo: ASSETS.personas.isabela },
         ],
         keyPoints: [
           {
@@ -731,13 +756,11 @@ const WRAPPED_DATA = {
         summary:
           'Presentación oficial del Nuevo Consulting Grid 2027 liderada por Joaquín Ruíz y Camilo: rediseño del modelo de evaluación y carrera con foco en AI & Data Fluency, Mindset AI Product Manager y un nuevo catálogo de 24 badges.',
         gif: ASSETS.gifs.statsRocket,
-        featuredImage: ASSETS.drawings.chapterGridIllustration,
-        featuredImageBadge: 'Consulting Grid 2027 · 60 Puntos & 24 Badges',
-        presentationUrl: '#slide-outro-grid',
-        presentationLabel: 'Ver Infografía Completa del Grid 2027',
+        presentationUrl: 'https://docs.google.com/presentation/d/1nKtuK5JHDTzKSVHLeclGsj9yJgLD2cdh9tCzB8xQ98c/edit?usp=sharing',
+        presentationLabel: 'Ver Presentación Nuevo Consulting Grid 2027',
         speakers: [
-          { name: 'Joaquín Ruíz', photo: ASSETS.personas.joaquinRuiz, cropStyle: { objectPosition: '50% 50%', scale: 1.18 } },
-          { name: 'Camilo', photo: ASSETS.personas.camiloYGuille },
+          { name: 'Joaquín Ruíz', photo: ASSETS.personas.joaquinRuiz },
+          { name: 'Camilo', photo: ASSETS.personas.camilo },
         ],
         keyPoints: [
           {
@@ -758,11 +781,11 @@ const WRAPPED_DATA = {
         ],
         demos: [
           {
-            id: 'grid-2027-illustration',
-            title: 'Nuevo Consulting Grid 2027 · 60 Puntos & Bono',
-            subtitle: 'Camilo y Joaquín Ruíz presentando la evolución a 60 puntos, 15 skills y 24 badges.',
-            src: ASSETS.drawings.chapterGridIllustration,
-            badge: 'Ilustración · Grid 2027',
+            id: 'grid-2027-matrix',
+            title: 'Consulting Grid 2027 · 15 Skills en 7 Categorías',
+            subtitle: 'De las 15 skills, 3 son nuevas (AI Fluency, Solution Framing, Data Analysis), 9 cambiaron sustancialmente y 3 tuvieron ajustes puntuales.',
+            src: ASSETS.logosAndDemos.demoGrid2027,
+            badge: 'Matriz Oficial · 15 Skills',
           },
         ],
         accentColor: '#E6007E',
@@ -781,7 +804,7 @@ const WRAPPED_DATA = {
         presentationUrl: '#',
         presentationLabel: 'Link a presentación (Disponible tras la sesión)',
         speakers: [
-          { name: 'Valentina Gana', photo: ASSETS.personas.valentinaGana, cropStyle: { objectPosition: '50% 50%', scale: 1.18 } },
+          { name: 'Valentina Gana', photo: ASSETS.personas.valentinaGana },
           { name: 'Equipo de Apoyos', initials: 'AP' },
         ],
         keyPoints: [
@@ -801,38 +824,6 @@ const WRAPPED_DATA = {
         accentColor: '#06B6D4',
       },
       {
-        id: '18-12-disponible',
-        date: '18/12',
-        monthLabel: 'DICIEMBRE 2026',
-        status: 'available',
-        statusBadge: 'Espacio Disponible · TBD',
-        title: 'Espacio Disponible',
-        subtitle: 'Slot abierto para nueva iniciativa o caso del Chapter de Consulting',
-        summary:
-          'Espacio disponible en la agenda del Chapter (el caso de Palacio de Hierro fue consolidado y presentado integralmente en la sesión del Agentic Lab del 06/11). Abierto para postular un nuevo caso o herramienta del equipo.',
-        gif: ASSETS.gifs.introSparkles,
-        presentationUrl: '#',
-        presentationLabel: 'Espacio disponible para presentación',
-        speakers: [
-          { name: 'Por definir (Espacio Abierto)', initials: 'TBD' },
-        ],
-        keyPoints: [
-          {
-            title: '1. Slot abierto para el equipo',
-            description: 'Espacio liberado tras integrar la experiencia de Palacio de Hierro en la sesión del Agentic Lab.',
-          },
-          {
-            title: '2. Formato estándar ArteTalk / Caso',
-            description: 'Oportunidad para presentar un nuevo experimento, PoC agéntico o aprendizaje de proyecto en 3 puntos clave.',
-          },
-          {
-            title: '3. Postulación abierta',
-            description: 'Coordina con el Equipo del Chapter para agendar tu demo o caso en esta fecha.',
-          },
-        ],
-        accentColor: '#64748B',
-      },
-      {
         id: '08-01-bono',
         date: '08/01',
         monthLabel: 'ENERO 2027',
@@ -846,7 +837,7 @@ const WRAPPED_DATA = {
         presentationUrl: '#',
         presentationLabel: 'Link a presentación (Disponible tras la sesión)',
         speakers: [
-          { name: 'Joaquín Ruíz', photo: ASSETS.personas.joaquinRuiz, cropStyle: { objectPosition: '50% 50%', scale: 1.18 } },
+          { name: 'Joaquín Ruíz', photo: ASSETS.personas.joaquinRuiz },
         ],
         keyPoints: [
           {
@@ -886,7 +877,7 @@ const WRAPPED_DATA = {
         presentationUrl: '#',
         presentationLabel: 'Link a presentación (Disponible tras la sesión)',
         speakers: [
-          { name: 'Camilo', photo: ASSETS.personas.camiloYGuille },
+          { name: 'Camilo', photo: ASSETS.personas.camilo },
           { name: 'People Team', initials: 'PP' },
         ],
         keyPoints: [
@@ -1354,6 +1345,7 @@ const WRAPPED_DATA = {
         active: false,
       },
       {
+        id: 'pr-2027-1',
         period: 'People Review 2027.1 (Ene – Jun 2027)',
         status: 'Nuevo Grid de Transición',
         detail: 'El nuevo Consulting Grid 2027 aplica oficialmente en el ciclo enero–junio 2027.',
@@ -2140,7 +2132,7 @@ const CountUpNumber: React.FC<CountUpNumberProps> = ({
   target,
   prefix = '',
   suffix = '',
-  durationMs = 1400,
+  durationMs = 1200,
 }) => {
   const [count, setCount] = useState(0);
 
@@ -2152,7 +2144,6 @@ const CountUpNumber: React.FC<CountUpNumberProps> = ({
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / durationMs, 1);
-      // easeOutExpo
       const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       setCount(Math.round(eased * target));
       if (progress < 1) {
@@ -2175,6 +2166,7 @@ const CountUpNumber: React.FC<CountUpNumberProps> = ({
 const StatsSlide: React.FC = () => {
   const { stats } = WRAPPED_DATA;
   const [activeCardId, setActiveCardId] = useState<string>('cases');
+  const [activePointIdx, setActivePointIdx] = useState<number>(2); // Default highlight on 06/11 (peak: 24)
 
   const iconsMap: Record<string, React.ElementType> = {
     sessions: Flame,
@@ -2183,59 +2175,77 @@ const StatsSlide: React.FC = () => {
     evolution: Sparkles,
   };
 
+  // SVG Chart Geometry for Attendance Evolution
+  const chartPoints = stats.attendanceChart.points;
+  const svgW = 540;
+  const svgH = 140;
+  const padX = 52;
+  const padTop = 26;
+  const padBot = 30;
+  const minVal = 14;
+  const maxVal = 26;
+
+  const coords = chartPoints.map((pt, i) => {
+    const x = padX + (i / (chartPoints.length - 1)) * (svgW - padX * 2);
+    const y =
+      padTop +
+      (1 - (pt.attendees - minVal) / (maxVal - minVal)) * (svgH - padTop - padBot);
+    return { ...pt, x, y };
+  });
+
+  const linePath = coords
+    .map((c, i) => `${i === 0 ? 'M' : 'L'} ${c.x} ${c.y}`)
+    .join(' ');
+  const areaPath = `${linePath} L ${coords[coords.length - 1].x} ${
+    svgH - padBot
+  } L ${coords[0].x} ${svgH - padBot} Z`;
+
   return (
-    <div className="w-full h-full flex flex-col justify-center px-4 sm:px-8 py-4">
-      <div className="max-w-6xl w-full mx-auto">
+    <div className="w-full h-full flex flex-col justify-center px-3 sm:px-8 py-2 overflow-y-auto">
+      <div className="max-w-7xl w-full mx-auto">
         {/* Header with Rocket GIF */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-3 mb-3">
           <motion.div
-            initial={{ opacity: 0, y: -15 }}
+            initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
+            transition={{ duration: 0.4 }}
             className="text-center md:text-left"
           >
-            <span className="inline-block text-xs font-extrabold tracking-[0.2em] uppercase text-[#E6007E] mb-1">
+            <span className="inline-block text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
               {stats.eyebrow}
             </span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               {stats.title}
             </h2>
-            <p className="text-xs sm:text-sm text-white/75 mt-1 max-w-2xl">
-              {stats.subtitle}
-            </p>
           </motion.div>
 
           {/* Rocket GIF Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            transition={{ duration: 0.45, delay: 0.1 }}
             className="relative shrink-0"
           >
-            <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-[#E6007E] to-[#3B82F6] opacity-70 blur-lg" />
-            <div className="relative flex items-center gap-3 p-2.5 rounded-2xl bg-[#051336]/90 border border-white/20 backdrop-blur-xl">
+            <div className="relative flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-[#051336]/90 border border-white/20 backdrop-blur-xl">
               <img
                 src={encodeURI(stats.gif)}
                 alt="Stats Rocket"
-                className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-xl border border-white/15"
+                className="w-11 h-11 object-cover rounded-xl border border-white/15"
               />
-              <div className="pr-2">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-[#E6007E]">
+              <div className="pr-1">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-[#E6007E]">
                   MODO DESPEGUE
                 </div>
-                <div className="text-sm font-extrabold text-white">
-                  Impacto LATAM
-                </div>
-                <div className="text-xs text-white/65">
-                  Sept 2026 – Ene 2027
+                <div className="text-xs font-extrabold text-white">
+                  Impacto LATAM · 2026–2027
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
 
-        {/* 4 Animated Stat Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Row 1: 4 Animated Stat Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
           {stats.counters.map((item, idx) => {
             const Icon = iconsMap[item.id] || Sparkles;
             const isSelected = activeCardId === item.id;
@@ -2243,57 +2253,56 @@ const StatsSlide: React.FC = () => {
             return (
               <motion.div
                 key={item.id}
-                initial={{ opacity: 0, y: 25 }}
+                initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                transition={{ duration: 0.4, delay: idx * 0.08 }}
                 onClick={() => {
                   soundManager.playPop();
                   setActiveCardId(item.id);
                 }}
-                className={`group relative rounded-3xl p-5 cursor-pointer transition-all duration-300 backdrop-blur-xl border flex flex-col justify-between ${
+                className={`group relative rounded-2xl p-3.5 cursor-pointer transition-all duration-300 backdrop-blur-xl border flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-white/[0.13] border-[#E6007E] shadow-[0_0_35px_rgba(230,0,126,0.3)] -translate-y-1'
-                    : 'bg-white/[0.06] border-white/15 hover:bg-white/[0.1] hover:border-white/30'
+                    ? 'bg-white/[0.12] border-[#E6007E] shadow-[0_0_25px_rgba(230,0,126,0.28)]'
+                    : 'bg-white/[0.06] border-white/15 hover:bg-white/[0.1]'
                 }`}
               >
-                {/* Top Icon & Accent Bar */}
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div
-                      className={`p-3 rounded-2xl bg-gradient-to-br ${item.accent} text-white shadow-lg`}
-                    >
-                      <Icon className="w-6 h-6" />
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className={`p-2 rounded-xl bg-gradient-to-br ${item.accent} text-white shadow-md`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+                      <div className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+                        <CountUpNumber
+                          target={item.value}
+                          prefix={item.prefix}
+                          suffix={item.suffix}
+                        />
+                      </div>
                     </div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-white/10 text-white/75">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/10 text-white/70">
                       0{idx + 1}
                     </span>
                   </div>
 
-                  {/* Animated Counter */}
-                  <div className="text-5xl sm:text-6xl font-black tracking-tight bg-gradient-to-r from-white via-white to-white/80 bg-clip-text text-transparent my-1">
-                    <CountUpNumber
-                      target={item.value}
-                      prefix={item.prefix}
-                      suffix={item.suffix}
-                    />
-                  </div>
-
-                  <h3 className="text-lg font-extrabold text-white mt-1">
+                  <h3 className="text-sm font-extrabold text-white">
                     {item.label}
                   </h3>
-                  <p className="text-xs text-white/70 mt-1.5 leading-relaxed">
+                  <p className="text-[11px] text-white/70 mt-0.5 leading-snug">
                     {item.sublabel}
                   </p>
                 </div>
 
                 {/* Tags / Breakdown Pills */}
-                <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap gap-1.5">
+                <div className="mt-2.5 pt-2 border-t border-white/10 flex flex-wrap gap-1">
                   {item.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-[#051336]/75 border border-white/15 text-white/90"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-[#051336]/80 border border-white/15 text-white/90"
                     >
-                      <CheckCircle2 className="w-3 h-3 text-[#E6007E] shrink-0" />
+                      <CheckCircle2 className="w-2.5 h-2.5 text-[#E6007E] shrink-0" />
                       {tag}
                     </span>
                   ))}
@@ -2303,19 +2312,197 @@ const StatsSlide: React.FC = () => {
           })}
         </div>
 
-        {/* Bottom Highlight Banner */}
+        {/* Row 2: Gráfica de Asistencia Creciente por Sesión + 3 KPI Cards */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.45 }}
-          className="mt-5 p-4 rounded-2xl bg-gradient-to-r from-[#E6007E]/20 via-[#8B5CF6]/20 to-[#3B82F6]/20 border border-white/20 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3"
+          transition={{ duration: 0.45, delay: 0.25 }}
+          className="rounded-3xl bg-white/[0.06] border border-white/20 backdrop-blur-xl p-4 mb-3"
         >
-          <div className="flex items-center gap-3">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+            {/* Left 7 Cols: Interactive Area/Line Chart */}
+            <div className="lg:col-span-7">
+              <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-[#E6007E]">
+                    <TrendingUp className="w-4 h-4" />
+                    {stats.attendanceChart.title}
+                  </span>
+                  <p className="text-[11px] text-white/70">
+                    {stats.attendanceChart.subtitle}
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#E6007E]/25 border border-[#E6007E]/50 text-white">
+                  🔥 Pico Máximo: 24 asistentes (06/11)
+                </span>
+              </div>
+
+              <div className="relative rounded-2xl bg-[#051336]/85 border border-white/15 p-3">
+                <svg
+                  viewBox={`0 0 ${svgW} ${svgH}`}
+                  className="w-full h-32 sm:h-36 overflow-visible"
+                >
+                  <defs>
+                    <linearGradient id="attendanceAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#E6007E" stopOpacity="0.55" />
+                      <stop offset="55%" stopColor="#8B5CF6" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.0" />
+                    </linearGradient>
+                    <linearGradient id="attendanceLineGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#3B82F6" />
+                      <stop offset="50%" stopColor="#8B5CF6" />
+                      <stop offset="100%" stopColor="#E6007E" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Horizontal reference grid lines */}
+                  {[16, 20, 24].map((val) => {
+                    const gy =
+                      padTop +
+                      (1 - (val - minVal) / (maxVal - minVal)) *
+                        (svgH - padTop - padBot);
+                    return (
+                      <g key={val}>
+                        <line
+                          x1={padX - 15}
+                          y1={gy}
+                          x2={svgW - padX + 15}
+                          y2={gy}
+                          stroke="rgba(255,255,255,0.08)"
+                          strokeDasharray="4 4"
+                        />
+                        <text
+                          x={padX - 22}
+                          y={gy + 3}
+                          textAnchor="end"
+                          className="fill-white/40 text-[9px] font-semibold"
+                        >
+                          {val}
+                        </text>
+                      </g>
+                    );
+                  })}
+
+                  {/* Gradient Area under curve */}
+                  <path d={areaPath} fill="url(#attendanceAreaGrad)" />
+
+                  {/* Glowing Line */}
+                  <path
+                    d={linePath}
+                    fill="none"
+                    stroke="url(#attendanceLineGrad)"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  {/* Interactive Data Points */}
+                  {coords.map((c, idx) => {
+                    const isSelected = activePointIdx === idx;
+                    return (
+                      <g
+                        key={c.date}
+                        onClick={() => {
+                          soundManager.playPop();
+                          setActivePointIdx(idx);
+                        }}
+                        className="cursor-pointer"
+                      >
+                        {(c.isPeak || isSelected) && (
+                          <circle
+                            cx={c.x}
+                            cy={c.y}
+                            r={11}
+                            fill={c.isPeak ? 'rgba(230,0,126,0.3)' : 'rgba(59,130,246,0.3)'}
+                          />
+                        )}
+                        <circle
+                          cx={c.x}
+                          cy={c.y}
+                          r={c.isPeak ? 6.5 : 5.5}
+                          fill={c.isPeak ? '#E6007E' : '#3B82F6'}
+                          stroke="#FFFFFF"
+                          strokeWidth="2"
+                        />
+                        {/* Value pill above point */}
+                        <text
+                          x={c.x}
+                          y={c.y - 11}
+                          textAnchor="middle"
+                          className={`text-[11px] font-black ${
+                            c.isPeak ? 'fill-[#E6007E]' : 'fill-white'
+                          }`}
+                        >
+                          {c.attendees} asist.
+                        </text>
+                        {/* Date & Session Label at bottom */}
+                        <text
+                          x={c.x}
+                          y={svgH - 13}
+                          textAnchor="middle"
+                          className="fill-white font-bold text-[10px]"
+                        >
+                          {c.date}
+                        </text>
+                        <text
+                          x={c.x}
+                          y={svgH - 2}
+                          textAnchor="middle"
+                          className="fill-white/65 text-[8.5px]"
+                        >
+                          {c.label}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              </div>
+            </div>
+
+            {/* Right 5 Cols: 3 Highlighted KPI Cards */}
+            <div className="lg:col-span-5 flex flex-col gap-2.5">
+              {stats.attendanceChart.kpis.map((kpi) => (
+                <div
+                  key={kpi.id}
+                  onClick={() => soundManager.playPop()}
+                  className="p-3 rounded-2xl bg-[#051336]/85 border border-white/15 hover:border-[#E6007E]/60 transition cursor-pointer flex items-center gap-3.5"
+                >
+                  <div
+                    className="px-3 py-2 rounded-xl font-black text-xl sm:text-2xl text-white shrink-0 min-w-[78px] text-center shadow-md"
+                    style={{
+                      background: `linear-gradient(135deg, ${kpi.color}40, ${kpi.color}20)`,
+                      border: `1px solid ${kpi.color}`,
+                    }}
+                  >
+                    {kpi.value}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs sm:text-sm font-extrabold text-white">
+                      {kpi.label}
+                    </div>
+                    <div className="text-[11px] text-white/75 leading-snug">
+                      {kpi.detail}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bottom Highlight Banner: Pitch your project */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.35 }}
+          className="p-3 rounded-2xl bg-gradient-to-r from-[#E6007E]/20 via-[#8B5CF6]/20 to-[#3B82F6]/20 border border-white/20 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-2"
+        >
+          <div className="flex flex-wrap items-center gap-3">
             <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-[#E6007E] text-white uppercase tracking-wider">
-              Los 4 Grandes Casos & Herramientas
+              {stats.pitchBanner.badge}
             </span>
-            <span className="text-xs sm:text-sm text-white/90 font-medium">
-              Cencosud · Carozzi (Catman & Agente Catman) · El Palacio de Hierro (Agentic Lab) · Portal de Diagnóstico RFI & Roadmap
+            <span className="text-xs sm:text-sm text-white/95 font-bold">
+              {stats.pitchBanner.projectsList}
             </span>
           </div>
           <span className="text-xs font-bold text-[#3B82F6] shrink-0">
@@ -2399,7 +2586,7 @@ const SpeakersSlide: React.FC = () => {
             } backdrop-blur-xl`}
           >
             <div>
-              <div className="flex items-center justify-between gap-2 mb-2.5">
+              <div className="flex items-center justify-between gap-2 mb-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-[#E6007E] to-[#8B5CF6] text-white shadow-md">
                   <Crown className="w-3.5 h-3.5 text-amber-300" />
                   {speakers.podiumTeam.rank}
@@ -2410,16 +2597,27 @@ const SpeakersSlide: React.FC = () => {
                 </span>
               </div>
 
-              {/* Photo container for Camilo y Guille.png */}
-              <div className="relative rounded-2xl bg-white p-2.5 shadow-xl border-2 border-[#E6007E]/60 flex items-center justify-center">
-                <img
-                  src={encodeURI(speakers.podiumTeam.photo)}
-                  alt="Camilo y Guillaume"
-                  className="w-full max-h-32 object-contain rounded-xl"
-                />
+              {/* Dual Circular Avatars for Camilo & Guillaume (NO white background!) */}
+              <div className="rounded-2xl bg-[#051336]/75 border border-white/15 p-4 flex items-center justify-around gap-4 shadow-inner">
+                {speakers.podiumTeam.members.map((m) => (
+                  <div key={m.name} className="flex flex-col items-center">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-[0_0_25px_rgba(230,0,126,0.4)]">
+                      <div className="w-full h-full rounded-full overflow-hidden bg-[#051336]">
+                        <img
+                          src={encodeURI(m.photo)}
+                          alt={m.name}
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      </div>
+                    </div>
+                    <span className="text-xs font-extrabold text-white mt-2">
+                      {m.name}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              <h3 className="text-lg sm:text-xl font-black text-white mt-2.5">
+              <h3 className="text-lg sm:text-xl font-black text-white mt-3">
                 {speakers.podiumTeam.names}
               </h3>
               <p className="text-xs text-white/80 mt-0.5 leading-relaxed">
@@ -2439,16 +2637,12 @@ const SpeakersSlide: React.FC = () => {
                       key={member.id}
                       className="flex items-center gap-2.5 p-2 rounded-2xl bg-[#051336]/80 border border-emerald-400/40 shadow-md"
                     >
-                      <div className="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-emerald-400 to-[#3B82F6] shrink-0">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                      <div className="w-12 h-12 rounded-full p-0.5 bg-gradient-to-tr from-emerald-400 to-[#3B82F6] shrink-0">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-[#051336]">
                           <img
                             src={encodeURI(member.photo)}
                             alt={member.name}
-                            style={{
-                              objectPosition: member.cropStyle?.objectPosition || '50% 50%',
-                              transform: `scale(${member.cropStyle?.scale || 1.2})`,
-                            }}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-full"
                           />
                         </div>
                       </div>
@@ -2476,9 +2670,9 @@ const SpeakersSlide: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Right Column (8 cols): Real Photos Grid + Support Team */}
+          {/* Right Column (8 cols): Real Circular Photos Grid + Support Team */}
           <div className="lg:col-span-8 flex flex-col gap-3 justify-between">
-            {/* Section 1: Speakers con Fotos Reales (Maite, Clemente, Rocío, Javier, Israel, Joaquín Ruíz, Valentina Gana, Inés, Team Palacio de Hierro) */}
+            {/* Section 1: Speakers con Fotos Reales Circulares (Sin fondo blanco) */}
             <div className="rounded-3xl bg-white/[0.06] border border-white/15 p-4 backdrop-blur-xl">
               <div className="flex items-center justify-between mb-2.5">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-white/90 flex items-center gap-1.5">
@@ -2494,7 +2688,7 @@ const SpeakersSlide: React.FC = () => {
                 {speakers.featuredPhotoSpeakers.map((sp, i) => {
                   const isSelected = selectedId === sp.id;
 
-                  if (sp.isTeamCard) {
+                  if (sp.isTeamCard && sp.teamPhotos) {
                     return (
                       <motion.div
                         key={sp.id}
@@ -2505,27 +2699,36 @@ const SpeakersSlide: React.FC = () => {
                           soundManager.playPop();
                           setSelectedId(sp.id);
                         }}
-                        className={`col-span-2 rounded-2xl p-2.5 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
+                        className={`col-span-2 rounded-2xl p-3 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
                           isSelected
                             ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg'
                             : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
                         }`}
                       >
-                        <div className="w-full h-16 rounded-xl bg-white p-1 flex items-center justify-center overflow-hidden shadow-md border border-[#3B82F6]/40">
-                          <img
-                            src={encodeURI(sp.photo!)}
-                            alt={sp.name}
-                            className="w-full h-full object-contain"
-                          />
+                        {/* 3 Circular Avatars for Diego, Iñaki & Isabela (NO white box!) */}
+                        <div className="flex items-center justify-center gap-3 my-1">
+                          {sp.teamPhotos.map((tp) => (
+                            <div key={tp.name} className="flex flex-col items-center">
+                              <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
+                                <div className="w-full h-full rounded-full overflow-hidden bg-[#051336]">
+                                  <img
+                                    src={encodeURI(tp.photo)}
+                                    alt={tp.name}
+                                    className="w-full h-full object-cover rounded-full"
+                                  />
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-bold text-white/85 mt-1">
+                                {tp.name}
+                              </span>
+                            </div>
+                          ))}
                         </div>
-                        <div className="mt-1.5">
+                        <div className="mt-1">
                           <div className="text-xs font-extrabold text-white leading-tight">
                             {sp.name}
                           </div>
-                          <div className="text-[10px] text-white/75 mt-0.5">
-                            {sp.role}
-                          </div>
-                          <span className="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#3B82F6]/30 text-white">
+                          <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-[#3B82F6]/30 text-white border border-[#3B82F6]/40">
                             {sp.sessionTag}
                           </span>
                         </div>
@@ -2549,27 +2752,23 @@ const SpeakersSlide: React.FC = () => {
                           : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
                       }`}
                     >
-                      <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
-                        <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                      <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
+                        <div className="w-full h-full rounded-full overflow-hidden bg-[#051336]">
                           <img
                             src={encodeURI(sp.photo!)}
                             alt={sp.name}
-                            style={{
-                              objectPosition: sp.cropStyle?.objectPosition || '50% 18%',
-                              transform: `scale(${sp.cropStyle?.scale || 1.32})`,
-                            }}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-full"
                           />
                         </div>
                       </div>
 
-                      <div className="text-xs font-extrabold text-white mt-1.5">
+                      <div className="text-xs font-extrabold text-white mt-2">
                         {sp.name}
                       </div>
                       <div className="text-[10px] text-white/70 line-clamp-2 mt-0.5 leading-tight">
                         {sp.role}
                       </div>
-                      <span className="mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-[#E6007E] border border-[#E6007E]/30">
+                      <span className="mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/10 text-[#E6007E] border border-[#E6007E]/30">
                         {sp.sessionTag.split('·')[0]}
                       </span>
                     </motion.div>
@@ -2645,7 +2844,6 @@ interface TimelineSlideProps {
 }
 const TimelineSlide: React.FC<TimelineSlideProps> = ({
   onOpenLightbox,
-  onJumpToSlide,
 }) => {
   const { timeline } = WRAPPED_DATA;
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -2661,8 +2859,8 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
   return (
     <div className="w-full h-full flex flex-col justify-center px-3 sm:px-6 py-2 overflow-y-auto">
       <div className="max-w-7xl w-full mx-auto">
-        {/* Header + Legend (Realizadas vs TBD + Hoy estamos acá) */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 mb-3">
+        {/* Header (No "Próximamente (TBD) / Disponible" pill on top right, and "Hoy estamos acá" elevated cleanly) */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-2 mb-2">
           <div>
             <span className="inline-block text-[11px] font-extrabold tracking-[0.2em] uppercase text-[#E6007E]">
               {timeline.eyebrow}
@@ -2672,41 +2870,37 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
             </h2>
           </div>
 
-          {/* Visual Status Legend */}
-          <div className="flex flex-wrap items-center gap-2 text-[11px]">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/50 text-emerald-200 font-bold">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              Sesión Realizada
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#E6007E] to-amber-500 text-white font-black shadow-[0_0_15px_rgba(230,0,126,0.6)] animate-pulse">
-              <MapPin className="w-3.5 h-3.5" />
-              Hoy estamos acá
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/5 border border-dashed border-white/35 text-white/65 font-semibold">
-              <Clock className="w-3.5 h-3.5 text-amber-300" />
-              Próximamente (TBD) / Disponible
-            </span>
-          </div>
+          <p className="text-xs text-white/75">
+            {timeline.subtitle}
+          </p>
         </div>
 
-        {/* Horizontal Timeline Track Strip with "Hoy estamos acá" Marker */}
-        <div className="flex items-stretch gap-1.5 overflow-x-auto pb-2 mb-3">
+        {/* Dedicated Top Bar for "Hoy estamos acá" Marker so it NEVER overlaps any session card */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 mb-3 pt-6 relative">
           {timeline.sessions.map((session, idx) => {
             const isActive = idx === activeIndex;
             const isCompleted = session.status === 'completed';
-            const isAvailable = session.status === 'available';
 
             return (
-              <React.Fragment key={session.id}>
+              <div key={session.id} className="relative flex flex-col">
+                {/* Elevated "Hoy estamos acá" Badge above the boundary after 20/11 */}
+                {session.isCurrentMarkerAfter && (
+                  <div className="hidden lg:flex absolute -top-6 -right-14 z-30 flex-col items-center pointer-events-none">
+                    <div className="px-3 py-0.5 rounded-full bg-gradient-to-r from-[#E6007E] to-amber-500 text-white text-[10px] font-black uppercase tracking-wider shadow-[0_0_20px_rgba(230,0,126,0.85)] border border-white/50 flex items-center gap-1 whitespace-nowrap">
+                      <MapPin className="w-3 h-3 animate-bounce" />
+                      <span>Hoy estamos acá</span>
+                    </div>
+                    <div className="w-0.5 h-3 bg-gradient-to-b from-amber-400 to-[#E6007E]" />
+                  </div>
+                )}
+
                 <button
                   onClick={() => handleSelectSession(idx)}
-                  className={`group relative min-w-[118px] sm:min-w-[126px] flex-1 rounded-2xl p-2 text-left transition-all cursor-pointer backdrop-blur-md flex flex-col justify-between ${
+                  className={`group relative h-full rounded-2xl p-2.5 text-left transition-all cursor-pointer backdrop-blur-md flex flex-col justify-between ${
                     isActive
                       ? 'bg-gradient-to-b from-[#E6007E]/35 via-[#8B5CF6]/30 to-[#051336]/95 border-2 border-[#E6007E] shadow-[0_0_25px_rgba(230,0,126,0.4)] -translate-y-0.5 opacity-100'
                       : isCompleted
                       ? 'bg-white/[0.09] border border-white/25 hover:bg-white/[0.15] hover:border-white/40 opacity-100'
-                      : isAvailable
-                      ? 'bg-white/[0.02] border border-dashed border-white/25 hover:border-white/45 opacity-55 hover:opacity-85'
                       : 'bg-white/[0.03] border border-dashed border-amber-300/35 hover:border-amber-300/60 opacity-65 hover:opacity-90'
                   }`}
                 >
@@ -2727,12 +2921,10 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
                       className={`text-[9px] font-extrabold px-1.5 py-0.5 rounded-full ${
                         isCompleted
                           ? 'bg-emerald-500/20 text-emerald-300'
-                          : isAvailable
-                          ? 'bg-white/10 text-white/60'
                           : 'bg-amber-500/20 text-amber-300'
                       }`}
                     >
-                      {isCompleted ? '✓ Realizada' : isAvailable ? 'Disponible' : 'TBD'}
+                      {isCompleted ? '✓ Realizada' : 'TBD'}
                     </span>
                   </div>
 
@@ -2746,24 +2938,16 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
                   </div>
                 </button>
 
-                {/* Highlighted Marker: "Hoy estamos acá" right after 20/11 (Grid) */}
+                {/* Vertical divider line on the right of 20/11 */}
                 {session.isCurrentMarkerAfter && (
-                  <div className="shrink-0 flex flex-col items-center justify-center px-1.5">
-                    <div className="h-full w-0.5 bg-gradient-to-b from-[#E6007E] via-amber-400 to-[#3B82F6] rounded-full relative flex items-center justify-center">
-                      <div className="px-2 py-1 rounded-xl bg-gradient-to-r from-[#E6007E] to-amber-500 text-white text-[9px] font-black uppercase tracking-wider whitespace-nowrap shadow-[0_0_20px_rgba(230,0,126,0.8)] border border-white/40 flex flex-col items-center gap-0.5">
-                        <MapPin className="w-3 h-3 animate-bounce" />
-                        <span>Hoy estamos</span>
-                        <span>acá</span>
-                      </div>
-                    </div>
-                  </div>
+                  <div className="hidden lg:block absolute -right-1.5 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#E6007E] via-amber-400 to-transparent rounded-full pointer-events-none" />
                 )}
-              </React.Fragment>
+              </div>
             );
           })}
         </div>
 
-        {/* Standardized Session Detail Panel (Palacio de Hierro Format) */}
+        {/* Standardized Session Detail Panel */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSession.id}
@@ -2778,7 +2962,7 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
             }`}
           >
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-              {/* Left Column (4 cols): Featured Header, Client Logo & Speakers */}
+              {/* Left Column (4 cols): Featured Header, Client Logo & Circular Speakers */}
               <div className="lg:col-span-4 flex flex-col gap-3">
                 {/* Session Header Card with GIF & Status Badge */}
                 <div className="relative rounded-2xl bg-[#051336]/85 border border-white/15 p-3.5 flex items-center gap-3.5">
@@ -2828,61 +3012,42 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
                   </div>
                 )}
 
-                {/* Speakers Block */}
+                {/* Speakers Block (All Circular Avatars without white borders!) */}
                 <div className="rounded-2xl bg-[#051336]/75 border border-white/15 p-3">
                   <div className="text-[10px] font-extrabold uppercase tracking-wider text-white/70 mb-2">
                     Speakers de la Sesión
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
-                    {activeSession.speakers.map((sp) => {
-                      const isWidePhoto =
-                        sp.photo &&
-                        (sp.photo.includes('Camilo y Guille') ||
-                          sp.photo.includes('team palacio'));
-
-                      return (
-                        <div
-                          key={sp.name}
-                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/10 border border-white/15"
-                        >
-                          {sp.photo ? (
-                            isWidePhoto ? (
-                              <div className="h-8 px-1.5 rounded-lg bg-white flex items-center justify-center overflow-hidden">
-                                <img
-                                  src={encodeURI(sp.photo)}
-                                  alt={sp.name}
-                                  className="h-7 w-auto object-contain"
-                                />
-                              </div>
-                            ) : (
-                              <div className="w-8 h-8 rounded-full overflow-hidden bg-white border border-[#E6007E]">
-                                <img
-                                  src={encodeURI(sp.photo)}
-                                  alt={sp.name}
-                                  style={{
-                                    objectPosition: sp.cropStyle?.objectPosition || '50% 18%',
-                                    transform: `scale(${sp.cropStyle?.scale || 1.32})`,
-                                  }}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                            )
-                          ) : (
-                            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#E6007E] to-[#3B82F6] flex items-center justify-center text-[10px] font-black text-white">
-                              {sp.initials}
+                    {activeSession.speakers.map((sp) => (
+                      <div
+                        key={sp.name}
+                        className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/10 border border-white/15"
+                      >
+                        {sp.photo ? (
+                          <div className="w-8 h-8 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] to-[#3B82F6] shrink-0">
+                            <div className="w-full h-full rounded-full overflow-hidden bg-[#051336]">
+                              <img
+                                src={encodeURI(sp.photo)}
+                                alt={sp.name}
+                                className="w-full h-full object-cover rounded-full"
+                              />
                             </div>
-                          )}
-                          <span className="text-xs font-bold text-white">
-                            {sp.name}
-                          </span>
-                        </div>
-                      );
-                    })}
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E6007E] to-[#3B82F6] flex items-center justify-center text-[10px] font-black text-white">
+                            {sp.initials}
+                          </div>
+                        )}
+                        <span className="text-xs font-bold text-white">
+                          {sp.name}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column (8 cols): Standardized Palacio de Hierro Layout (Summary + 3 Key Points + Gallery/Demos + Direct Presentation Link Button) */}
+              {/* Right Column (8 cols): Summary + 3 Key Points + Gallery/Demos + Direct Presentation Link Button */}
               <div className="lg:col-span-8 flex flex-col gap-3">
                 {/* Brief Description + 3 Key Points */}
                 <div className="rounded-2xl bg-[#051336]/65 border border-white/15 p-3.5">
@@ -2912,7 +3077,7 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
                   </div>
                 </div>
 
-                {/* Lower Section: Gallery of Demos / Captures + Direct Presentation Link Button */}
+                {/* Lower Section: Gallery of Demos / Captures */}
                 {activeSession.demos && activeSession.demos.length > 0 && (
                   <div className="rounded-2xl bg-[#051336]/80 border border-white/20 p-3.5">
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
@@ -2938,19 +3103,19 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
                           }}
                           className="group relative rounded-xl overflow-hidden border border-white/20 hover:border-[#E6007E] bg-[#051336] cursor-pointer transition-all shadow-lg"
                         >
-                          <div className="relative h-24 sm:h-28 w-full overflow-hidden bg-white/95 flex items-center justify-center">
+                          <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-[#051336] flex items-center justify-center">
                             <img
                               src={encodeURI(demo.src)}
                               alt={demo.title}
-                              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#051336] via-transparent to-transparent opacity-80" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#051336] via-transparent to-transparent opacity-75" />
                             <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-[#E6007E] text-white text-[10px] font-bold flex items-center gap-1 shadow-md">
                               <ZoomIn className="w-3 h-3" />
                               Zoom
                             </div>
                           </div>
-                          <div className="p-2">
+                          <div className="p-2.5">
                             <div className="text-[9px] font-bold text-[#3B82F6] uppercase">
                               {demo.badge}
                             </div>
@@ -3062,18 +3227,6 @@ const TimelineSlide: React.FC<TimelineSlideProps> = ({
                       <ExternalLink className="w-3.5 h-3.5" />
                       <span>{activeSession.presentationLabel || 'Abrir Presentación Oficial'}</span>
                     </a>
-                  ) : activeSession.presentationUrl === '#slide-outro-grid' &&
-                    onJumpToSlide ? (
-                    <button
-                      onClick={() => {
-                        soundManager.playPop();
-                        onJumpToSlide(6);
-                      }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold text-white bg-gradient-to-r from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] hover:opacity-95 shadow-[0_0_20px_rgba(230,0,126,0.45)] transition cursor-pointer"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                      <span>{activeSession.presentationLabel}</span>
-                    </button>
                   ) : (
                     <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold text-white/60 bg-white/5 border border-dashed border-white/25">
                       <ExternalLink className="w-3.5 h-3.5" />
