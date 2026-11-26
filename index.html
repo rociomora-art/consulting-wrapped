@@ -280,6 +280,8 @@ const ASSETS = {
     ines: 'assets/personas/Ines.jpg',
     valentinaGana: 'assets/personas/Valentina_Gana.jpg',
     joaquinRuiz: 'assets/personas/Joaquin_Ruiz.jpg',
+    simonCelis: 'assets/personas/Simon_Celis.png',
+    simonVelasco: 'assets/personas/Simon_Velasco.png',
   },
   sounds: {
     pop: 'assets/sonidos/pop.wav',
@@ -490,29 +492,18 @@ const WRAPPED_DATA = {
         photo: ASSETS.personas.joaquinRuiz,
       },
       {
-        id: 'valentina-gana',
-        name: 'Valentina Gana',
-        role: 'Portal RFI + Diagnóstico + Roadmap',
-        sessionTag: '04/12 · Diagnóstico (TBD)',
-        photo: ASSETS.personas.valentinaGana,
-      },
-      {
-        id: 'ines',
-        name: 'Inés',
-        role: 'Incorporación Reciente · Equipo Chapter',
-        sessionTag: 'Nuevo Fichaje · Equipo',
-        photo: ASSETS.personas.ines,
-      },
-      {
         id: 'team-palacio',
         name: 'Team Palacio de Hierro',
-        role: 'Diego Bendicho, Iñaki & Isabela',
+        role: 'Diego Bendicho, Iñaki, Isabela, Inés, Simón Celis & Simón Velasco',
         sessionTag: '06/11 · Agentic Lab',
         isTeamCard: true,
         teamPhotos: [
           { name: 'Diego', photo: ASSETS.personas.diego },
           { name: 'Iñaki', photo: ASSETS.personas.inaki },
           { name: 'Isabela', photo: ASSETS.personas.isabela },
+          { name: 'Inés', photo: ASSETS.personas.ines },
+          { name: 'Simón Celis', photo: ASSETS.personas.simonCelis },
+          { name: 'Simón Velasco', photo: ASSETS.personas.simonVelasco },
         ],
       },
     ] as SpeakerItem[],
@@ -715,6 +706,9 @@ const WRAPPED_DATA = {
           { name: 'Diego Bendicho', photo: ASSETS.personas.diego },
           { name: 'Iñaki', photo: ASSETS.personas.inaki },
           { name: 'Isabela', photo: ASSETS.personas.isabela },
+          { name: 'Inés', photo: ASSETS.personas.ines },
+          { name: 'Simón Celis', photo: ASSETS.personas.simonCelis },
+          { name: 'Simón Velasco', photo: ASSETS.personas.simonVelasco },
         ],
         keyPoints: [
           {
@@ -2699,17 +2693,17 @@ const SpeakersSlide: React.FC = () => {
                           soundManager.playPop();
                           setSelectedId(sp.id);
                         }}
-                        className={`col-span-2 rounded-2xl p-3 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
+                        className={`col-span-2 sm:col-span-2 lg:col-span-4 rounded-2xl p-3 cursor-pointer transition-all flex flex-col items-center justify-between text-center border ${
                           isSelected
                             ? 'bg-[#E6007E]/25 border-[#E6007E] shadow-lg'
                             : 'bg-[#051336]/60 border-white/15 hover:bg-white/10'
                         }`}
                       >
-                        {/* 3 Circular Avatars for Diego, Iñaki & Isabela (NO white box!) */}
-                        <div className="flex items-center justify-center gap-3 my-1">
+                        {/* 6 Circular Avatars for Team Palacio de Hierro (Diego, Iñaki, Isabela, Inés, Simón Celis & Simón Velasco) */}
+                        <div className="flex flex-wrap items-center justify-around gap-2 sm:gap-3 w-full my-1">
                           {sp.teamPhotos.map((tp) => (
                             <div key={tp.name} className="flex flex-col items-center">
-                              <div className="w-14 h-14 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
+                              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full p-0.5 bg-gradient-to-tr from-[#E6007E] via-[#8B5CF6] to-[#3B82F6] shadow-md">
                                 <div className="w-full h-full rounded-full overflow-hidden bg-[#051336]">
                                   <img
                                     src={encodeURI(tp.photo)}
@@ -2718,7 +2712,7 @@ const SpeakersSlide: React.FC = () => {
                                   />
                                 </div>
                               </div>
-                              <span className="text-[10px] font-bold text-white/85 mt-1">
+                              <span className="text-[10px] font-bold text-white/90 mt-1">
                                 {tp.name}
                               </span>
                             </div>
@@ -2727,6 +2721,9 @@ const SpeakersSlide: React.FC = () => {
                         <div className="mt-1">
                           <div className="text-xs font-extrabold text-white leading-tight">
                             {sp.name}
+                          </div>
+                          <div className="text-[10px] text-white/70 mt-0.5">
+                            {sp.role}
                           </div>
                           <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-[#3B82F6]/30 text-white border border-[#3B82F6]/40">
                             {sp.sessionTag}
